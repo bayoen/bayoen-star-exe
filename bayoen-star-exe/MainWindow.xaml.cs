@@ -20,7 +20,7 @@ namespace bayoen
     public partial class MainWindow : MetroWindow
     {
         /// <summary>
-        /// bayoen-star 0.2
+        /// bayoen-star 0.4
         /// </summary>
         public MainWindow()
         {
