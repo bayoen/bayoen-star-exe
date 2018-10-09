@@ -2,8 +2,11 @@
 Sub-module for counting stars (statistics) of bayeon project.
 Tested in Windows 10 64-bits
 
+Demo link
+[YouTube](https://youtu.be/d3a80QGKDsY)
+
 Download link
-[Alpha 0.0.4](https://github.com/bayoen/bayoen-star-exe/raw/master/bayoen-star-exe/bin/x64/Release%20Alpha%200.0.4.zip)
+[Release](https://github.com/bayoen/bayoen-star-exe/releases)
 
 
 Main functions
@@ -12,8 +15,8 @@ Main functions
 - Various display modes
 - Capturable figure for streaming
 - Save results
+- Floating with transparent window
 
 Futher works
-
-- Floating with transparent window and capturable one
 - 'First to #' match system
+
