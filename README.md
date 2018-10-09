@@ -15,8 +15,8 @@ Main functions
 - Various display modes
 - Capturable figure for streaming
 - Save results
+- Floating with transparent window
 
 Futher works
-
-- Floating with transparent window and capturable one
 - 'First to #' match system
+
