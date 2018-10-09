@@ -6,7 +6,7 @@ Demo link
 [YouTube](https://youtu.be/d3a80QGKDsY)
 
 Download link
-[Beta 0.0.5](https://github.com/bayoen/bayoen-star-exe/raw/master/bayoen-star-exe/bin/x64/bayoen-star-0.0.5.zip)
+[Release](https://github.com/bayoen/bayoen-star-exe/releases)
 
 
 Main functions
