@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 using MahApps.Metro.Controls;
@@ -32,11 +33,13 @@ namespace bayoen
             Thread.Sleep(1000);
 
             this.CheckContainers();
+            this.ToMonitors();
             this.IsStatOn = true;
         }
 
         public DisplayGrid MainDisplay;
         public DisplayGrid OverlayDisplay;
+        public List<TextBox> Monitors;
 
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
@@ -60,7 +63,7 @@ namespace bayoen
         public List<int> countingStar;
         public List<int> countingCrown;
         
-        public ContextMenu ModeContextMenu;
+        //public ContextMenu ModeContextMenu;
 
         public DisplayModes _mode;
         public DisplayModes Mode
@@ -134,10 +137,152 @@ namespace bayoen
 
         private void InitializeLayouts()
         {
+            InitializeTopMenu();
             InitializeSettingWindow();
-            InitializeModeMenu();
             InitializeNotifyIcon();
             InitializeDisplay();
+
+            void InitializeTopMenu()
+            {
+                MenuItem ResetMenuItem = BuildMenu("Reset", "appbar_new");
+                ResetMenuItem.Click += ResetMenuItem_ClickAsync;
+                this.TopCompositeCollection.Add(ResetMenuItem);
+
+                MenuItem OverlayMenuItem = BuildMenu("Show Overlay", "appbar_app_plus");
+                OverlayMenuItem.Click += OverlayMenuItem_Click;
+                this.TopCompositeCollection.Add(OverlayMenuItem);
+
+                MenuItem SettingMenuItem = BuildMenu("Settings", "appbar_settings");
+                SettingMenuItem.Click += SettingMenuItem_Click;
+                this.TopCompositeCollection.Add(SettingMenuItem);
+
+                MenuItem ModeMenuItem = BuildMenu("Mode", "appbar_list");
+                this.TopCompositeCollection.Add(ModeMenuItem);
+
+                List<MenuItem> ModeItems = new List<MenuItem>();
+                MenuItem Mode1Item = new MenuItem()
+                {
+                    Header = "1. Star+",
+                    ToolTip = "Count STARs and display (hidden GAMEs); 별을 세어 보여줍니다 (게임은 숨깁니다)",
+                    IsCheckable = true,
+                };
+                Mode1Item.Click += (sender, e) =>
+                {
+                    this.Mode = DisplayModes.Star_plus_only;
+                    this.CheckContainers();
+
+                    this.preferences.DisplayMode = this.Mode;
+                    ModeItems.ForEach(x => x.IsChecked = false);
+                    (sender as MenuItem).IsChecked = true;
+                };
+                ModeItems.Add(Mode1Item);
+
+                MenuItem Mode2Item = new MenuItem()
+                {
+                    Header = "2. Game",
+                    ToolTip = "Count GAMEs and display (hidden STARs); 게임을 세어 보여줍니다 (별은 숨깁니다)",
+                    IsCheckable = true,
+                };
+                Mode2Item.Click += (sender, e) =>
+                {
+                    this.Mode = DisplayModes.Game_only;
+                    this.CheckContainers();
+
+                    this.preferences.DisplayMode = this.Mode;
+                    ModeItems.ForEach(x => x.IsChecked = false);
+                    (sender as MenuItem).IsChecked = true;
+                };
+                ModeItems.Add(Mode2Item);
+
+                MenuItem Mode3Item = new MenuItem()
+                {
+                    Header = "3. Game & Star",
+                    ToolTip = "Count only GAMEs not STARs just display; 게임만 세고 별은 그대로 보여줍니다",
+                    IsCheckable = true,
+                };
+                Mode3Item.Click += (sender, e) =>
+                {
+                    this.Mode = DisplayModes.Game_and_Star;
+                    this.CheckContainers();
+
+                    this.preferences.DisplayMode = this.Mode;
+                    ModeItems.ForEach(x => x.IsChecked = false);
+                    (sender as MenuItem).IsChecked = true;
+                };
+                ModeItems.Add(Mode3Item);
+
+                MenuItem Mode4Item = new MenuItem()
+                {
+                    Header = "4. Game & Star+",
+                    ToolTip = "Count/Display both GAMEs and STARs; 게임과 별을 함께 세어 보여줍니다",
+                    IsCheckable = true,
+                };
+                Mode4Item.Click += (sender, e) =>
+                {
+                    this.Mode = DisplayModes.Game_and_Star_plus;
+                    this.CheckContainers();
+
+                    this.preferences.DisplayMode = this.Mode;
+                    ModeItems.ForEach(x => x.IsChecked = false);
+                    (sender as MenuItem).IsChecked = true;
+                };
+                ModeItems.Add(Mode4Item);
+
+                MenuItem Mode5Item = new MenuItem()
+                {
+                    Header = "5. Star & Star+",
+                    ToolTip = "Couont/Display STARs (hidden GAMEs); 별을 세고 현재 별을 보여줍니다 (게임은 숨깁니다)",
+                    IsCheckable = true,
+                };
+                Mode5Item.Click += (sender, e) =>
+                {
+                    this.Mode = DisplayModes.Star_plus_and_Star;
+                    this.CheckContainers();
+
+                    this.preferences.DisplayMode = this.Mode;
+                    ModeItems.ForEach(x => x.IsChecked = false);
+                    (sender as MenuItem).IsChecked = true;
+                };
+                ModeItems.Add(Mode5Item);
+
+                ModeMenuItem.ItemsSource = ModeItems;
+
+                if (this.preferences.DisplayMode == null)
+                {
+                    this.preferences.DisplayMode = DisplayModes.Game_and_Star_plus;
+                    (ModeItems[0] as MenuItem).IsChecked = true;
+                }
+                else
+                {
+                    int modeIndex = (int)this.preferences.DisplayMode.Value;
+                    (ModeItems[modeIndex] as MenuItem).IsChecked = true;
+                }
+
+
+                MenuItem BuildMenu(string header, string appbar)
+                {
+                    return new MenuItem()
+                    {
+                        Header = header,
+                        Icon = new Rectangle()
+                        {
+                            Width = 15,
+                            Height = 15,
+                            Fill = Brushes.White,
+                            Margin = new Thickness(8, 8, 2, 8),
+                            OpacityMask = new VisualBrush()
+                            {
+                                AlignmentX = AlignmentX.Center,
+                                AlignmentY = AlignmentY.Center,
+                                Stretch = Stretch.Uniform,
+                                Visual = TryFindResource(appbar) as Visual,
+                            },
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                        },
+                    };
+                }
+            }
 
             void InitializeSettingWindow()
             {
@@ -146,13 +291,18 @@ namespace bayoen
                     Title = "Settings",
                     TitleCharacterCasing = CharacterCasing.Normal,
 
-                    Height = 300,
-                    Width = 300,
+                    Height = 270,
+                    Width = 520,
                     ResizeMode = ResizeMode.NoResize,
 
                     BorderBrush = Brushes.Transparent,
                     BorderThickness = new Thickness(0),
                     Topmost = true,
+                };
+
+                this.Setting.MouseLeftButtonDown += (sender, e) =>
+                {
+                    this.Setting.DragMove();
                 };
 
                 this.Setting.Closing += (sender, e) =>
@@ -164,9 +314,26 @@ namespace bayoen
                 WrapPanel SettingPanel = new WrapPanel()
                 {
                     Orientation = Orientation.Vertical,
-                    Margin = new Thickness(10),
+                    Margin = new Thickness(5),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 this.Setting.Content = SettingPanel;
+
+                #region MainGroup
+                GroupBox MainGroupBox = new GroupBox()
+                {
+                    Header = "Main",
+                    Margin = new Thickness(5),
+                };
+                SettingPanel.Children.Add(MainGroupBox);
+
+                WrapPanel MainGroupPanel = new WrapPanel()
+                {
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(10),
+                };
+                MainGroupBox.Content = MainGroupPanel;
 
                 CheckBox TopMostCheckBox = new CheckBox()
                 {
@@ -195,7 +362,7 @@ namespace bayoen
                 }
                 this.Topmost = this.preferences.IsTopMost.Value;
                 TopMostCheckBox.IsChecked = this.preferences.IsTopMost.Value;
-                SettingPanel.Children.Add(TopMostCheckBox);
+                MainGroupPanel.Children.Add(TopMostCheckBox);
 
                 CheckBox ChromaKeyCheckBox = new CheckBox()
                 {
@@ -215,7 +382,7 @@ namespace bayoen
                 }
                 this.Background = (this.preferences.IsChromaKey.Value)?(Brushes.Magenta): (NeroBrush);
                 ChromaKeyCheckBox.IsChecked = this.preferences.IsChromaKey.Value;
-                SettingPanel.Children.Add(ChromaKeyCheckBox);
+                MainGroupPanel.Children.Add(ChromaKeyCheckBox);
 
                 StackPanel ExportTextPanel = new StackPanel()
                 {
@@ -265,7 +432,7 @@ namespace bayoen
                     Process.Start(exportFolderName);
                 };
                 ExportTextPanel.Children.Add(ExportTextFolderButton);
-                SettingPanel.Children.Add(ExportTextPanel);
+                MainGroupPanel.Children.Add(ExportTextPanel);
 
 
                 CheckBox FitScoreBoardCheckBox = new CheckBox()
@@ -291,122 +458,129 @@ namespace bayoen
                     this.preferences.IsFitToScore = false;
                 }
                 FitScoreBoardCheckBox.IsChecked = this.preferences.IsFitToScore.Value;
-                SettingPanel.Children.Add(FitScoreBoardCheckBox);
+                MainGroupPanel.Children.Add(FitScoreBoardCheckBox);
+                #endregion
 
-            }
+                #region MonitorGroup
 
-            void InitializeModeMenu()
-            {
-                this.ModeContextMenu = new ContextMenu()
+                this.Monitors = new List<TextBox>();
+
+                GroupBox MonitorGroupBox = new GroupBox()
                 {
-
+                    Header = "Monitor",
+                    Margin = new Thickness(5),
                 };
+                SettingPanel.Children.Add(MonitorGroupBox);
 
-                List<MenuItem> ModeItems = new List<MenuItem>();
-                MenuItem Mode1Item = new MenuItem()
+                WrapPanel MonitorGroupPanel = new WrapPanel()
                 {
-                    Header = "1. Star+",
-                    ToolTip = "Count STARs and display (hidden GAMEs); 별을 세어 보여줍니다 (게임은 숨깁니다)",
-                    IsCheckable = true,
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(10),
+                    Height = 150,
                 };
-                Mode1Item.Click += (sender, e) =>
+                MonitorGroupBox.Content = MonitorGroupPanel;
+
+                double setHeight = 22;
+                double setWidth1 = 60;
+                double setWidth2 = 40;
+
+                StackPanel Star1Set = SetText("Star 1", setHeight, setWidth1, setWidth2, false);
+                MonitorGroupPanel.Children.Add(Star1Set);                
+                StackPanel StarPlus1Set = SetText("Star+ 1", setHeight, setWidth1, setWidth2, true);
+                MonitorGroupPanel.Children.Add(StarPlus1Set);
+                StackPanel Crown1Set = SetText("Crown 1", setHeight, setWidth1, setWidth2, true);
+                MonitorGroupPanel.Children.Add(Crown1Set);
+                StackPanel WinCountSet = SetText("Win Count", setHeight, setWidth1, setWidth2, false);
+                MonitorGroupPanel.Children.Add(WinCountSet);
+                StackPanel Star2Set = SetText("Star 2", setHeight, setWidth1, setWidth2, false);
+                MonitorGroupPanel.Children.Add(Star2Set);
+                StackPanel StarPlus2Set = SetText("Star+ 2", setHeight, setWidth1, setWidth2, true);
+                MonitorGroupPanel.Children.Add(StarPlus2Set);
+                StackPanel Crown2Set = SetText("Crown 2", setHeight, setWidth1, setWidth2, true);
+                MonitorGroupPanel.Children.Add(Crown2Set);
+
+                StackPanel ButtonSet = new StackPanel()
                 {
-                    this.Mode = DisplayModes.Star_plus_only;
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(25, 5, 5, 5),
+                };
+                Button MonitorLoadButton = new Button()
+                {
+                    Content = "Load",
+                    Width = 40,
+                    Margin = new Thickness(0,0,5,0),
+                };
+                MonitorLoadButton.Click += (sender, e) =>
+                {
+                    this.ToMonitors();
+                };
+                MonitorLoadButton.SetResourceReference(Control.StyleProperty, "AccentedSquareButtonStyle");
+                ButtonSet.Children.Add(MonitorLoadButton);
+                Button MonitorSaveButton = new Button()
+                {
+                    Content = "Save",
+                    Width = 40,
+                    Margin = new Thickness(0),
+                };
+                MonitorSaveButton.Click += (sender, e) =>
+                {
+                    this.FromMonitors();
+
                     this.CheckContainers();
-
-                    this.preferences.DisplayMode = this.Mode;
-                    ModeItems.ForEach(x => x.IsChecked = false);
-                    (sender as MenuItem).IsChecked = true;
+                    this.CheckOverlay();
+                    this.Save();
+                    this.Export();
                 };
-                ModeItems.Add(Mode1Item);
-                ModeContextMenu.Items.Add(Mode1Item);
+                ButtonSet.Children.Add(MonitorSaveButton);
+                MonitorSaveButton.SetResourceReference(Control.StyleProperty, "AccentedSquareButtonStyle");
+                MonitorGroupPanel.Children.Add(ButtonSet);
 
-                MenuItem Mode2Item = new MenuItem()
+                this.Monitors.Add(Star1Set.Children[1] as TextBox);
+                this.Monitors.Add(Star2Set.Children[1] as TextBox);
+                this.Monitors.Add(StarPlus1Set.Children[1] as TextBox);
+                this.Monitors.Add(StarPlus2Set.Children[1] as TextBox);
+                this.Monitors.Add(Crown1Set.Children[1] as TextBox);
+                this.Monitors.Add(Crown2Set.Children[1] as TextBox);
+                this.Monitors.Add(WinCountSet.Children[1] as TextBox);
+
+                this.Monitors.ForEach(x => x.Text = "?");
+
+                #endregion
+
+                StackPanel SetText(string header, double height, double width1, double width2, bool isEnabled)
                 {
-                    Header = "2. Game",
-                    ToolTip = "Count GAMEs and display (hidden STARs); 게임을 세어 보여줍니다 (별은 숨깁니다)",
-                    IsCheckable = true,
-                };
-                Mode2Item.Click += (sender, e) =>
-                {
-                    this.Mode = DisplayModes.Game_only;
-                    this.CheckContainers();
+                    TextBlock tokenTextBlock = new TextBlock()
+                    {
+                        Text = header,
+                        TextAlignment = TextAlignment.Right,
+                        Margin = new Thickness(0),                        
+                        Width = width1,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    Border tokenBorder = new Border()
+                    {
+                        Height = height,
+                        Child = tokenTextBlock,
+                    };
+                    TextBox tokenTextBox = new TextBox()
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Padding = new Thickness(0,2,0,0),
+                        Margin = new Thickness(5,0,0,0),
+                        Height = height,
+                        Width = width2,
+                        IsEnabled = isEnabled,
+                    };
+                    StackPanel tokenPanel = new StackPanel()
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Margin = new Thickness(5),
+                    };
+                    tokenPanel.Children.Add(tokenBorder);
+                    tokenPanel.Children.Add(tokenTextBox);
 
-                    this.preferences.DisplayMode = this.Mode;
-                    ModeItems.ForEach(x => x.IsChecked = false);
-                    (sender as MenuItem).IsChecked = true;
-                };
-                ModeItems.Add(Mode2Item);
-                ModeContextMenu.Items.Add(Mode2Item);
-
-                MenuItem Mode3Item = new MenuItem()
-                {
-                    Header = "3. Game & Star",
-                    ToolTip = "Count only GAMEs not STARs just display; 게임만 세고 별은 그대로 보여줍니다",
-                    IsCheckable = true,
-                };
-                Mode3Item.Click += (sender, e) =>
-                {
-                    this.Mode = DisplayModes.Game_and_Star;
-                    this.CheckContainers();
-
-                    this.preferences.DisplayMode = this.Mode;
-                    ModeItems.ForEach(x => x.IsChecked = false);
-                    (sender as MenuItem).IsChecked = true;
-                };
-                ModeItems.Add(Mode3Item);
-                ModeContextMenu.Items.Add(Mode3Item);
-
-                MenuItem Mode4Item = new MenuItem()
-                {
-                    Header = "4. Game & Star+",
-                    ToolTip = "Count/Display both GAMEs and STARs; 게임과 별을 함께 세어 보여줍니다",
-                    IsCheckable = true,
-                };
-                Mode4Item.Click += (sender, e) =>
-                {
-                    this.Mode = DisplayModes.Game_and_Star_plus;
-                    this.CheckContainers();
-
-                    this.preferences.DisplayMode = this.Mode;
-                    ModeItems.ForEach(x => x.IsChecked = false);
-                    (sender as MenuItem).IsChecked = true;
-                };
-                ModeItems.Add(Mode4Item);
-                ModeContextMenu.Items.Add(Mode4Item);
-
-                MenuItem Mode5Item = new MenuItem()
-                {
-                    Header = "5. Star & Star+",
-                    ToolTip = "Couont/Display STARs (hidden GAMEs); 별을 세고 현재 별을 보여줍니다 (게임은 숨깁니다)",
-                    IsCheckable = true,
-                };
-                Mode5Item.Click += (sender, e) =>
-                {
-                    this.Mode = DisplayModes.Star_plus_and_Star;
-                    this.CheckContainers();
-
-                    this.preferences.DisplayMode = this.Mode;
-                    ModeItems.ForEach(x => x.IsChecked = false);
-                    (sender as MenuItem).IsChecked = true;
-                };
-                ModeItems.Add(Mode5Item);
-                ModeContextMenu.Items.Add(Mode5Item);
-
-                this.ModeButton.ContextMenu = ModeContextMenu;
-
-                if (this.preferences.DisplayMode == null)
-                {
-                    this.preferences.DisplayMode = DisplayModes.Game_and_Star_plus;
-                    (ModeContextMenu.Items[0] as MenuItem).IsChecked = true;
+                    return tokenPanel;
                 }
-                else
-                {
-                    int modeIndex = (int)this.preferences.DisplayMode.Value;
-                    (ModeContextMenu.Items[modeIndex] as MenuItem).IsChecked = true;
-                }
-                
-
             }
 
             void InitializeNotifyIcon()
@@ -739,11 +913,13 @@ namespace bayoen
                         this.Export();
                     }
 
+                    this.ToMonitors();
                     this.Save();
                 }
             }
 
             this.CheckContainers();
+            
 
             for (int playerIndex = 0; playerIndex < 2; playerIndex++)
             {
@@ -806,6 +982,25 @@ namespace bayoen
             }
         }
 
+        private void ToMonitors()
+        {
+            this.Monitors[0].Text = this.currentStar[0].ToString();
+            this.Monitors[1].Text = this.currentStar[1].ToString();
+            this.Monitors[2].Text = this.countingStar[0].ToString();
+            this.Monitors[3].Text = this.countingStar[1].ToString();
+            this.Monitors[4].Text = this.countingCrown[0].ToString();
+            this.Monitors[5].Text = this.countingCrown[1].ToString();
+            this.Monitors[6].Text = this.winCount.ToString();
+        }
+
+        private void FromMonitors()
+        {
+            this.countingStar[0] = int.Parse(this.Monitors[2].Text);
+            this.countingStar[1] = int.Parse(this.Monitors[3].Text);
+            this.countingCrown[0] = int.Parse(this.Monitors[4].Text);
+            this.countingCrown[1] = int.Parse(this.Monitors[5].Text);
+        }
+
         private void CheckOverlay()
         {
             GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.pptRect);
@@ -836,7 +1031,12 @@ namespace bayoen
             this.Overlay.Top = this.pptRect.Top - this.preferences.Overlay[2];
         }
 
-        private async void ClearButton_ClickAsync(object sender, RoutedEventArgs e)
+        private void MenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.TopContextMenu.IsOpen = true;
+        }
+
+        private async void ResetMenuItem_ClickAsync(object sender, RoutedEventArgs e)
         {
             var result = await this.ShowMessageAsync("Do clear?", "", MessageDialogStyle.AffirmativeAndNegative);
             if (result == MessageDialogResult.Affirmative)
@@ -845,12 +1045,13 @@ namespace bayoen
                 this.countingCrown = new List<int>() { 0, 0 };
 
                 this.CheckContainers();
+                this.ToMonitors();
                 this.Save();
                 System.Media.SystemSounds.Hand.Play();
             }
         }
 
-        private void OverlayButton_Click(object sender, RoutedEventArgs e)
+        private void OverlayMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.Overlay.Show();
             if (this.Overlay.WindowState == WindowState.Minimized)
@@ -860,9 +1061,13 @@ namespace bayoen
             this.Overlay.Activate();
         }
 
-        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        private void SettingMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            System.Drawing.Point mousePoint = System.Windows.Forms.Control.MousePosition;
+
             this.Setting.Show();
+            this.Setting.Left = Math.Max(0, mousePoint.X - 50);
+            this.Setting.Top = Math.Max(0, mousePoint.Y - 50);
             if (this.Setting.WindowState == WindowState.Minimized)
             {
                 this.Setting.WindowState = WindowState.Normal;
@@ -870,9 +1075,9 @@ namespace bayoen
             this.Setting.Activate();
         }
 
-        private void ModeButton_Click(object sender, RoutedEventArgs e)
+        private void MetroWindow_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ModeContextMenu.IsOpen = true;
+            this.DragMove();
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -938,7 +1143,7 @@ namespace bayoen
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref RECT rectangle);
-       
+
         public enum DisplayModes : int
         {
             Star_plus_only = 0,

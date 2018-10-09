@@ -9,13 +9,8 @@
                  BorderThickness="0"                               
                  ResizeMode="NoResize"
                  Height="120" Width="525"
+                 MouseLeftButtonDown="MetroWindow_MouseLeftButtonDown"
                  Closing="MetroWindow_Closing">
-
-    <!--<Grid x:Name="TopGrid">
-        <Image x:Name="PanelImage" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Text=":" FontSize="30" FontWeight="ExtraBold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-        <StackPanel x:Name="TopPanel" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-    </Grid>-->
 
     <!--Titlebar buttons-->
     <mtc:MetroWindow.RightWindowCommands>
@@ -24,9 +19,10 @@
                 <Style TargetType="Rectangle">
                     <Setter Property="Width" Value="15"/>
                     <Setter Property="Height" Value="15"/>
-                    <!--<Setter Property="Margin" Value="7,3,5,3"/>-->
-                    <Setter Property="Margin" Value="3"/>
+                    <Setter Property="Margin" Value="7"/>
                     <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
                 </Style>
 
                 <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
@@ -37,49 +33,28 @@
                 </Style>
             </mtc:WindowCommands.Resources>
 
-            <Button x:Name ="ClearButton" Background="Transparent" ToolTip="Clear" Click="ClearButton_ClickAsync">
+            <TextBlock Text="Beta v0.0.6" Margin="8,3,8,3" Foreground="DimGray" IsEnabled="False"/>
+
+            <Button x:Name ="MenuButton" Background="Transparent" Click="MenuButton_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Rectangle>
+                    <Rectangle Margin="3,6,5,3">
                         <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_new}"/>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_list_gear}"/>
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <!--<TextBlock Text=""/>-->
+                    <TextBlock Text="Menu" FontWeight="Bold"/>
                 </StackPanel>
+
+                <Button.ContextMenu>
+                    <ContextMenu x:Name="TopContextMenu">
+                        <ContextMenu.ItemsSource>
+                            <CompositeCollection x:Name="TopCompositeCollection"/>
+                        </ContextMenu.ItemsSource>
+                    </ContextMenu>
+                </Button.ContextMenu>
             </Button>
 
-            <Button x:Name ="OverlayButton" Background="Transparent" ToolTip="Overlay" Click="OverlayButton_Click">
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle>
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_app_plus}"/>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                    <!--<TextBlock Text=""/>-->
-                </StackPanel>
-            </Button>
-
-            <Button x:Name ="SettingButton" Background="Transparent" ToolTip="Setting" Click="SettingButton_Click">
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle>
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_settings}"/>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                    <!--<TextBlock Text=""/>-->
-                </StackPanel>
-            </Button>
-
-            <Button x:Name ="ModeButton" Background="Transparent" ToolTip="Mode" Click="ModeButton_Click">
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle>
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_list}"/>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                    <!--<TextBlock Text=""/>-->
-                </StackPanel>
-            </Button>
+            
         </mtc:WindowCommands>
     </mtc:MetroWindow.RightWindowCommands>
 </mtc:MetroWindow>
