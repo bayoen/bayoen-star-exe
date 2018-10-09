@@ -5,16 +5,17 @@
                  Title="bayoen-star"
                  TitleCharacterCasing="Normal"
                  WindowTitleBrush="Transparent"
-                 ShowIconOnTitleBar="False"
-                 BorderThickness="0"
-                 ResizeMode="NoResize"                 
+                 ShowIconOnTitleBar="False"                 
+                 BorderThickness="0"                               
+                 ResizeMode="NoResize"
                  Height="120" Width="525"
                  Closing="MetroWindow_Closing">
-    <Grid x:Name="TopGrid">
+
+    <!--<Grid x:Name="TopGrid">
         <Image x:Name="PanelImage" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Text=":" FontSize="30" FontWeight="ExtraBold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,8"/>
         <StackPanel x:Name="TopPanel" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-    </Grid>
+    </Grid>-->
 
     <!--Titlebar buttons-->
     <mtc:MetroWindow.RightWindowCommands>
@@ -41,6 +42,17 @@
                     <Rectangle>
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_new}"/>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <!--<TextBlock Text=""/>-->
+                </StackPanel>
+            </Button>
+
+            <Button x:Name ="OverlayButton" Background="Transparent" ToolTip="Overlay" Click="OverlayButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle>
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_app_plus}"/>
                         </Rectangle.OpacityMask>
                     </Rectangle>
                     <!--<TextBlock Text=""/>-->

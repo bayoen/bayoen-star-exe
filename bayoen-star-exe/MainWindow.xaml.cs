@@ -35,18 +35,21 @@ namespace bayoen
             this.IsStatOn = true;
         }
 
-        public List<Container> StarContainers;
-        public List<Container> CrownContainers;
+        public DisplayGrid MainDisplay;
+        public DisplayGrid OverlayDisplay;
 
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
         public const string dataJSONName = "data.json";
         public Preferences preferences;
-        public wf::NotifyIcon notify;
-        public MetroWindow setting;
+        public wf::NotifyIcon Notify;
+        public MetroWindow Setting;
+        public MetroWindow Overlay;
+
 
         public VAMemory pptMemory;
+        public RECT pptRect, oldRect;
         public int scoreAddress;
         public Process[] PPTProcesses;
         public DispatcherTimer timer;
@@ -70,135 +73,9 @@ namespace bayoen
                     return;
                 }
 
-                this.StarContainers.ForEach(x => this.TopPanel.Children.Remove(x));
-                this.CrownContainers.ForEach(x => this.TopPanel.Children.Remove(x));
+                this.MainDisplay.SetMode(value, this.preferences.IsFitToScore.Value);
+                this.OverlayDisplay.SetMode(value, this.preferences.IsFitToScore.Value);
 
-                if (this._mode >= DisplayModes.Game_only)
-                {
-                    if (value < DisplayModes.Game_only)
-                    {
-                        PanelImage.SetBitmap(bayoen.Properties.Resources.PanelScore2LongStrong);
-                    }                        
-                }
-                else
-                {
-                    if (value >= DisplayModes.Game_only)
-                    {
-                        if (this.preferences.IsFirToScore.Value)
-                        {
-                            PanelImage.SetBitmap(bayoen.Properties.Resources.PanelScore2FitStrong);
-                        }
-                        else
-                        {
-                            PanelImage.SetBitmap(bayoen.Properties.Resources.PanelScore2ShortStrong);
-                        }                        
-                    }                        
-                }
-
-
-                if (value == DisplayModes.Game_and_Star_plus)
-                {
-                    this.TopPanel.Children.Add(this.CrownContainers[0]);
-                    this.CrownContainers[0].Margin = new Thickness(0);
-                    this.CrownContainers[0].ContainerOrientation = ContainerOrientations.Left;
-
-                    this.TopPanel.Children.Add(this.StarContainers[0]);
-                    this.StarContainers[0].Margin = new Thickness(0, 0, 5, 0);
-                    this.StarContainers[0].ContainerOrientation = ContainerOrientations.Left;
-                    this.StarContainers[0].ContainerImage = ContainerImages.StarPlus;
-
-                    this.TopPanel.Children.Add(this.StarContainers[1]);
-                    this.StarContainers[1].Margin = new Thickness(5, 0, 0, 0);
-                    this.StarContainers[1].ContainerOrientation = ContainerOrientations.Right;
-                    this.StarContainers[1].ContainerImage = ContainerImages.StarPlus;
-
-                    this.TopPanel.Children.Add(this.CrownContainers[1]);
-                    this.CrownContainers[1].Margin = new Thickness(0);
-                    this.CrownContainers[1].ContainerOrientation = ContainerOrientations.Right;
-                }
-                else if (value == DisplayModes.Game_and_Star)
-                {
-                    this.TopPanel.Children.Add(this.CrownContainers[0]);
-                    this.CrownContainers[0].Margin = new Thickness(0);
-                    this.CrownContainers[0].ContainerOrientation = ContainerOrientations.Left;
-
-                    this.TopPanel.Children.Add(this.StarContainers[0]);
-                    this.StarContainers[0].Margin = new Thickness(0, 0, 5, 0);
-                    this.StarContainers[0].ContainerOrientation = ContainerOrientations.Left;
-                    this.StarContainers[0].ContainerImage = ContainerImages.StarPlain;
-
-                    this.TopPanel.Children.Add(this.StarContainers[1]);
-                    this.StarContainers[1].Margin = new Thickness(5, 0, 0, 0);
-                    this.StarContainers[1].ContainerOrientation = ContainerOrientations.Right;
-                    this.StarContainers[1].ContainerImage = ContainerImages.StarPlain;
-
-                    this.TopPanel.Children.Add(this.CrownContainers[1]);
-                    this.CrownContainers[1].Margin = new Thickness(0);
-                    this.CrownContainers[1].ContainerOrientation = ContainerOrientations.Right;
-                }
-                else if (value == DisplayModes.Game_only)
-                {
-                    if (this.preferences.IsFirToScore.Value)
-                    {
-                        this.CrownContainers[0].Margin = new Thickness(0, 0, 30, 0);
-                        this.CrownContainers[1].Margin = new Thickness(30, 0, 0, 0);
-                    }
-                    else
-                    {
-                        this.CrownContainers[0].Margin = new Thickness(0, 0, 5, 0);
-                        this.CrownContainers[1].Margin = new Thickness(5, 0, 0, 0);
-                    }
-
-                    this.TopPanel.Children.Add(this.CrownContainers[0]);
-                    this.CrownContainers[0].ContainerOrientation = ContainerOrientations.Left;
-
-                    this.TopPanel.Children.Add(this.CrownContainers[1]);
-                    this.CrownContainers[1].ContainerOrientation = ContainerOrientations.Right;
-                }
-                else if (value == DisplayModes.Star_plus_only)
-                {
-                    if (this.preferences.IsFirToScore.Value)
-                    {
-                        this.StarContainers[0].Margin = new Thickness(0, 0, 30, 0);
-                        this.StarContainers[1].Margin = new Thickness(30, 0, 0, 0);
-                    }
-                    else
-                    {
-                        this.StarContainers[0].Margin = new Thickness(0, 0, 5, 0);
-                        this.StarContainers[1].Margin = new Thickness(5, 0, 0, 0);
-                    }
-
-                    this.TopPanel.Children.Add(this.StarContainers[0]);
-                    this.StarContainers[0].ContainerOrientation = ContainerOrientations.Left;
-                    this.StarContainers[0].ContainerImage = ContainerImages.StarPlus;
-
-                    this.TopPanel.Children.Add(this.StarContainers[1]);
-                    this.StarContainers[1].ContainerOrientation = ContainerOrientations.Right;
-                    this.StarContainers[1].ContainerImage = ContainerImages.StarPlus;
-                }
-                else // if (value == DisplayModes.Star_plus_only)
-                {
-                    if (this.preferences.IsFirToScore.Value)
-                    {
-                        this.StarContainers[0].Margin = new Thickness(0, 0, 30, 0);
-                        this.StarContainers[1].Margin = new Thickness(30, 0, 0, 0);
-                    }
-                    else
-                    {
-                        this.StarContainers[0].Margin = new Thickness(0, 0, 5, 0);
-                        this.StarContainers[1].Margin = new Thickness(5, 0, 0, 0);
-                    }
-
-                    this.TopPanel.Children.Add(this.StarContainers[0]);
-                    this.StarContainers[0].ContainerOrientation = ContainerOrientations.Left;
-                    this.StarContainers[0].ContainerImage = ContainerImages.StarPlain;
-
-                    this.TopPanel.Children.Add(this.StarContainers[1]);
-                    this.StarContainers[1].ContainerOrientation = ContainerOrientations.Right;
-                    this.StarContainers[1].ContainerImage = ContainerImages.StarPlain;
-                }
-
-                
 
                 this._mode = value;
             }
@@ -260,11 +137,11 @@ namespace bayoen
             InitializeSettingWindow();
             InitializeModeMenu();
             InitializeNotifyIcon();
-            InitializePanel();
+            InitializeDisplay();
 
             void InitializeSettingWindow()
             {
-                this.setting = new MetroWindow()
+                this.Setting = new MetroWindow()
                 {
                     Title = "Settings",
                     TitleCharacterCasing = CharacterCasing.Normal,
@@ -278,10 +155,10 @@ namespace bayoen
                     Topmost = true,
                 };
 
-                this.setting.Closing += (sender, e) =>
+                this.Setting.Closing += (sender, e) =>
                 {
                     e.Cancel = true;
-                    this.setting.Hide();
+                    this.Setting.Hide();
                 };
 
                 WrapPanel SettingPanel = new WrapPanel()
@@ -289,7 +166,7 @@ namespace bayoen
                     Orientation = Orientation.Vertical,
                     Margin = new Thickness(10),
                 };
-                this.setting.Content = SettingPanel;
+                this.Setting.Content = SettingPanel;
 
                 CheckBox TopMostCheckBox = new CheckBox()
                 {
@@ -303,9 +180,9 @@ namespace bayoen
 
                     if (this.preferences.IsTopMost.Value)
                     {
-                        this.setting.Topmost = false;
+                        this.Setting.Topmost = false;
                         this.Topmost = true;
-                        this.setting.Topmost = true;
+                        this.Setting.Topmost = true;
                     }
                     else
                     {
@@ -348,7 +225,7 @@ namespace bayoen
                 {
                     Content = "Export Texts",
                     Margin = new Thickness(5),
-                    ToolTip = "Export these texts: (#: 1, 2, 3, 4)\n텍스트 파일로 저장합니다:\n\tStar#.txt,\n\tStarPlus#.txt,\n\tCrown#.txt,\n\tWinCount.txt,\n\tExport.json",
+                    ToolTip = "Export these texts: (#: 1, 2, 3, 4)\n텍스트 파일로 저장합니다:\n\tStar#.txt,\n\tStarPlus#.txt,\n\tCrown#.txt,\n\tWinCount.txt",
                 };
                 ExportTextCheckBox.Click += (sender, e) =>
                 {
@@ -357,6 +234,11 @@ namespace bayoen
                     if (!System.IO.Directory.Exists(exportFolderName))
                     {
                         System.IO.Directory.CreateDirectory(exportFolderName);
+                    }
+
+                    if (this.preferences.ExportText.Value)
+                    {
+                        this.Export();
                     }
                 };
                 if (this.preferences.ExportText == null)
@@ -375,9 +257,9 @@ namespace bayoen
                 ExportTextFolderButton.SetResourceReference(Control.StyleProperty, "AccentedSquareButtonStyle");
                 ExportTextFolderButton.Click += (sender, e) =>
                 {
-                    if (!System.IO.Directory.Exists(exportFolderName))
+                    if (!Directory.Exists(exportFolderName))
                     {
-                        System.IO.Directory.CreateDirectory(exportFolderName);
+                        Directory.CreateDirectory(exportFolderName);
                     }
 
                     Process.Start(exportFolderName);
@@ -394,9 +276,9 @@ namespace bayoen
                 };
                 FitScoreBoardCheckBox.Click += (sender, e) =>
                 {
-                    this.preferences.IsFirToScore = !this.preferences.IsFirToScore;
+                    this.preferences.IsFitToScore = !this.preferences.IsFitToScore;
 
-                    if (this.Mode >= DisplayModes.Game_only)
+                    if (this.Mode < DisplayModes.Game_and_Star)
                     {
                         DisplayModes tokenMode = this.Mode;
                         this.Mode = DisplayModes.Game_and_Star;
@@ -404,11 +286,11 @@ namespace bayoen
                     }
                     
                 };
-                if (this.preferences.IsFirToScore == null)
+                if (this.preferences.IsFitToScore == null)
                 {
-                    this.preferences.IsFirToScore = false;
+                    this.preferences.IsFitToScore = false;
                 }
-                FitScoreBoardCheckBox.IsChecked = this.preferences.IsFirToScore.Value;
+                FitScoreBoardCheckBox.IsChecked = this.preferences.IsFitToScore.Value;
                 SettingPanel.Children.Add(FitScoreBoardCheckBox);
 
             }
@@ -423,13 +305,13 @@ namespace bayoen
                 List<MenuItem> ModeItems = new List<MenuItem>();
                 MenuItem Mode1Item = new MenuItem()
                 {
-                    Header = "1. Game & Star+",
-                    ToolTip = "Count/Display both GAMEs and STARs; 게임과 별을 함께 세어 보여줍니다",
+                    Header = "1. Star+",
+                    ToolTip = "Count STARs and display (hidden GAMEs); 별을 세어 보여줍니다 (게임은 숨깁니다)",
                     IsCheckable = true,
                 };
                 Mode1Item.Click += (sender, e) =>
                 {
-                    this.Mode = DisplayModes.Game_and_Star_plus;
+                    this.Mode = DisplayModes.Star_plus_only;
                     this.CheckContainers();
 
                     this.preferences.DisplayMode = this.Mode;
@@ -441,13 +323,13 @@ namespace bayoen
 
                 MenuItem Mode2Item = new MenuItem()
                 {
-                    Header = "2. Game & Star",
-                    ToolTip = "Count only GAMEs not STARs just display; 게임만 세고 별은 그대로 보여줍니다",
+                    Header = "2. Game",
+                    ToolTip = "Count GAMEs and display (hidden STARs); 게임을 세어 보여줍니다 (별은 숨깁니다)",
                     IsCheckable = true,
                 };
                 Mode2Item.Click += (sender, e) =>
                 {
-                    this.Mode = DisplayModes.Game_and_Star;
+                    this.Mode = DisplayModes.Game_only;
                     this.CheckContainers();
 
                     this.preferences.DisplayMode = this.Mode;
@@ -459,13 +341,13 @@ namespace bayoen
 
                 MenuItem Mode3Item = new MenuItem()
                 {
-                    Header = "3. Game",
-                    ToolTip = "Count GAMEs and display (hidden STARs); 게임을 세어 보여줍니다 (별은 숨깁니다)",
+                    Header = "3. Game & Star",
+                    ToolTip = "Count only GAMEs not STARs just display; 게임만 세고 별은 그대로 보여줍니다",
                     IsCheckable = true,
                 };
                 Mode3Item.Click += (sender, e) =>
                 {
-                    this.Mode = DisplayModes.Game_only;
+                    this.Mode = DisplayModes.Game_and_Star;
                     this.CheckContainers();
 
                     this.preferences.DisplayMode = this.Mode;
@@ -477,13 +359,13 @@ namespace bayoen
 
                 MenuItem Mode4Item = new MenuItem()
                 {
-                    Header = "4. Star+",
-                    ToolTip = "Count STARs and display (hidden GAMEs); 별을 세어 보여줍니다 (게임은 숨깁니다)",
+                    Header = "4. Game & Star+",
+                    ToolTip = "Count/Display both GAMEs and STARs; 게임과 별을 함께 세어 보여줍니다",
                     IsCheckable = true,
                 };
                 Mode4Item.Click += (sender, e) =>
                 {
-                    this.Mode = DisplayModes.Star_plus_only;
+                    this.Mode = DisplayModes.Game_and_Star_plus;
                     this.CheckContainers();
 
                     this.preferences.DisplayMode = this.Mode;
@@ -495,13 +377,13 @@ namespace bayoen
 
                 MenuItem Mode5Item = new MenuItem()
                 {
-                    Header = "5. Star",
-                    ToolTip = "Display STARs (hidden GAMEs); 현재 별을 보여줍니다 (게임은 숨깁니다)",
+                    Header = "5. Star & Star+",
+                    ToolTip = "Couont/Display STARs (hidden GAMEs); 별을 세고 현재 별을 보여줍니다 (게임은 숨깁니다)",
                     IsCheckable = true,
                 };
                 Mode5Item.Click += (sender, e) =>
                 {
-                    this.Mode = DisplayModes.Star_only;
+                    this.Mode = DisplayModes.Star_plus_and_Star;
                     this.CheckContainers();
 
                     this.preferences.DisplayMode = this.Mode;
@@ -529,19 +411,19 @@ namespace bayoen
 
             void InitializeNotifyIcon()
             {
-                this.notify = new wf::NotifyIcon()
+                this.Notify = new wf::NotifyIcon()
                 {
                     Visible = true,
                     Icon = bayoen.Properties.Resources.dailycarbuncle_174030608386,
                     Text = "bayoen-star",
                 };
 
-                this.notify.MouseDoubleClick += (sender, e) =>
+                this.Notify.MouseDoubleClick += (sender, e) =>
                 {
                     ShowMainWindow();
                 };
 
-                this.notify.ContextMenu = new wf::ContextMenu();
+                this.Notify.ContextMenu = new wf::ContextMenu();
 
                 wf::MenuItem OpenMenu = new wf::MenuItem()
                 {
@@ -551,7 +433,7 @@ namespace bayoen
                 {
                     ShowMainWindow();
                 };
-                this.notify.ContextMenu.MenuItems.Add(OpenMenu);
+                this.Notify.ContextMenu.MenuItems.Add(OpenMenu);
 
                 wf::MenuItem AckMenu = new wf::MenuItem()
                 {
@@ -570,7 +452,7 @@ namespace bayoen
                         + Environment.NewLine + "and also thank you PPT KOR community!" + Environment.NewLine
                         , "Acknowledgement");
                 };
-                this.notify.ContextMenu.MenuItems.Add(AckMenu);
+                this.Notify.ContextMenu.MenuItems.Add(AckMenu);
 
 
                 wf::MenuItem ExitMenu = new wf::MenuItem()
@@ -580,10 +462,11 @@ namespace bayoen
                 ExitMenu.Click += (sender, e) =>
                 {
                     this.preferences.Save(prefName);
-                    this.notify.Visible = false;
+                    this.Save();
+                    this.Notify.Visible = false;
                     Environment.Exit(0);
                 };
-                this.notify.ContextMenu.MenuItems.Add(ExitMenu);
+                this.Notify.ContextMenu.MenuItems.Add(ExitMenu);
 
                 void ShowMainWindow()
                 {
@@ -596,24 +479,155 @@ namespace bayoen
                 }
             }
 
-            void InitializePanel()
+            void InitializeDisplay()
             {
-                // Panel image
-                this.PanelImage.SetBitmap(bayoen.Properties.Resources.PanelScore2LongStrong);
-                this.PanelImage.Height = 68;
-                this.PanelImage.Width = 406;
+                this.MainDisplay = new DisplayGrid();
+                this.Content = this.MainDisplay;
 
-                // Containers
-                this.StarContainers = new List<Container>()
+                if (IsPPTOn)
                 {
-                    new Container() { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, },
-                    new Container() { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, },
-                };
-                this.CrownContainers = new List<Container>()
+                    GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.pptRect);
+                }
+                else
                 {
-                    new Container() { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, ContainerImage = ContainerImages.CrownLight },
-                    new Container() { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, ContainerImage = ContainerImages.CrownLight },
+                    this.pptRect = new RECT()
+                    {
+                        Left = -1,
+                        Top = -1,
+                        Right = -1,
+                        Bottom = -1,
+                    };
+                }
+
+                this.pptRect = new RECT(this.oldRect);
+
+                this.OverlayDisplay = new DisplayGrid();
+                this.Overlay = new MetroWindow()
+                {
+                    Title = "bayoen-star-overlay",
+                    BorderThickness = new Thickness(0),
+                    AllowsTransparency = true,
+                    Background = new SolidColorBrush() { Opacity = 0 },
+                    ResizeMode = ResizeMode.NoResize,
+                    TitlebarHeight = 0,
+                    Topmost = true,
                 };
+
+                Rect workingRect = System.Windows.SystemParameters.WorkArea;
+                bool isOverlayBroken = false;
+                if (this.preferences.Overlay == null)
+                {
+                    isOverlayBroken = true;
+                }
+                else
+                {
+                    if (this.preferences.Overlay.Count != 5) isOverlayBroken = true;
+                    else if (this.preferences.Overlay[0] < 0 || this.preferences.Overlay[0] > 1) isOverlayBroken = true;                    
+                }
+
+                if (isOverlayBroken)
+                {                    
+                    this.Overlay.Height = this.Height;
+                    this.Overlay.Width = this.Width;
+                    this.Overlay.Top = (workingRect.Height - this.Overlay.Height) / 2 + workingRect.Top;
+                    this.Overlay.Left = (workingRect.Width - this.Overlay.Width) / 2 + workingRect.Left;
+                    this.preferences.Overlay = new List<double>() { 1, 0, 0, this.Overlay.Left, this.Overlay.Top };
+                }
+                else
+                {
+                    this.Overlay.LayoutTransform = new ScaleTransform(this.preferences.Overlay[0], this.preferences.Overlay[0]);
+                    this.Overlay.Height = this.Height * this.preferences.Overlay[0];
+                    this.Overlay.Width = this.Width * this.preferences.Overlay[0];
+
+                    if (IsPPTOn)
+                    {
+                        this.Overlay.Left = this.pptRect.Left - this.preferences.Overlay[1];
+                        this.Overlay.Top = this.pptRect.Top - this.preferences.Overlay[2];
+                    }
+                    else
+                    {
+                        this.Overlay.Left = this.preferences.Overlay[3];
+                        this.Overlay.Top = this.preferences.Overlay[4];
+                    }
+                    
+                }
+
+                double delta = 0.05;
+                this.Overlay.PreviewMouseWheel += (sender, e) =>
+                {
+                    if (this.preferences.IsOverlayFixed.Value)
+                    {
+                        return;
+                    }
+
+                    if (e.Delta > 0)
+                    {
+                        this.preferences.Overlay[0] = Math.Min(1, this.preferences.Overlay[0] + delta);
+                    }
+                    else if (e.Delta < 0)
+                    {
+                        this.preferences.Overlay[0] = Math.Max(0.4, this.preferences.Overlay[0] - delta);
+                    }
+
+                    this.Overlay.LayoutTransform = new ScaleTransform(this.preferences.Overlay[0], this.preferences.Overlay[0], this.Overlay.Left + (this.Overlay.Width / 2), this.Overlay.Top + (this.Overlay.Height / 2));
+                    this.Overlay.Height = this.Height * this.preferences.Overlay[0];
+                    this.Overlay.Width = this.Width * this.preferences.Overlay[0];
+                };
+
+                this.Overlay.PreviewMouseLeftButtonDown += (sender, e) =>
+                {
+                    if (this.preferences.IsOverlayFixed.Value)
+                    {
+                        return;
+                    }
+                    this.Overlay.DragMove();
+                };
+                this.Overlay.PreviewMouseLeftButtonUp += (sender, e) =>
+                {
+                    if (this.preferences.IsOverlayFixed.Value)
+                    {
+                        return;
+                    }
+                    this.preferences.Overlay[1] = this.pptRect.Left - this.Overlay.Left;
+                    this.preferences.Overlay[2] = this.pptRect.Top - this.Overlay.Top;
+                    this.preferences.Overlay[3] = this.Overlay.Left;
+                    this.preferences.Overlay[4] = this.Overlay.Top;
+                };
+                this.Overlay.Closing += (sender, e) =>
+                {
+                    e.Cancel = true;
+                    this.Overlay.Hide();
+                };
+
+                this.Overlay.Content = this.OverlayDisplay;
+                this.Overlay.ContextMenu = new ContextMenu();
+                MenuItem OverlayFixMenu = new MenuItem()
+                {
+                    Header = "Fixed",
+                    IsCheckable = true,
+                };
+                OverlayFixMenu.Click += (sender, e) =>
+                {
+                    this.preferences.IsOverlayFixed = !this.preferences.IsOverlayFixed;
+                    OverlayFixMenu.IsChecked = this.preferences.IsOverlayFixed.Value;
+                };
+                this.Overlay.ContextMenu.Items.Add(OverlayFixMenu);
+
+                if (this.preferences.IsOverlayFixed == null)
+                {
+                    this.preferences.IsOverlayFixed = false;
+                }
+                OverlayFixMenu.IsChecked = this.preferences.IsOverlayFixed.Value;
+
+                MenuItem OverlayCloseMenu = new MenuItem()
+                {
+                    Header = "Close",
+                };
+                OverlayCloseMenu.Click += (sender, e) =>
+                {
+                    this.Overlay.Hide();
+                };
+                this.Overlay.ContextMenu.Items.Add(OverlayCloseMenu);
 
                 if (this.preferences.DisplayMode == null)
                 {
@@ -677,12 +691,16 @@ namespace bayoen
         {
             if (IsPPTOn)
             {
-                if (this.TopGrid.Visibility == Visibility.Collapsed) this.TopGrid.Visibility = Visibility.Visible;
+                if (this.MainDisplay.Visibility == Visibility.Collapsed) this.MainDisplay.Visibility = Visibility.Visible;
+                if (this.OverlayDisplay.Visibility == Visibility.Hidden) this.MainDisplay.Visibility = Visibility.Visible;
                 this.scoreAddress = this.pptMemory.ReadInt32(new IntPtr(0x14057F048)) + 0x38;
+
+                this.CheckOverlay();                
             }
             else
             {
-                if (this.TopGrid.Visibility == Visibility.Visible) this.TopGrid.Visibility = Visibility.Collapsed;
+                if (this.MainDisplay.Visibility == Visibility.Visible) this.MainDisplay.Visibility = Visibility.Collapsed;
+                if (this.OverlayDisplay.Visibility == Visibility.Visible) this.MainDisplay.Visibility = Visibility.Hidden;
                 return;
             }
 
@@ -693,14 +711,9 @@ namespace bayoen
                     this.currentStar[playerIndex] = this.pptMemory.ReadInt32(new IntPtr(scoreAddress) + playerIndex * 0x4);
                 }
                 this.winCount = this.pptMemory.ReadInt32(new IntPtr(scoreAddress) + 0x10);
-
-                //this.StarContainers.ForEach(x => { if (!x.IsValid) { x.IsValid = true; } });
-                //this.CrownContainers.ForEach(x => { if (!x.IsValid) { x.IsValid = true; } });
             }
             else
             {
-                //this.StarContainers.ForEach(x => { if (x.IsValid) { x.IsValid = false; } });
-                //this.CrownContainers.ForEach(x => { if (x.IsValid) { x.IsValid = false; } });
                 return;
             }
 
@@ -723,27 +736,10 @@ namespace bayoen
                             Directory.CreateDirectory(exportFolderName);
                         }
 
-                        File.WriteAllText(exportFolderName + '\\' + "Star1.txt", this.currentStar[0].ToString(), Encoding.Unicode);
-                        File.WriteAllText(exportFolderName + '\\' + "Star2.txt", this.currentStar[1].ToString(), Encoding.Unicode);
-                        File.WriteAllText(exportFolderName + '\\' + "StarPlus1.txt", this.countingStar[0].ToString(), Encoding.Unicode);
-                        File.WriteAllText(exportFolderName + '\\' + "StarPlus2.txt", this.countingStar[1].ToString(), Encoding.Unicode);
-                        File.WriteAllText(exportFolderName + '\\' + "Crown1.txt", this.countingCrown[0].ToString(), Encoding.Unicode);
-                        File.WriteAllText(exportFolderName + '\\' + "Crown2.txt", this.countingCrown[1].ToString(), Encoding.Unicode);
-                        File.WriteAllText(exportFolderName + '\\' + "WinCount1.txt", this.winCount.ToString(), Encoding.Unicode);
+                        this.Export();
                     }
 
-
-                    Newtonsoft.Json.Linq.JObject json = new Newtonsoft.Json.Linq.JObject()
-                    {
-                        ["Star1"] = this.currentStar[0],
-                        ["Star2"] = this.currentStar[1],
-                        ["StarPlus1"] = this.countingStar[0],
-                        ["StarPlus2"] = this.countingStar[1],
-                        ["Crown1"] = this.countingCrown[0],
-                        ["Crown2"] = this.countingCrown[1],
-                        ["WinCount"] = this.winCount,
-                    };
-                    File.WriteAllText(dataJSONName, json.ToString(), Encoding.Unicode);
+                    this.Save();
                 }
             }
 
@@ -754,40 +750,90 @@ namespace bayoen
                 this.oldStar[playerIndex] = this.currentStar[playerIndex];
             }
         }
+        
+        private void Export()
+        {
+            File.WriteAllText(exportFolderName + '\\' + "Star1.txt", this.currentStar[0].ToString(), Encoding.Unicode);
+            File.WriteAllText(exportFolderName + '\\' + "Star2.txt", this.currentStar[1].ToString(), Encoding.Unicode);
+            File.WriteAllText(exportFolderName + '\\' + "StarPlus1.txt", this.countingStar[0].ToString(), Encoding.Unicode);
+            File.WriteAllText(exportFolderName + '\\' + "StarPlus2.txt", this.countingStar[1].ToString(), Encoding.Unicode);
+            File.WriteAllText(exportFolderName + '\\' + "Crown1.txt", this.countingCrown[0].ToString(), Encoding.Unicode);
+            File.WriteAllText(exportFolderName + '\\' + "Crown2.txt", this.countingCrown[1].ToString(), Encoding.Unicode);
+            File.WriteAllText(exportFolderName + '\\' + "WinCount1.txt", this.winCount.ToString(), Encoding.Unicode);
+        }
+
+        private void Save()
+        {
+            Newtonsoft.Json.Linq.JObject json = new Newtonsoft.Json.Linq.JObject()
+            {
+                ["Star1"] = this.currentStar[0],
+                ["Star2"] = this.currentStar[1],
+                ["StarPlus1"] = this.countingStar[0],
+                ["StarPlus2"] = this.countingStar[1],
+                ["Crown1"] = this.countingCrown[0],
+                ["Crown2"] = this.countingCrown[1],
+                ["WinCount"] = this.winCount,
+            };
+            File.WriteAllText(dataJSONName, json.ToString(), Encoding.Unicode);
+        }
 
         private void CheckContainers()
         {
             if (this.Mode == DisplayModes.Game_and_Star_plus)
             {
-                this.StarContainers[0].Score = this.countingStar[0];
-                this.StarContainers[1].Score = this.countingStar[1];
-
-                this.CrownContainers[0].Score = this.countingCrown[0];
-                this.CrownContainers[1].Score = this.countingCrown[1];
+                this.MainDisplay.Set(this.countingCrown[0], this.countingStar[0], this.countingStar[1], this.countingCrown[1]);
+                this.OverlayDisplay.Set(this.countingCrown[0], this.countingStar[0], this.countingStar[1], this.countingCrown[1]);
             }
             else if (this.Mode == DisplayModes.Game_and_Star)
             {
-                this.StarContainers[0].Score = this.currentStar[0];
-                this.StarContainers[1].Score = this.currentStar[1];
-
-                this.CrownContainers[0].Score = this.countingCrown[0];
-                this.CrownContainers[1].Score = this.countingCrown[1];
+                this.MainDisplay.Set(this.countingCrown[0], this.currentStar[0], this.currentStar[1], this.countingCrown[1]);
+                this.OverlayDisplay.Set(this.countingCrown[0], this.currentStar[0], this.currentStar[1], this.countingCrown[1]);
             }
             else if (this.Mode == DisplayModes.Game_only)
             {
-                this.CrownContainers[0].Score = this.countingCrown[0];
-                this.CrownContainers[1].Score = this.countingCrown[1];
+                this.MainDisplay.Set(this.countingCrown[0], this.countingCrown[1]);
+                this.OverlayDisplay.Set(this.countingCrown[0], this.countingCrown[1]);
             }
             else if (this.Mode == DisplayModes.Star_plus_only)
             {
-                this.StarContainers[0].Score = this.countingStar[0];
-                this.StarContainers[1].Score = this.countingStar[1];
+                this.MainDisplay.Set(this.countingStar[0], this.countingStar[1]);
+                this.OverlayDisplay.Set(this.countingStar[0], this.countingStar[1]);
             }
-            else // if (this.Mode == DisplayModes.Star_plus_only)
+            else //if (this.Mode == DisplayModes.Star_plus_and_Star)
             {
-                this.StarContainers[0].Score = this.currentStar[0];
-                this.StarContainers[1].Score = this.currentStar[1];
+                this.MainDisplay.Set(this.countingStar[0], this.currentStar[0], this.currentStar[1], this.countingStar[1]);
+                this.OverlayDisplay.Set(this.countingStar[0], this.currentStar[0], this.currentStar[1], this.countingStar[1]);
             }
+        }
+
+        private void CheckOverlay()
+        {
+            GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.pptRect);
+
+            this.FixOverlay();
+
+            this.oldRect = new RECT(this.pptRect);
+        }
+
+        private void FixOverlay()
+        {
+            if (RECT.Equals(this.pptRect, this.oldRect))
+            {
+                return;
+            }
+
+            if (!this.preferences.IsOverlayFixed.Value)
+            {
+                return;
+            }
+
+            if (this.Overlay.WindowState != WindowState.Normal)
+            {
+                return;
+            }
+
+            this.Overlay.Left = this.pptRect.Left - this.preferences.Overlay[1];
+            this.Overlay.Top = this.pptRect.Top - this.preferences.Overlay[2];
         }
 
         private async void ClearButton_ClickAsync(object sender, RoutedEventArgs e)
@@ -799,18 +845,29 @@ namespace bayoen
                 this.countingCrown = new List<int>() { 0, 0 };
 
                 this.CheckContainers();
+                this.Save();
                 System.Media.SystemSounds.Hand.Play();
             }
         }
 
+        private void OverlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Overlay.Show();
+            if (this.Overlay.WindowState == WindowState.Minimized)
+            {
+                this.Overlay.WindowState = WindowState.Normal;
+            }
+            this.Overlay.Activate();
+        }
+
         private void SettingButton_Click(object sender, RoutedEventArgs e)
         {
-            this.setting.Show();
-            if (this.setting.WindowState == WindowState.Minimized)
+            this.Setting.Show();
+            if (this.Setting.WindowState == WindowState.Minimized)
             {
-                this.setting.WindowState = WindowState.Normal;
+                this.Setting.WindowState = WindowState.Normal;
             }
-            this.setting.Activate();
+            this.Setting.Activate();
         }
 
         private void ModeButton_Click(object sender, RoutedEventArgs e)
@@ -834,18 +891,61 @@ namespace bayoen
 
             void NotifyMinimizing()
             {
-                this.notify.ShowBalloonTip(2000, "Closing → Minimizing", "Minimized into system tray\nPlease right-click icon!", wf::ToolTipIcon.None);
+                this.Notify.ShowBalloonTip(2000, "Closing → Minimizing", "Minimized into system tray\nPlease right-click icon!", wf::ToolTipIcon.None);
                 preferences.EverClosed = true;
             }
         }
 
+        public struct RECT
+        {
+            /// <summary>
+            /// x position of upper-left corner
+            /// </summary>
+            public int Left;
+
+            /// <summary>
+            /// y position of upper-left corner
+            /// </summary>
+            public int Top;
+
+            /// <summary>
+            /// x position of lower-right corner
+            /// </summary>
+            public int Right;
+
+            /// <summary>
+            /// y position of lower-right corner
+            /// </summary>
+            public int Bottom;
+
+            public int Width
+            {
+                get => this.Right - this.Left;
+            }
+            public int Height
+            {
+                get => this.Bottom - this.Top;
+            }
+
+            public RECT(RECT rect)
+            {
+                this.Left = rect.Left;
+                this.Top = rect.Top;
+                this.Right = rect.Right;
+                this.Bottom = rect.Bottom;
+            }
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref RECT rectangle);
+       
         public enum DisplayModes : int
         {
-            Game_and_Star_plus = 0,
-            Game_and_Star = 1,
-            Game_only = 2,
-            Star_plus_only = 3,
-            Star_only = 4,
+            Star_plus_only = 0,
+            Game_only = 1,
+            Game_and_Star = 2,
+            Game_and_Star_plus = 3,
+            Star_plus_and_Star = 4,
         }
     }
 

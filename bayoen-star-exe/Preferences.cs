@@ -18,7 +18,9 @@ namespace bayoen
             public bool? IsTopMost;
             public bool? IsChromaKey;
             public bool? ExportText;
-            public bool? IsFirToScore;
+            public bool? IsFitToScore;
+            public List<double> Overlay;
+            public bool? IsOverlayFixed;
 
             public DisplayModes? DisplayMode;
 
@@ -36,7 +38,9 @@ namespace bayoen
                 this.IsTopMost = null;
                 this.IsChromaKey = null;
                 this.ExportText = null;
-                this.IsFirToScore = null;
+                this.IsFitToScore = null;
+                this.Overlay = null;
+                this.IsOverlayFixed = null;
 
                 this.DisplayMode = null;
 
