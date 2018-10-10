@@ -18,10 +18,12 @@
 
 다운로드: [ [bayoen-star-xxxx.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
-## <a name="korean-changes">변경점</a>
--
+<a name="korean-changes"> </a>
+## 변경점
+- 아직 없습니다. (베타 v0.0.7)
 
-## <a name="korean-functions">주요기능</a>
+<a name="korean-functions"> </a>
+## 주요기능
 ### 1. 카운터 및 메뉴
 - 뿌요뿌요 테트리스 게임 중 '**bayoen-star**'창에 게임(왕관)/별 점수를 세어줍니다. 게임에서 별이 올라가면 카운터에 바로 반영됩니다. 게임이나 '**bayoen-star**'이 종료되어도 기록이 보존됩니다.
 
@@ -56,10 +58,12 @@
 
 다운로드: [ [bayoen-star-xxxx.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
-## <a name="korean-changes">Changes</a>
--
+<a name="english-changes"> </a>
+## Changes
+- not yet (beta v0.0.7)
 
-## <a name="korean-functions">Functions</a>
+<a name="english-functions"> </a>
+## Functions
 ### 1. Counter and Menu
 - '**bayoen-star**' counts crown(game)/star in Puyo Puyo Tetri game. As the stars rise in the game, they are reflected directly on the counter. records are preserved when you exit the game or '**bayoen-star**'.
 
