@@ -18,11 +18,18 @@
 다운로드: [ [bayoen-star-xxxx.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
 ## 주요기능들 <a name="korean-main-functions"></a>
+### 1. 카운터 및 설정
+'bayoen-star'창에서 뿌요뿌요 테트리스의 별/게임 점수를 세어줍니다. 점수는 'settings'에서 고칠 수 있습니다.
 
-### bayoen-star
-별/게임 점수를
+### 2. 오버레이
+**'bayoen-star'**창은 테두리 때문에 게임과 함께 보기 힘듭니다. 오버레이를 이용하면 게임 위에 점수판을 띄울 수 있습니다. 단, 전체화면일 경우에는 동작하지 않습니다. 오버레이는 **'Menu > Overlay'**로 띄울 수 있고 마우스 드래그로 이동하고 마우스 휠로 크기를 조절할 수 있습니다. 오버레이를 우클릭하면 오버레이메뉴를 볼 수 있습니다. 오버레이 메뉴의 **'Fixed'** 기능은 위치와 크기를 고정하고 게임 창이 움직일 때 함께 따라갑니다.
 
-### 메뉴
+### 3. 송출용 도구
+
+- 크로마키: 
+
+- 텍스트 출력: 
+
 
 ## 사용법 <a name="korean-how-to-use"></a>
 
