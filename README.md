@@ -47,8 +47,8 @@
 
 
 * * *
-
-# English Instruction <a name="english"></a>
+<a name="english"> </a>
+# English Instruction 
 ## bayoen-star-exe
 '**bayoen-star**' is a sub-module for counting stars of Puyo Puyo Tetris bayeon project.
 문의 및 건의는 [ [디스코드](https://discord.gg/rxW5UKx) ]로 오셔서 'SemiRain'을 찾아주시면 됩니다.
