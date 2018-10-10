@@ -26,6 +26,9 @@ namespace bayoen
 
             // Passive
             public bool? EverClosed;
+
+            // Escape
+            public int? Period;
             public bool? OverlapPass;
 
             public Preferences()
@@ -46,6 +49,7 @@ namespace bayoen
 
                 this.EverClosed = null;
                 this.OverlapPass = false;
+                this.Period = 333;
             }
 
             public static Preferences Load(string src)

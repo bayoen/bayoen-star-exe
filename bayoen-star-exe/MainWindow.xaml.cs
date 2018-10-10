@@ -28,7 +28,7 @@ namespace bayoen
             this.InitializePreferences();
             this.InitializeComponent();
             this.InitializeLayouts();
-            this.InitializeTimer(333);
+            this.InitializeTimer();
             this.InitializeVariables();
             this.Status("Ready");
             Thread.Sleep(1000);
@@ -623,7 +623,7 @@ namespace bayoen
                         + Environment.NewLine + "and made by SemiR4in (twitch.tv/semirain)" + Environment.NewLine
                         + "[ the.semirain@gmail.com ]" + Environment.NewLine
 
-                        + Environment.NewLine + "and also thank you PPT KOR community!" + Environment.NewLine
+                        + Environment.NewLine + "and also thank you all PPT communities!" + Environment.NewLine
                         , "Acknowledgement");
                 };
                 this.Notify.ContextMenu.MenuItems.Add(AckMenu);
@@ -812,11 +812,20 @@ namespace bayoen
             }
         }
 
-        private void InitializeTimer(int milliseconds)
+        private void InitializeTimer()
         {
+            if (this.preferences.Period == null)
+            {
+                this.preferences.Period = 333;
+            }
+            else
+            {
+                this.preferences.Period = Math.Min(50, this.preferences.Period.Value); // at least 50 ms
+            }
+
             this.timer = new DispatcherTimer()
             {
-                Interval = new TimeSpan(0, 0, 0, 0, milliseconds),
+                Interval = new TimeSpan(0, 0, 0, 0, this.preferences.Period.Value),
             };
             this.timer.Tick += (e, sender) =>
             {
