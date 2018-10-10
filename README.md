@@ -41,7 +41,7 @@
 - 오버레이를 **마우스 우클릭**하면 오버레이메뉴를 볼 수 있습니다. 오버레이 메뉴의 '**Fixed**' 기능은 위치와 크기를 고정하고 게임 창이 움직일 때 함께 따라갑니다.
 
 ### 3. 송출용 도구
-- 크로마키: 점수판을 방송송출하고 싶을 경우 유용한 기능입니다. 오버레이는 캡처할 수 없기 때문에 방송송출용으로는 메인창의 색을 바꿔줍니다. '**메인 > Menu > Settings > Main > Enable Chroma Key (Magenta)**'를 체크하면 메인 창의 크로마키를 활성화 할 수 있습니다. 
+- 크로마키: 점수판을 방송송출하고 싶을 경우 유용한 기능입니다. 오버레이는 캡처할 수 없기 때문에 방송송출용으로는 메인창을 이용해야 합니다. 크로마키는 메인창의 색을 바꿔줍니다. '**메인 > Menu > Settings > Main > Enable Chroma Key (Magenta)**'를 체크하면 메인 창의 크로마키를 활성화 할 수 있습니다. 
 
 - 텍스트출력: 점수판 대신 직접 인터페이스를 구성하고 싶을 때 유용한 기능입니다. 송출프로그램에서 텍스트파일 (\*.txt) 파일을 불러올 수 있습니다. '**메인 > Menu > Settings > Main > Export Texts**'을 체크하면 오른쪽의 '**Folder**' 경로에 파일이 저장됩니다.
 
@@ -81,6 +81,6 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 - **Mouse right click** to view the menu of overlay. The '**Fixed**' function in the Overlay menu will freeze the position and size and follow along as the Games window moves.
 
 ### 3. Tools for streaming
-- Chroma Key: This is useful if you want to insert scoreboards in streaming. Because overlays cannot be captured, it changes the color of the main window for broadcast transmission. Check '**Main > Menu > Settings > MAIN > Enable Chrome Key (Magenta)**' to activate chroma key of the main window.
+- Chroma Key: This is useful if you want to insert scoreboards in streaming. Because overlays cannot be captured, we should capture the main window. It changes the color of the main window for broadcast transmission. Check '**Main > Menu > Settings > MAIN > Enable Chrome Key (Magenta)**' to activate chroma key of the main window.
 
 - Exporting Text: This is useful when you want to configure the interface directly instead of the scoreboard. You can import text files (\*.txt) from the streaming program. Check '**Main > Menu > Settings > MAIN > Export Text**' to save the file in the path of '**Folder**' on the right.
