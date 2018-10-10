@@ -33,7 +33,7 @@
                 </Style>
             </mtc:WindowCommands.Resources>
 
-            <TextBlock Text="Beta v0.0.6" Margin="8,3,8,3" Foreground="DimGray" IsEnabled="False"/>
+            <TextBlock x:Name="StatusTextBlock" Margin="8,3,8,3" Foreground="DimGray" IsEnabled="False"/>
 
             <Button x:Name ="MenuButton" Background="Transparent" Click="MenuButton_Click">
                 <StackPanel Orientation="Horizontal">

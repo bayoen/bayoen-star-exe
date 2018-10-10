@@ -30,6 +30,7 @@ namespace bayoen
             this.InitializeLayouts();
             this.InitializeTimer(333);
             this.InitializeVariables();
+            this.Status("Ready");
             Thread.Sleep(1000);
 
             this.CheckContainers();
@@ -41,6 +42,7 @@ namespace bayoen
         public DisplayGrid OverlayDisplay;
         public List<TextBox> Monitors;
 
+        public const string versionText = " - Beta v0.0.6";
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
@@ -61,9 +63,7 @@ namespace bayoen
         public List<int> currentStar;
         public List<int> oldStar;
         public List<int> countingStar;
-        public List<int> countingCrown;
-        
-        //public ContextMenu ModeContextMenu;
+        public List<int> countingCrown;       
 
         public DisplayModes _mode;
         public DisplayModes Mode
@@ -866,7 +866,7 @@ namespace bayoen
             if (IsPPTOn)
             {
                 if (this.MainDisplay.Visibility == Visibility.Collapsed) this.MainDisplay.Visibility = Visibility.Visible;
-                if (this.OverlayDisplay.Visibility == Visibility.Hidden) this.MainDisplay.Visibility = Visibility.Visible;
+                if (this.OverlayDisplay.Visibility == Visibility.Hidden) this.OverlayDisplay.Visibility = Visibility.Visible;
                 this.scoreAddress = this.pptMemory.ReadInt32(new IntPtr(0x14057F048)) + 0x38;
 
                 this.CheckOverlay();                
@@ -874,7 +874,8 @@ namespace bayoen
             else
             {
                 if (this.MainDisplay.Visibility == Visibility.Visible) this.MainDisplay.Visibility = Visibility.Collapsed;
-                if (this.OverlayDisplay.Visibility == Visibility.Visible) this.MainDisplay.Visibility = Visibility.Hidden;
+                if (this.OverlayDisplay.Visibility == Visibility.Visible) this.OverlayDisplay.Visibility = Visibility.Hidden;
+                this.Status("Offline");
                 return;
             }
 
@@ -888,6 +889,7 @@ namespace bayoen
             }
             else
             {
+                this.Status("Ready");
                 return;
             }
 
@@ -919,7 +921,7 @@ namespace bayoen
             }
 
             this.CheckContainers();
-            
+            this.Status("Working");
 
             for (int playerIndex = 0; playerIndex < 2; playerIndex++)
             {
@@ -1143,6 +1145,11 @@ namespace bayoen
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref RECT rectangle);
+
+        private void Status(string s)
+        {
+            this.StatusTextBlock.Text = s + versionText;
+        }
 
         public enum DisplayModes : int
         {
