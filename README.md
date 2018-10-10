@@ -83,4 +83,4 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 ### 3. Tools for streaming
 - Chroma Key: This is useful if you want to insert scoreboards in streaming. Because overlays cannot be captured, it changes the color of the main window for broadcast transmission. Check '**Main > Menu > Settings > MAIN > Enable Chrome Key (Magenta)**' to activate chroma key of the main window.
 
-- Exporting Text: This is useful when you want to configure the interface directly instead of the scoreboard. You can import text files (\*.txt) from the streaming program. Check '**Main > Menu > Settings > Main > Export Text**' to save the file in the path of '**Folder**' on the right.
+- Exporting Text: This is useful when you want to configure the interface directly instead of the scoreboard. You can import text files (\*.txt) from the streaming program. Check '**Main > Menu > Settings > MAIN > Export Text**' to save the file in the path of '**Folder**' on the right.
