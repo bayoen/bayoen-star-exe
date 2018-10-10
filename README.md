@@ -1,10 +1,6 @@
 # Table of Contents
 - [한국어 안내](#korean)
-   1. [주요기능들](#korean-main-functions)
-   2. [사용법](#korean-how-to-use)
-- [English Instruction](#english)
-   1. [Main Functions](#english-main-functions)
-   2. [How to Use](#english-how-to-use)
+- [English Instruction](#english)  
 
 * * *
 
@@ -18,7 +14,10 @@
 
 다운로드: [ [bayoen-star-xxxx.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
-## 주요기능들 <a name="korean-main-functions"></a>
+## 변경점
+아직 내용은 없습니다.
+
+## <a name="korean-main-functions">주요기능들</a>
 ### 1. 카운터 및 설정
 - 뿌요뿌요 테트리스 게임 중 'bayoen-star'창에 별/게임 점수를 세어줍니다. 게임에서 별이 올라가면 카운터에 바로 반영됩니다.
 
@@ -34,10 +33,7 @@
 ### 3. 송출용 도구
 - 크로마키: 점수판을 방송송출하고 싶을 경우 유용한 기능입니다. 오버레이는 캡처할 수 없기 때문에 방송송출용으로는 메인창의 색을 바꿔줍니다. '**메인 > Menu > Settings > Main > Enable Chroma Key (Magenta)**'를 체크하면 메인 창의 크로마키를 활성화 할 수 있습니다. 
 
-- 텍스트출력: 점수판의 인터페이스 대신 직접 텍스트파일 (\*.txt) 파일을 '**메인 > Menu > Settings > Main > Export Texts**'을 체크하면 바로 오른쪽에 있는 '**Folder**' 경로에 있는 
-
-
-## 사용법 <a name="korean-how-to-use"></a>
+- 텍스트출력: 점수판 대신 직접 인터페이스를 구성하고 싶을 때 유용한 기능입니다. 송출프로그램에서 텍스트파일 (\*.txt) 파일을 불러올 수 있습니다. '**메인 > Menu > Settings > Main > Export Texts**'을 체크하면 오른쪽의 '**Folder**' 경로에 파일이 저장됩니다.
 
 
 * * *
