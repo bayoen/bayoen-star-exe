@@ -13,8 +13,7 @@
 뿌요뿌요 테트리스 bayoen 프로젝트의 보조기능인 별세는 앱입니다.
 개발 및 테스트 환경은 Windows 10 입니다.
 
-시연영상: [ <a href="https://www.youtube.com/watch?v=d3a80QGKDsY&list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE" target="blank">YouTube 링크</a> ]
-
+시연영상: [ [YouTube 링크](https://www.youtube.com/playlist?list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE) ]
 다운로드: [ [bayoen-star-****.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
 ## 주요기능들 <a name="korean-main-functions"></a>
@@ -34,7 +33,7 @@
 Sub-module for counting stars (statistics) of Puyo Puyo Tetris bayeon project.
 Developed/Tested in Windows 10 64-bits
 
-Demo Video: <a href="https://www.youtube.com/watch?v=d3a80QGKDsY&list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE" target="_blank">YouTube 링크</a>
+Demo Video: [ [YouTube Link](https://www.youtube.com/playlist?list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE) ]
 
 Download: [ [bayoen-star-****.zip](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
