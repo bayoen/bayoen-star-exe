@@ -51,12 +51,12 @@
 # English Instruction 
 ## bayoen-star-exe
 '**bayoen-star**' is a sub-module for counting stars of Puyo Puyo Tetris bayeon project.
-문의 및 건의는 [ [디스코드](https://discord.gg/rxW5UKx) ]로 오셔서 'SemiRain'을 찾아주시면 됩니다.
-개발 및 테스트 환경은 Windows 10 (.Net Framework 4.5) 입니다.
+For questions and suggestions, please visit [Discode](https://discord.gg/rxW5UKx) ] and find 'SemiR4in'.
+The development and testing environment is Windows 10 (.Net Framework 4.5).
 
-시연영상: [ [YouTube 링크](https://www.youtube.com/playlist?list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE) ]
+Demo Video: [ [YouTube Link](https://www.youtube.com/playlist?list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE) ]
 
-다운로드: [ [bayoen-star-xxxx.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
+Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
 <a name="english-changes"> </a>
 ## Changes
