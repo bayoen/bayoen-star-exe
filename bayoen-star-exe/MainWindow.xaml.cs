@@ -42,7 +42,7 @@ namespace bayoen
         public DisplayGrid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public const string versionText = " - Beta v0.0.6";
+        public const string versionText = " - Beta v0.0.7";
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
