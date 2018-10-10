@@ -1,32 +1,44 @@
 # Table of Contents
 - [한국어 안내](#korean)
-   1. 123
+   1. [주요기능들](#korean-main-functions)
+   2. [사용법](#korean-how-to-use)
 - [English Instruction](#english)
+   1. [Main Functions](#english-main-functions)
+   2. [How to Use](#english-how-to-use)
 
+* * *
 
 # 한국어 안내 <a name="korean"></a>
+## bayoen-star-exe
+뿌요뿌요 테트리스 bayoen 프로젝트의 보조기능인 별세는 앱입니다.
+개발 및 테스트 환경은 Windows 10 입니다.
 
-## 주요 기능들
+시연영상: [ [YouTube 링크](https://youtu.be/d3a80QGKDsY) ]
 
-### bayoen-star 기능
+다운로드: [ [bayoen-star-****.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
+
+## 주요기능들 <a name="korean-main-functions"></a>
+
+### bayoen-star
 별/게임 점수를
 
-### 메뉴 기능
+### 메뉴
 
+## 사용법 <a name="korean-how-to-use"></a>
+
+
+* * *
 
 # English Instruction <a name="english"></a>
-
 ## bayoen-star-exe
-Sub-module for counting stars (statistics) of bayeon project.
-Tested in Windows 10 64-bits
+Sub-module for counting stars (statistics) of Puyo Puyo Tetris bayeon project.
+Developed/Tested in Windows 10 64-bits
 
-Demo link
-[YouTube](https://youtu.be/d3a80QGKDsY)
+Demo Video: [ [YouTube Link](https://youtu.be/d3a80QGKDsY) ]
 
-Download link
-[Release](https://github.com/bayoen/bayoen-star-exe/releases/latest)
+Download: [ [bayoen-star-****.zip](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
-## Main functions
+## Main functions <a name="english-main-functions"></a>
 
 ### Display
 - Count/Display stars (set score) and crowns (round score)
@@ -36,3 +48,5 @@ Download link
 - Floating with transparent window
 
 ### Menu
+
+## 사용법 <a name="english-how-to-use"></a>
