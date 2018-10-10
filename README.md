@@ -56,10 +56,10 @@
 
 다운로드: [ [bayoen-star-xxxx.zip 다운](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
-## <a name="korean-changes">변경점</a>
+## <a name="korean-changes">Changes</a>
 -
 
-## <a name="korean-functions">주요기능</a>
+## <a name="korean-functions">Functions</a>
 ### 1. Counter and Menu
 - '**bayoen-star**' counts crown(game)/star in Puyo Puyo Tetri game. As the stars rise in the game, they are reflected directly on the counter. records are preserved when you exit the game or '**bayoen-star**'.
 
