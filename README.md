@@ -7,8 +7,8 @@
    2. [Main Function](#english-functions)
 
 * * *
-
-# 한국어 안내 <a name="korean"></a>
+<a name="korean"> </a>
+# 한국어 안내
 ## bayoen-star-exe
 '**bayoen-star**'은 뿌요뿌요 테트리스 bayoen 프로젝트의 보조기능인 별세는 앱입니다.
 문의 및 건의는 [ [디스코드](https://discord.gg/rxW5UKx) ]로 오셔서 'SemiRain'을 찾아주시면 됩니다.
