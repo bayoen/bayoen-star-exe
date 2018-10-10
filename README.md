@@ -27,6 +27,8 @@
 ### 1. 카운터 및 메뉴
 - 뿌요뿌요 테트리스 게임 중 '**bayoen-star**'창에 게임(왕관)/별 점수를 세어줍니다. 게임에서 별이 올라가면 카운터에 바로 반영됩니다. 게임이나 '**bayoen-star**'이 종료되어도 기록이 보존됩니다.
 
+- 사용중 인터페이스가 깨지면, **bayoen-star** 프로그램을 **완전히 종료**하고 '**pref.json**' 이라는 파일을 삭제하고 다시 실행시키면 됩니다.
+
 - 초기화는 '**메인창 > Menu > Reset**'입니다. 모든 수치를 초기화 합니다. 만약 게임 중이라면, 현재 별은 초기화 되지 않습니다.
 
 - 세부설정은 '**메인창 > Menu > Settings**'입니다. 여러가지 기능을 추가하고 있습니다. 각 항목에 마우스를 올리면 한국어 설명이 있습니다.
@@ -66,6 +68,8 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 ## Functions
 ### 1. Counter and Menu
 - '**bayoen-star**' counts crown(game)/star in Puyo Puyo Tetri game. As the stars rise in the game, they are reflected directly on the counter. records are preserved when you exit the game or '**bayoen-star**'.
+
+- If the interface is broken during use, **Completely close bayoen-star** and '**pref.json**'. Then re-run.
 
 - The reset is '**Main > Menu > Reset**'. Do reset all figures. If you're playing a game, the **star** doesn't reset at the moment.
 
