@@ -20,7 +20,15 @@
 
 <a name="korean-changes"> </a>
 ## 변경점
-- 아직 없습니다. (베타 v0.0.7)
+
+- 가독성을 위해서 메뉴버튼들을 하나로 합쳤습니다.
+- 설정에서 점수를 수동조작할 수 있는 **모니터링 패널**을 추가했습니다.
+- 패널 초기화 버그를 수정했습니다.  (뿌테가 켜져있을 동안 bayoen을 실행하면 버그가 발생했었습니다)
+
+*빼먹었던 것들..*
+
+- 동작주기를 늘렸습니다. (**50 ms**에서 **333 ms**로 바뀌었습니다; 설정파일을 수정하여 바꿀 수 있습니다만 안정성 때문에 숨겨뒀습니다)
+- 트로피를 왕관으로 바꿨습니다. (뿌테에서 추출했습니다)
 
 <a name="korean-functions"> </a>
 ## 주요기능
@@ -61,8 +69,16 @@ Demo Video: [ [YouTube Link](https://www.youtube.com/playlist?list=PLK_vOCD9v3gU
 Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
 <a name="english-changes"> </a>
-## Changes
-- not yet (beta v0.0.7)
+## Changes 10(:
+
+- Menu buttons are merged into single button for better readability
+- In settings, added **monitor panel** which can change scores arbitrarily
+- Fixed bugs Initializing panel (when turn on bayoen while PPT is running)
+
+*including missing functional..*
+
+- Increase operating time period (from **50 ms** to **333 ms**, can be tuned by modifying preferences file, we hided it for stability reason)
+- Trophy is replaced by Crown (we found in PPT client)
 
 <a name="english-functions"> </a>
 ## Functions
