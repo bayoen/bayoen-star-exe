@@ -21,7 +21,7 @@ namespace bayoen
     public partial class MainWindow : MetroWindow
     {
         /// <summary>
-        /// bayoen-star 0.4
+        /// bayoen-star
         /// </summary>
         public MainWindow()
         {
@@ -42,7 +42,7 @@ namespace bayoen
         public DisplayGrid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public const string versionText = " - Beta v0.0.7";
+        public const string versionText = " - Beta v0.0.8";
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
@@ -148,7 +148,7 @@ namespace bayoen
                 ResetMenuItem.Click += ResetMenuItem_ClickAsync;
                 this.TopCompositeCollection.Add(ResetMenuItem);
 
-                MenuItem OverlayMenuItem = BuildMenu("Show Overlay", "appbar_app_plus");
+                MenuItem OverlayMenuItem = BuildMenu("Overlay", "appbar_app_plus");
                 OverlayMenuItem.Click += OverlayMenuItem_Click;
                 this.TopCompositeCollection.Add(OverlayMenuItem);
 
@@ -288,7 +288,7 @@ namespace bayoen
             {
                 this.Setting = new MetroWindow()
                 {
-                    Title = "Settings",
+                    Title = "settings",
                     TitleCharacterCasing = CharacterCasing.Normal,
 
                     Height = 270,
@@ -366,9 +366,9 @@ namespace bayoen
 
                 CheckBox ChromaKeyCheckBox = new CheckBox()
                 {
-                    Content = "Enable Chroma Key (Magenta)",
+                    Content = "Enable chroma key (magenta)",
                     Margin = new Thickness(5),
-                    ToolTip = "Change background to Magenta for transmission;\n송출을 위해 배경을 자홍색으로 바꿉니다",
+                    ToolTip = "Change background to magenta for transmission;\n송출을 위해 배경을 자홍색으로 바꿉니다",
                 };
                 Brush NeroBrush = new SolidColorBrush(Color.FromRgb(37, 37, 37)); //new BrushConverter().ConvertFromString("#FF252525") as Brush;
                 ChromaKeyCheckBox.Click += (sender, e) =>
@@ -807,8 +807,9 @@ namespace bayoen
                 {
                     this.preferences.DisplayMode = DisplayModes.Game_and_Star_plus;
                 }
+
                 this._mode = (this.preferences.DisplayMode == DisplayModes.Game_and_Star_plus) ? (DisplayModes.Game_and_Star) : (DisplayModes.Game_and_Star_plus);
-                this.Mode = this.preferences.DisplayMode.Value;                
+                this.Mode = this.preferences.DisplayMode.Value;
             }
         }
 
@@ -837,8 +838,8 @@ namespace bayoen
         {
             this.pptMemory = new VAMemory(pptName);
 
-            this.oldStar = new List<int>() { 0, 0 };
-            this.currentStar = new List<int>() { 0, 0 };
+            this.oldStar = new List<int>() { -1, -1 };
+            this.currentStar = new List<int>() { -1, -1 };
 
 
             if (File.Exists(dataJSONName))
@@ -898,6 +899,16 @@ namespace bayoen
             }
             else
             {
+                for (int playerIndex = 0; playerIndex < 2; playerIndex++)
+                {
+                    this.currentStar[playerIndex] = -1;
+                    this.oldStar[playerIndex] = -1;
+                }
+                this.winCount = -1;
+
+                this.CheckContainers();
+                this.Save();
+
                 this.Status("Ready");
                 return;
             }
@@ -907,6 +918,8 @@ namespace bayoen
             {
                 for (int playerIndex = 0; playerIndex < 2; playerIndex++)
                 {
+                    if (this.oldStar[playerIndex] < 0) break;
+
                     if (gradients[playerIndex] == 1) this.countingStar[playerIndex]++;
 
                     if (this.winCount == this.currentStar[playerIndex])
@@ -923,12 +936,10 @@ namespace bayoen
 
                         this.Export();
                     }
-
-                    this.ToMonitors();
                     this.Save();
                 }
             }
-
+            
             this.CheckContainers();
             this.Status("Working");
 
@@ -940,13 +951,13 @@ namespace bayoen
         
         private void Export()
         {
-            File.WriteAllText(exportFolderName + '\\' + "Star1.txt", this.currentStar[0].ToString(), Encoding.Unicode);
-            File.WriteAllText(exportFolderName + '\\' + "Star2.txt", this.currentStar[1].ToString(), Encoding.Unicode);
-            File.WriteAllText(exportFolderName + '\\' + "StarPlus1.txt", this.countingStar[0].ToString(), Encoding.Unicode);
-            File.WriteAllText(exportFolderName + '\\' + "StarPlus2.txt", this.countingStar[1].ToString(), Encoding.Unicode);
-            File.WriteAllText(exportFolderName + '\\' + "Crown1.txt", this.countingCrown[0].ToString(), Encoding.Unicode);
-            File.WriteAllText(exportFolderName + '\\' + "Crown2.txt", this.countingCrown[1].ToString(), Encoding.Unicode);
-            File.WriteAllText(exportFolderName + '\\' + "WinCount1.txt", this.winCount.ToString(), Encoding.Unicode);
+            File.WriteAllText(exportFolderName + '\\' + "Star1.txt", this.currentStar[0].ToString(), Encoding.UTF8);
+            File.WriteAllText(exportFolderName + '\\' + "Star2.txt", this.currentStar[1].ToString(), Encoding.UTF8);
+            File.WriteAllText(exportFolderName + '\\' + "StarPlus1.txt", this.countingStar[0].ToString(), Encoding.UTF8);
+            File.WriteAllText(exportFolderName + '\\' + "StarPlus2.txt", this.countingStar[1].ToString(), Encoding.UTF8);
+            File.WriteAllText(exportFolderName + '\\' + "Crown1.txt", this.countingCrown[0].ToString(), Encoding.UTF8);
+            File.WriteAllText(exportFolderName + '\\' + "Crown2.txt", this.countingCrown[1].ToString(), Encoding.UTF8);
+            File.WriteAllText(exportFolderName + '\\' + "WinCount1.txt", this.winCount.ToString(), Encoding.UTF8);
         }
 
         private void Save()
@@ -961,7 +972,7 @@ namespace bayoen
                 ["Crown2"] = this.countingCrown[1],
                 ["WinCount"] = this.winCount,
             };
-            File.WriteAllText(dataJSONName, json.ToString(), Encoding.Unicode);
+            File.WriteAllText(dataJSONName, json.ToString(), Encoding.UTF8);
         }
 
         private void CheckContainers()
@@ -995,13 +1006,18 @@ namespace bayoen
 
         private void ToMonitors()
         {
-            this.Monitors[0].Text = this.currentStar[0].ToString();
-            this.Monitors[1].Text = this.currentStar[1].ToString();
-            this.Monitors[2].Text = this.countingStar[0].ToString();
-            this.Monitors[3].Text = this.countingStar[1].ToString();
-            this.Monitors[4].Text = this.countingCrown[0].ToString();
-            this.Monitors[5].Text = this.countingCrown[1].ToString();
-            this.Monitors[6].Text = this.winCount.ToString();
+            this.Monitors[0].Text = SetText(this.currentStar[0]);
+            this.Monitors[1].Text = SetText(this.currentStar[1]);
+            this.Monitors[2].Text = SetText(this.countingStar[0]);
+            this.Monitors[3].Text = SetText(this.countingStar[1]);
+            this.Monitors[4].Text = SetText(this.countingCrown[0]);
+            this.Monitors[5].Text = SetText(this.countingCrown[1]);
+            this.Monitors[6].Text = SetText(this.winCount);
+
+            string SetText(int number)
+            {
+                return (number < 0) ? ("-") : (number.ToString());
+            }
         }
 
         private void FromMonitors()
