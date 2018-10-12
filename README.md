@@ -64,7 +64,7 @@
 
 Contect us: [[Discord](https://discord.gg/rxW5UKx)] '**SemiR4in#0001**'
 
-Demo Video: [ [YouTube Link](https://www.youtube.com/playlist?list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE) ]
+Demo video: [ [YouTube Link](https://www.youtube.com/playlist?list=PLK_vOCD9v3gUABMGU1R_VNhv5_s-LctnE) ]
 
 Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-exe/releases/latest) ]
 
