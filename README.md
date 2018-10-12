@@ -10,7 +10,7 @@
 <a name="korean"> </a>
 # 한국어 안내
 ## bayoen-star-exe
-'**bayoen-star**'은 뿌요뿌요 테트리스 bayoen 프로젝트의 보조기능인 별세는 앱입니다.
+'**bayoen-star**'은 뿌요뿌요 테트리스 bayoen 프로젝트의 보조기능인 별세는 앱입니다. 뿌요뿌요 테트리스 내부의 정보를 조작하지 않고, 전적분석을 위해 읽기만 합니다.
 문의 및 건의는 [[디스코드](https://discord.gg/rxW5UKx)]로 오셔서 '**SemiR4in#0001**'을 찾아주시면 됩니다.
 개발 및 테스트 환경은 Windows 10 (.Net Framework 4.5) 입니다.
 
@@ -22,7 +22,7 @@
 ## 변경점
 
 - 가독성을 위해서 메뉴버튼들을 하나로 합쳤습니다.
-- 설정에서 점수를 수동조작할 수 있는 **모니터링 패널**을 추가했습니다.
+- 설정에서 통계점수를 수동조작할 수 있는 **모니터링 패널**을 추가했습니다.
 - 패널 초기화 버그를 수정했습니다.  (뿌테가 켜져있을 동안 bayoen을 실행하면 버그가 발생했었습니다)
 
 *빼먹었던 것들..*
@@ -60,7 +60,7 @@
 <a name="english"> </a>
 # English Instruction 
 ## bayoen-star-exe
-'**bayoen-star**' is counting star module of Puyo Puyo Tetris bayeon project.
+'**bayoen-star**' is counting star module of Puyo Puyo Tetris bayeon project. we do not manipulate the information inside the Puyo Puyo Tetris, we read only it for game result analysis.
 For questions and suggestions, please visit [[Discord](https://discord.gg/rxW5UKx)] and find '**SemiR4in#0001**'.
 The development and testing environment is Windows 10 (.Net Framework 4.5).
 
