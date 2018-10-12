@@ -60,7 +60,7 @@
 <a name="english"> </a>
 # English Instruction 
 ## bayoen-star-exe
-'**bayoen-star**' is a sub-module for counting stars of Puyo Puyo Tetris bayeon project.
+'**bayoen-star**' is counting star module of Puyo Puyo Tetris bayeon project.
 For questions and suggestions, please visit [[Discord](https://discord.gg/rxW5UKx)] and find '**SemiR4in#0001**'.
 The development and testing environment is Windows 10 (.Net Framework 4.5).
 
