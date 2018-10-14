@@ -20,15 +20,10 @@
 
 <a name="korean-changes"> </a>
 ## 변경점
-
-- 가독성을 위해서 메뉴버튼들을 하나로 합쳤습니다.
-- 설정에서 통계점수를 수동조작할 수 있는 **모니터링 패널**을 추가했습니다.
-- 패널 초기화 버그를 수정했습니다.  (뿌테가 켜져있을 동안 bayoen을 실행하면 버그가 발생했었습니다)
-
-*빼먹었던 것들..*
-
-- 동작주기를 늘렸습니다. (**50 ms**에서 **333 ms**로 바뀌었습니다; 설정파일을 수정하여 바꿀 수 있습니다만 안정성 때문에 숨겨뒀습니다)
-- 트로피를 왕관으로 바꿨습니다. (뿌테에서 추출했습니다)
+몇몇 단축키 추가
+- 메뉴 단축키: 메인창에서 'm'을 눌러서 메뉴를 엽니다
+- 초기화 단축키: 메뉴에서 'r'을 눌러서 대화상자 확인없이 초기화합니다
+- 오버레이 단축키: 메뉴에서 'o'를 눌러 오버레이를 활성화 합니다
 
 <a name="korean-functions"> </a>
 ## 주요기능
@@ -42,6 +37,15 @@
 - 세부설정은 '**메인창 > Menu > Settings**'입니다. 여러가지 기능을 추가하고 있습니다. 각 항목에 마우스를 올리면 한국어 설명이 있습니다.
 
 - 모드변경은 '**메인창 > Menu > Mode**'입니다. 모드는 **Star**(현재 별), **Star+**(누적 별), **Game**(게임/왕관)의 조합으로 구성되어 있어 편한 걸로 선택하시면 됩니다.
+
+- 가독성을 위해서 메뉴버튼들을 하나로 합쳤습니다.
+- 설정에서 통계점수를 수동조작할 수 있는 **모니터링 패널**을 추가했습니다.
+- 패널 초기화 버그를 수정했습니다.  (뿌테가 켜져있을 동안 bayoen을 실행하면 버그가 발생했었습니다)
+
+*빼먹었던 것들..*
+
+- 동작주기를 늘렸습니다. (**50 ms**에서 **333 ms**로 바뀌었습니다; 설정파일을 수정하여 바꿀 수 있습니다만 안정성 때문에 숨겨뒀습니다)
+- 트로피를 왕관으로 바꿨습니다. (뿌테에서 추출했습니다)
 
 ### 2. 오버레이
 - '**bayoen-star**'창은 테두리 때문에 게임과 함께 보기 힘듭니다. 오버레이를 이용하면 게임 위에 점수판을 띄울 수 있습니다. (단, 전체화면일 경우에는 동작하지 않습니다)
@@ -70,15 +74,10 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 
 <a name="english-changes"> </a>
 ## Changes 10(:
-
-- Menu buttons are merged into single button for better readability
-- In settings, added **monitor panel** which can change scores arbitrarily
-- Fixed bugs Initializing panel (when turn on bayoen while PPT is running)
-
-*including missing functional..*
-
-- Increase operating time period (from **50 ms** to **333 ms**, can be tuned by modifying preferences file, we hided it for stability reason)
-- Trophy is replaced by Crown (we found in PPT client)
+Add some hotkeys
+- Menu hotkey: in main window, press 'm' to open menu
+- Reset hotkey: in menu, press 'r' to reset without dialog
+- Overlay hotkey: in menu, press 'o' to active overlay
 
 <a name="english-functions"> </a>
 ## Functions
@@ -92,6 +91,15 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 - The detailed setting is '**Main > Menu > Settings**'. We're adding a number of features. Hover over each topic to find a Korean explanation.
 
 - Changing display mode is '**Main > Menu > Mode**'. The mode is consister of **Star**(current star), **Star+**(cumulative star), **Game**(cumulative game/crown) and You can choose your favorites.
+
+- Menu buttons are merged into single button for better readability
+- In settings, added **monitor panel** which can change scores arbitrarily
+- Fixed bugs Initializing panel (when turn on bayoen while PPT is running)
+
+*including missing functional..*
+
+- Increase operating time period (from **50 ms** to **333 ms**, can be tuned by modifying preferences file, we hided it for stability reason)
+- Trophy is replaced by Crown (we found in PPT client)
 
 ### 2. Overlay
 - The main window '**bayoen-star**' is hard to see with the game because of the border. Overlay allows you to place scoreboards on above of the game. (However, it does not work if the game is fullscreen view.)
