@@ -10,6 +10,7 @@
                  ResizeMode="NoResize"
                  Height="120" Width="525"
                  MouseLeftButtonDown="MetroWindow_MouseLeftButtonDown"
+                 KeyDown="MetroWindow_KeyDown"
                  Closing="MetroWindow_Closing">
 
     <!--Titlebar buttons-->
@@ -35,7 +36,7 @@
 
             <TextBlock x:Name="StatusTextBlock" Margin="8,3,8,3" Foreground="DimGray" IsEnabled="False"/>
 
-            <Button x:Name ="MenuButton" Background="Transparent" Click="MenuButton_Click">
+            <Button x:Name ="MenuButton" Background="Transparent" ToolTip="Hotkey 'M'" Click="MenuButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Margin="3,6,5,3">
                         <Rectangle.OpacityMask>
@@ -46,7 +47,7 @@
                 </StackPanel>
 
                 <Button.ContextMenu>
-                    <ContextMenu x:Name="TopContextMenu">
+                    <ContextMenu x:Name="TopContextMenu" KeyDown="TopContextMenu_KeyDown" >
                         <ContextMenu.ItemsSource>
                             <CompositeCollection x:Name="TopCompositeCollection"/>
                         </ContextMenu.ItemsSource>

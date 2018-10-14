@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -42,7 +43,7 @@ namespace bayoen
         public DisplayGrid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public const string versionText = " - Beta v0.0.9";
+        public const string versionText = " - Beta v0.0.10";
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
@@ -1132,6 +1133,17 @@ namespace bayoen
             this.Overlay.Top = this.pptRect.Top - this.preferences.Overlay[2];
         }
 
+        private void Reset()
+        {
+            this.countingStar = new List<int>() { 0, 0 };
+            this.countingCrown = new List<int>() { 0, 0 };
+
+            this.CheckContainers();
+            this.ToMonitors();
+            this.Save();
+            System.Media.SystemSounds.Hand.Play();
+        }
+
         private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
             this.TopContextMenu.IsOpen = true;
@@ -1142,17 +1154,16 @@ namespace bayoen
             var result = await this.ShowMessageAsync("Do clear?", "", MessageDialogStyle.AffirmativeAndNegative);
             if (result == MessageDialogResult.Affirmative)
             {
-                this.countingStar = new List<int>() { 0, 0 };
-                this.countingCrown = new List<int>() { 0, 0 };
-
-                this.CheckContainers();
-                this.ToMonitors();
-                this.Save();
-                System.Media.SystemSounds.Hand.Play();
+                this.Reset();
             }
         }
 
         private void OverlayMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.ViewOverlay();
+        }
+
+        private void ViewOverlay()
         {
             this.Overlay.Show();
             if (this.Overlay.WindowState == WindowState.Minimized)
@@ -1174,6 +1185,26 @@ namespace bayoen
                 this.Setting.WindowState = WindowState.Normal;
             }
             this.Setting.Activate();
+        }
+
+        private void TopContextMenu_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.O)
+            {
+                this.ViewOverlay();
+            }
+            else if (e.Key == Key.R)
+            {
+                this.Reset();
+            }
+        }
+
+        private void MetroWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.M)
+            {
+                this.TopContextMenu.IsOpen = true;
+            }
         }
 
         private void MetroWindow_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

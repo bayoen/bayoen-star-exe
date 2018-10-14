@@ -156,9 +156,6 @@
     <None Include="Resources\CrownLight.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\StarBlank.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\StarPlain.png" />
   </ItemGroup>
   <ItemGroup>
@@ -169,9 +166,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\score4.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\score2_long_strong.png" />
