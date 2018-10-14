@@ -61,10 +61,11 @@ namespace bayoen
         public DispatcherTimer timer;
 
         public int winCount;
+        public int winMatch;
         public List<int> currentStar;
         public List<int> oldStar;
         public List<int> countingStar;
-        public List<int> countingCrown;       
+        public List<int> countingCrown;        
 
         public DisplayModes _mode;
         public DisplayModes Mode
@@ -925,6 +926,7 @@ namespace bayoen
                 Newtonsoft.Json.Linq.JToken crown1Token = json.SelectToken("Crown1");
                 Newtonsoft.Json.Linq.JToken crown2Token = json.SelectToken("Crown2");
                 Newtonsoft.Json.Linq.JToken winCountToken = json.SelectToken("WinCount");
+                Newtonsoft.Json.Linq.JToken winMatchToken = json.SelectToken("WinMatch");
 
                 this.countingStar = new List<int>()
                 {
@@ -943,6 +945,7 @@ namespace bayoen
                 this.countingStar = new List<int>() { 0, 0 };
                 this.countingCrown = new List<int>() { 0, 0 };
                 this.winCount = -1;
+                this.winMatch = -1;
             }            
         }
 
@@ -1046,6 +1049,7 @@ namespace bayoen
                 ["Crown1"] = this.countingCrown[0],
                 ["Crown2"] = this.countingCrown[1],
                 ["WinCount"] = this.winCount,
+                ["WinMatch"] = this.winMatch,
             };
             File.WriteAllText(dataJSONName, json.ToString(), Encoding.UTF8);
         }
@@ -1192,10 +1196,12 @@ namespace bayoen
             if (e.Key == Key.O)
             {
                 this.ViewOverlay();
+                this.TopContextMenu.IsOpen = false;
             }
             else if (e.Key == Key.R)
             {
                 this.Reset();
+                this.TopContextMenu.IsOpen = false;
             }
         }
 
