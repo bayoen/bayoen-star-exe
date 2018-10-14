@@ -37,7 +37,7 @@
 
 - 사용중 인터페이스가 깨지면, **bayoen-star** 프로그램을 **완전히 종료**하고 '**pref.json**' 이라는 파일을 삭제하고 다시 실행시키면 됩니다.
 
-- 초기화는 '**메인창 > Menu > Reset**'입니다. 모든 수치를 초기화 합니다. 만약 게임 중이라면, 현재 별은 초기화 되지 않습니다.
+- 초기화는 '**메인창 > Menu > Reset**'입니다. 모든 수치를 초기화 합니다. 만약 게임 중이라면, 현재 별은 초기화 되지 않습니다. <단축키 M→R>
 
 - 세부설정은 '**메인창 > Menu > Settings**'입니다. 여러가지 기능을 추가하고 있습니다. 각 항목에 마우스를 올리면 한국어 설명이 있습니다.
 
@@ -46,7 +46,7 @@
 ### 2. 오버레이
 - '**bayoen-star**'창은 테두리 때문에 게임과 함께 보기 힘듭니다. 오버레이를 이용하면 게임 위에 점수판을 띄울 수 있습니다. (단, 전체화면일 경우에는 동작하지 않습니다)
 
-- '**메인창 > Menu > Overlay**'로 오버레이를 띄울 수 있고, 오버레이를 **마우스 드래그**로 이동하고 **마우스 휠**로 크기를 조절할 수 있습니다.
+- '**메인창 > Menu > Overlay**'로 오버레이를 띄울 수 있고, 오버레이를 **마우스 드래그**로 이동하고 **마우스 휠**로 크기를 조절할 수 있습니다. <단축키 M→O>
 
 - 오버레이를 **마우스 우클릭**하면 오버레이메뉴를 볼 수 있습니다. 오버레이 메뉴의 '**Fixed**' 기능은 위치와 크기를 고정하고 게임 창이 움직일 때 함께 따라갑니다.
 
@@ -87,7 +87,7 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 
 - If the interface is broken during use, **Completely close bayoen-star** and '**pref.json**'. Then re-run.
 
-- The reset is '**Main > Menu > Reset**'. Do reset all figures. If you're playing a game, the **star** doesn't reset at the moment.
+- The reset is '**Main > Menu > Reset**'. Do reset all figures. If you're playing a game, the **star** doesn't reset at the moment. <Hotkey M→R>
 
 - The detailed setting is '**Main > Menu > Settings**'. We're adding a number of features. Hover over each topic to find a Korean explanation.
 
@@ -96,7 +96,7 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 ### 2. Overlay
 - The main window '**bayoen-star**' is hard to see with the game because of the border. Overlay allows you to place scoreboards on above of the game. (However, it does not work if the game is fullscreen view.)
 
-- You can display the overlay with **main > Menu > Overlay**, Move the overlay to **Mouse Drag** and adjust the size to **Mouse Wheel**.
+- You can display the overlay with **main > Menu > Overlay**, Move the overlay to **Mouse Drag** and adjust the size to **Mouse Wheel**. <Hotkey M→O>
 
 - **Mouse right click** to view the menu of overlay. The '**Fixed**' function in the Overlay menu will freeze the position and size and follow along as the Games window moves.
 
