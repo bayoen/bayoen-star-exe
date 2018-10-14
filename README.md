@@ -21,6 +21,7 @@
 <a name="korean-changes"> </a>
 ## 변경점
 몇몇 단축키 추가
+- 크로마 키 추가: 마젠타, 파랑, 초록
 - 메뉴 단축키: 메인창에서 'm'을 눌러서 메뉴를 엽니다
 - 초기화 단축키: 메뉴에서 'r'을 눌러서 대화상자 확인없이 초기화합니다
 - 오버레이 단축키: 메뉴에서 'o'를 눌러 오버레이를 활성화 합니다
@@ -74,7 +75,8 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 
 <a name="english-changes"> </a>
 ## Changes 10(:
-Add some hotkeys
+Add some hotkeys 
+- Add few chroma keys: Magenta(Best), Blue, Green
 - Menu hotkey: in main window, press 'm' to open menu
 - Reset hotkey: in menu, press 'r' to reset without dialog
 - Overlay hotkey: in menu, press 'o' to active overlay
