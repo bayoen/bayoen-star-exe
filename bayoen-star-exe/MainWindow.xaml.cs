@@ -42,7 +42,7 @@ namespace bayoen
         public DisplayGrid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public const string versionText = " - Beta v0.0.8";
+        public const string versionText = " - Beta v0.0.9";
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
@@ -364,26 +364,6 @@ namespace bayoen
                 TopMostCheckBox.IsChecked = this.preferences.IsTopMost.Value;
                 MainGroupPanel.Children.Add(TopMostCheckBox);
 
-                CheckBox ChromaKeyCheckBox = new CheckBox()
-                {
-                    Content = "Enable chroma key (magenta)",
-                    Margin = new Thickness(5),
-                    ToolTip = "Change background to magenta for transmission;\n송출을 위해 배경을 자홍색으로 바꿉니다",
-                };
-                Brush NeroBrush = new SolidColorBrush(Color.FromRgb(37, 37, 37)); //new BrushConverter().ConvertFromString("#FF252525") as Brush;
-                ChromaKeyCheckBox.Click += (sender, e) =>
-                {
-                    this.preferences.IsChromaKey = !this.preferences.IsChromaKey;
-                    this.Background = (this.preferences.IsChromaKey.Value) ? (Brushes.Magenta) : (NeroBrush);
-                };
-                if (this.preferences.IsChromaKey == null)
-                {
-                    this.preferences.IsChromaKey = false;
-                }
-                this.Background = (this.preferences.IsChromaKey.Value)?(Brushes.Magenta): (NeroBrush);
-                ChromaKeyCheckBox.IsChecked = this.preferences.IsChromaKey.Value;
-                MainGroupPanel.Children.Add(ChromaKeyCheckBox);
-
                 StackPanel ExportTextPanel = new StackPanel()
                 {
                     Orientation = Orientation.Horizontal,
@@ -433,8 +413,7 @@ namespace bayoen
                 };
                 ExportTextPanel.Children.Add(ExportTextFolderButton);
                 MainGroupPanel.Children.Add(ExportTextPanel);
-
-
+           
                 CheckBox FitScoreBoardCheckBox = new CheckBox()
                 {
                     Content = "Fit/Cover to score board",
@@ -459,6 +438,101 @@ namespace bayoen
                 }
                 FitScoreBoardCheckBox.IsChecked = this.preferences.IsFitToScore.Value;
                 MainGroupPanel.Children.Add(FitScoreBoardCheckBox);
+
+                StackPanel ChromaKeyPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                };
+                TextBlock ChromaKeyTextBlock = new TextBlock()
+                {
+                    Text = "- Chroma key",
+                    Margin = new Thickness(5, 5, 0, 5),
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                ChromaKeyPanel.Children.Add(ChromaKeyTextBlock);
+                List<Tuple<ChromaKeys, Brush>> ChromaSets = new List<Tuple<ChromaKeys, Brush>>()
+                {
+                    new Tuple<ChromaKeys, Brush>( ChromaKeys.None,  new SolidColorBrush(Color.FromRgb(37, 37, 37))),
+                    new Tuple<ChromaKeys, Brush>( ChromaKeys.Green, Brushes.Green),
+                    new Tuple<ChromaKeys, Brush>( ChromaKeys.Blue, Brushes.Blue),
+                    new Tuple<ChromaKeys, Brush>( ChromaKeys.Magenta, Brushes.Magenta),
+                };
+                ComboBoxItem TokenAccentItem;
+                List<ComboBoxItem> AccentItemList = new List<ComboBoxItem>();
+                foreach (Tuple<ChromaKeys, Brush> tokenChroma in ChromaSets)
+                {
+                    TokenAccentItem = new ComboBoxItem()
+                    {
+                        Background = Brushes.Black,
+                        Content = new StackPanel()
+                        {
+                            Margin = new Thickness(0),
+                            Orientation = Orientation.Horizontal,                            
+                        },
+                    };
+                    (TokenAccentItem.Content as StackPanel).Children.Add(new Rectangle()
+                    {
+                        Width = 12,
+                        Height = 12,
+                        Fill = tokenChroma.Item2,
+                        Margin = new Thickness(4, 0, 4, 0),
+                        OpacityMask = new VisualBrush()
+                        {
+                            AlignmentX = AlignmentX.Center,
+                            AlignmentY = AlignmentY.Center,
+                            Stretch = Stretch.Uniform,
+                            Visual = TryFindResource("appbar_3d_obj") as Visual,
+                        },
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    });
+
+                    (TokenAccentItem.Content as StackPanel).Children.Add(new TextBlock()
+                    {
+                        Text = tokenChroma.Item1.ToString(),
+                        Margin = new Thickness(2),
+                    });
+
+                    AccentItemList.Add(TokenAccentItem);
+                }
+                ComboBox ChromaKeyComboBox = new ComboBox()
+                {
+                    Width = 110,
+                    Margin = new Thickness(5),
+                    Background = Brushes.Black,
+                    ItemsSource = AccentItemList,                    
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                ChromaKeyPanel.Children.Add(ChromaKeyComboBox);
+                ChromaKeyComboBox.SelectionChanged += (sender, e) =>
+                {
+                    this.preferences.ChromaKey = (ChromaKeys)ChromaKeyComboBox.SelectedIndex;
+                    this.Background = ChromaSets[ChromaKeyComboBox.SelectedIndex].Item2;
+                };
+                if (this.preferences.ChromaKey == null)
+                {
+                    if (this.preferences.IsChromaKey == null)
+                    {
+                        this.preferences.ChromaKey = ChromaKeys.None;
+                    }
+                    else
+                    {
+                        if (this.preferences.IsChromaKey.Value)
+                        {
+                            this.preferences.ChromaKey = ChromaKeys.None;
+                        }
+                        else
+                        {
+                            this.preferences.ChromaKey = ChromaKeys.Magenta;
+                        }
+
+                        this.preferences.IsChromaKey = null;
+                    }                    
+                }
+                this.Background = ChromaSets[(int)this.preferences.ChromaKey].Item2;
+                ChromaKeyComboBox.SelectedIndex = (int)this.preferences.ChromaKey;
+
+                MainGroupPanel.Children.Add(ChromaKeyPanel);
                 #endregion
 
                 #region MonitorGroup
@@ -1183,6 +1257,14 @@ namespace bayoen
             Game_and_Star = 2,
             Game_and_Star_plus = 3,
             Star_plus_and_Star = 4,
+        }
+
+        public enum ChromaKeys : int
+        {
+            None = 0,
+            Green = 1,
+            Blue = 2,
+            Magenta = 3,
         }
     }
 

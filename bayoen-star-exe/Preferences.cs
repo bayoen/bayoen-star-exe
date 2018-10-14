@@ -17,6 +17,7 @@ namespace bayoen
             // Active
             public bool? IsTopMost;
             public bool? IsChromaKey;
+            public ChromaKeys? ChromaKey;
             public bool? ExportText;
             public bool? IsFitToScore;
             public List<double> Overlay;
@@ -39,7 +40,8 @@ namespace bayoen
             public void Clear()
             {
                 this.IsTopMost = null;
-                this.IsChromaKey = null;
+                //this.IsChromaKey = null;
+                this.ChromaKey = null;
                 this.ExportText = null;
                 this.IsFitToScore = null;
                 this.Overlay = null;
