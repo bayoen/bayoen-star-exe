@@ -6,9 +6,9 @@ namespace bayoen
 {
     public partial class MainWindow
     {
-        public class DisplayGrid : Grid
+        public class Display2Grid : Grid
         {
-            public DisplayGrid()
+            public Display2Grid()
             {
                 this.PanelImage = new Image()
                 {

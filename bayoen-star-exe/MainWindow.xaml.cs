@@ -36,14 +36,18 @@ namespace bayoen
 
             this.CheckContainers();
             this.ToMonitors();
+            this.CheckUpdate();
             this.IsStatOn = true;
         }
 
-        public DisplayGrid MainDisplay;
-        public DisplayGrid OverlayDisplay;
+        public Display2Grid MainDisplay;
+        public Display2Grid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public const string versionText = " - Beta v0.0.10";
+        public static Version currentVersion = new Version(0, 0, 11);
+        public Version latestVersion;
+
+        public static string versionText = string.Format(" - Beta v{0}", currentVersion);
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
@@ -124,6 +128,25 @@ namespace bayoen
                 }
 
                 this._isStatOn = value;
+            }
+        }
+
+        public bool IsGoogleOn
+        {
+            get
+            {
+                try
+                {
+                    using (var client = new System.Net.WebClient())
+                    using (client.OpenRead("http://clients3.google.com/generate_204"))
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
@@ -731,7 +754,7 @@ namespace bayoen
 
             void InitializeDisplay()
             {
-                this.MainDisplay = new DisplayGrid();
+                this.MainDisplay = new Display2Grid();
                 this.Content = this.MainDisplay;
 
                 if (IsPPTOn)
@@ -751,7 +774,7 @@ namespace bayoen
 
                 this.pptRect = new RECT(this.oldRect);
 
-                this.OverlayDisplay = new DisplayGrid();
+                this.OverlayDisplay = new Display2Grid();
                 this.Overlay = new MetroWindow()
                 {
                     Title = "bayoen-star-overlay",
@@ -912,6 +935,17 @@ namespace bayoen
 
         private void InitializeVariables()
         {
+            if (this.IsGoogleOn)
+            {
+                using (System.Net.WebClient web = new System.Net.WebClient() { Encoding = Encoding.UTF8 })
+                {
+                    System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+                    string rawString = web.DownloadString("https://github.com/bayoen/bayoen-star-exe/releases/latest");
+                    string latestVersion = System.Text.RegularExpressions.Regex.Match(rawString, @"<a class=""js-selected-navigation-item selected reponav-item""((.|\n)*?)>", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups[1].Value.Split('/').Last();
+                    this.latestVersion = Version.Parse(latestVersion.Remove(latestVersion.Length - 1));
+                }
+            }
+            
             this.pptMemory = new VAMemory(pptName);
 
             this.oldStar = new List<int>() { -1, -1 };
@@ -1148,6 +1182,31 @@ namespace bayoen
             System.Media.SystemSounds.Hand.Play();
         }
 
+        private void CheckUpdate()
+        {
+            if (currentVersion == latestVersion)
+            {
+                // Latest: do nothing
+            }
+            else if (currentVersion < latestVersion)
+            {
+                // Old
+                this.Notify.BalloonTipClicked += Notify_BalloonTipClicked_GoDownloadPage;
+                this.Notify.ShowBalloonTip(2000, "This is old version!", "Click to go download page!\nand please remove this version", wf::ToolTipIcon.None);
+            }
+            else // if (version > LatestVersion)
+            {
+                // in Dev.: do nothing
+                this.Notify.ShowBalloonTip(2000, "This is version in development!", "There's no problem, right?", wf::ToolTipIcon.None);
+            }
+        }
+
+        private void Notify_BalloonTipClicked_GoDownloadPage(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/bayoen/bayoen-star-exe/releases/latest");
+            this.Notify.BalloonTipClicked -= Notify_BalloonTipClicked_GoDownloadPage;
+        }
+
         private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
             this.TopContextMenu.IsOpen = true;
@@ -1234,6 +1293,7 @@ namespace bayoen
 
             void NotifyMinimizing()
             {
+                this.Notify.BalloonTipClicked -= Notify_BalloonTipClicked_GoDownloadPage;
                 this.Notify.ShowBalloonTip(2000, "Closing → Minimizing", "Minimized into system tray\nPlease right-click icon!", wf::ToolTipIcon.None);
                 preferences.EverClosed = true;
             }
