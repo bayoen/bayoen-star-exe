@@ -170,11 +170,11 @@ namespace bayoen
                 }
                 else if (this.GoalType == GoalTypes.Star)
                 {
-                    return this.countingStar.IndexOf(this.GoalScore) > -1;
+                    return this.countingStar.FindIndex(x => x >= this.GoalScore) > -1;
                 }
                 else // if (this.GoalType == GoalTypes.Crown)
                 {
-                    return this.countingCrown.IndexOf(this.GoalScore) > -1;
+                    return this.countingCrown.FindIndex(x => x >= this.GoalScore) > -1;
                 }
             }
         }
@@ -644,9 +644,9 @@ namespace bayoen
                 List<Tuple<ChromaKeys, Brush>> ChromaSets = new List<Tuple<ChromaKeys, Brush>>()
                 {
                     new Tuple<ChromaKeys, Brush>( ChromaKeys.None,  new SolidColorBrush(Color.FromRgb(37, 37, 37))),
+                    new Tuple<ChromaKeys, Brush>( ChromaKeys.Magenta, Brushes.Magenta),
                     new Tuple<ChromaKeys, Brush>( ChromaKeys.Green, Brushes.Green),
                     new Tuple<ChromaKeys, Brush>( ChromaKeys.Blue, Brushes.Blue),
-                    new Tuple<ChromaKeys, Brush>( ChromaKeys.Magenta, Brushes.Magenta),
                 };
                 ComboBoxItem TokenAccentItem;
                 List<ComboBoxItem> AccentItemList = new List<ComboBoxItem>();
@@ -1336,6 +1336,8 @@ namespace bayoen
 
         private void CheckUpdate()
         {
+            if (!IsGoogleOn) return;
+
             if (currentVersion == latestVersion)
             {
                 // Latest: do nothing
