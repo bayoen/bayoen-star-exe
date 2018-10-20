@@ -44,7 +44,7 @@ namespace bayoen
         public Display2Grid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public static Version currentVersion = new Version(0, 0, 11);
+        public static Version currentVersion = new Version(0, 0, 12);
         public Version latestVersion;
 
         public static string versionText = string.Format(" - Beta v{0}", currentVersion);
@@ -57,7 +57,6 @@ namespace bayoen
         public MetroWindow Setting;
         public MetroWindow Overlay;
 
-
         public VAMemory pptMemory;
         public RECT pptRect, oldRect;
         public int scoreAddress;
@@ -69,7 +68,51 @@ namespace bayoen
         public List<int> currentStar;
         public List<int> oldStar;
         public List<int> countingStar;
-        public List<int> countingCrown;        
+        public List<int> countingCrown;
+
+        private int _goalScore;
+        public int GoalScore
+        {
+            get => this._goalScore;
+            set
+            {
+                int refined = Math.Min(Math.Max(0, value), 9999);
+
+                if (this.GoalType == GoalTypes.None)
+                {
+                    this.MainDisplay.HideGoal();
+                    this.OverlayDisplay.HideGoal();
+                }
+                else
+                {
+                    this.MainDisplay.DisplayGoal(refined, this.GoalType);
+                    this.OverlayDisplay.DisplayGoal(refined, this.GoalType);
+                }
+
+                this._goalScore = refined;
+            }
+        }
+
+        private GoalTypes _goalType;
+        public GoalTypes GoalType
+        {
+            get => this._goalType;
+            set
+            {
+                if (value == GoalTypes.None)
+                {
+                    this.MainDisplay.HideGoal();
+                    this.OverlayDisplay.HideGoal();
+                }   
+                else
+                {
+                    this.MainDisplay.DisplayGoal(this.GoalScore, value);
+                    this.OverlayDisplay.DisplayGoal(this.GoalScore, value);
+                }
+
+                this._goalType = value;
+            }
+        }
 
         public DisplayModes _mode;
         public DisplayModes Mode
@@ -77,14 +120,13 @@ namespace bayoen
             get => this._mode;
             set
             {
-                if (value == this._mode)
-                {
-                    return;
-                }
+                //if (value == this._mode)
+                //{
+                //    return;
+                //}
 
                 this.MainDisplay.SetMode(value, this.preferences.IsFitToScore.Value);
-                this.OverlayDisplay.SetMode(value, this.preferences.IsFitToScore.Value);
-
+                this.OverlayDisplay.SetMode(value, this.preferences.IsFitToScore.Value);                
 
                 this._mode = value;
             }
@@ -109,6 +151,31 @@ namespace bayoen
             get
             {
                 return (this.scoreAddress != 0x38);
+            }
+        }
+
+
+        private bool IsGoalOver
+        {
+            get
+            {
+                if (this.GoalScore == 0)
+                {
+                    return false;
+                }
+
+                if (this.GoalType == GoalTypes.None)
+                {
+                    return false;
+                }
+                else if (this.GoalType == GoalTypes.Star)
+                {
+                    return this.countingStar.IndexOf(this.GoalScore) > -1;
+                }
+                else // if (this.GoalType == GoalTypes.Crown)
+                {
+                    return this.countingCrown.IndexOf(this.GoalScore) > -1;
+                }
             }
         }
 
@@ -172,6 +239,105 @@ namespace bayoen
                 MenuItem ResetMenuItem = BuildMenu("Reset", "appbar_new");
                 ResetMenuItem.Click += ResetMenuItem_ClickAsync;
                 this.TopCompositeCollection.Add(ResetMenuItem);
+
+                MenuItem GoalMenuItem = BuildMenu("Goal", "appbar_controller_xbox");
+                this.TopCompositeCollection.Add(GoalMenuItem);
+
+                List<MenuItem> GoalItems = new List<MenuItem>();
+                MenuItem SetGoalItem = new MenuItem()
+                {
+                    Header = "Set...",
+                    ToolTip = "Set goal with its score and type; 목표를 입력하고 설정합니다",
+                };
+                SetGoalItem.Click += (sender, e) =>
+                {
+                    this.GoalFlyout.IsOpen = true;
+                };
+                GoalItems.Add(SetGoalItem);
+                this.SetGoalButton.Click += (sender, e) =>
+                {
+                    this.preferences.GoalType = (GoalTypes)(this.GoalTypeComboBox.SelectedIndex);
+                    this.preferences.GoalScore = (int)this.GoalScoreNumericUpDown.Value.Value;
+
+                    this.GoalType = this.preferences.GoalType.Value;
+                    this.GoalScore = this.preferences.GoalScore.Value;
+                    this.GoalFlyout.IsOpen = false;
+                    System.Media.SystemSounds.Hand.Play();
+                };
+                this.ClearGoalButton.Click += (sender, e) =>
+                {
+                    this.GoalTypeComboBox.SelectedIndex = 0;
+                    this.GoalScoreNumericUpDown.Value = 0;
+                };
+                List<Tuple<GoalTypes, System.Drawing.Bitmap>> GoalTypeSets = new List<Tuple<GoalTypes, System.Drawing.Bitmap>>()
+                {
+                    new Tuple<GoalTypes, System.Drawing.Bitmap>( GoalTypes.None,  null),
+                    new Tuple<GoalTypes, System.Drawing.Bitmap>( GoalTypes.Star, bayoen.Properties.Resources.StarPlus),
+                    new Tuple<GoalTypes, System.Drawing.Bitmap>( GoalTypes.Crown, bayoen.Properties.Resources.CrownLight),
+                };
+                List<ComboBoxItem> GoalTypeItemList = new List<ComboBoxItem>();
+                foreach (Tuple<GoalTypes, System.Drawing.Bitmap> tokenGoalType in GoalTypeSets)
+                {
+                    StackPanel TokenGoalTypeStackPanel = new StackPanel()
+                    {
+                        Margin = new Thickness(0),
+                        Orientation = Orientation.Horizontal,
+                    };
+
+                    Image TokenGoalTypeImage = new Image()
+                    {
+                        Width = 14,
+                        Height = 14,
+                        Margin = new Thickness(3, 2, 5, 2),
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    if (tokenGoalType.Item2 != null) TokenGoalTypeImage.SetBitmap(tokenGoalType.Item2);
+                    TokenGoalTypeStackPanel.Children.Add(TokenGoalTypeImage);
+
+                    TextBlock TokenGoalTypeTextBlock = new TextBlock()
+                    {
+                        Text = tokenGoalType.Item1.ToString(),
+                        FontWeight = FontWeights.Normal,
+                        Margin = new Thickness(2),
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    TokenGoalTypeStackPanel.Children.Add(TokenGoalTypeTextBlock);
+
+                    ComboBoxItem TokenGoalTypeItem = new ComboBoxItem()
+                    {
+                        Background = Brushes.Black,
+                        Content = TokenGoalTypeStackPanel,
+                    };
+                    GoalTypeItemList.Add(TokenGoalTypeItem);
+                }
+                this.GoalTypeComboBox.ItemsSource = GoalTypeItemList;
+                MenuItem RemoveGoalItem = new MenuItem()
+                {
+                    Header = "Remove",
+                    ToolTip = "Remove goal; 목표를 취소합니다",
+                };
+                RemoveGoalItem.Click += (sender, e) =>
+                {
+                    this.preferences.GoalType = GoalTypes.None;
+                    this.preferences.GoalScore = 0;
+
+                    this.GoalType = this.preferences.GoalType.Value;
+                    this.GoalScore = this.preferences.GoalScore.Value;
+                };
+                GoalItems.Add(RemoveGoalItem);
+                GoalMenuItem.ItemsSource = GoalItems;
+
+                if (this.preferences.GoalType == null)
+                {
+                    this.preferences.GoalType = GoalTypes.None;
+                }
+                if (this.preferences.GoalScore == null)
+                {
+                    this.preferences.GoalScore = 0;
+                }
+
+                this.GoalTypeComboBox.SelectedIndex = (int)this.preferences.GoalType.Value;
+                this.GoalScoreNumericUpDown.Value = this.preferences.GoalScore.Value;
 
                 MenuItem OverlayMenuItem = BuildMenu("Overlay", "appbar_app_plus");
                 OverlayMenuItem.Click += OverlayMenuItem_Click;
@@ -825,7 +991,7 @@ namespace bayoen
                     
                 }
 
-                double delta = 0.05;
+                double delta = 0.035;
                 this.Overlay.PreviewMouseWheel += (sender, e) =>
                 {
                     if (this.preferences.IsOverlayFixed.Value)
@@ -980,7 +1146,10 @@ namespace bayoen
                 this.countingCrown = new List<int>() { 0, 0 };
                 this.winCount = -1;
                 this.winMatch = -1;
-            }            
+            }
+
+            this.GoalType = this.preferences.GoalType.Value;
+            this.GoalScore = this.preferences.GoalScore.Value;
         }
 
         private void CountingStars()
@@ -1022,6 +1191,12 @@ namespace bayoen
                 this.Save();
 
                 this.Status("Ready");
+                return;
+            }
+
+            if (IsGoalOver)
+            {
+                this.Status("Goal!");
                 return;
             }
 
@@ -1090,31 +1265,8 @@ namespace bayoen
 
         private void CheckContainers()
         {
-            if (this.Mode == DisplayModes.Game_and_Star_plus)
-            {
-                this.MainDisplay.Set(this.countingCrown[0], this.countingStar[0], this.countingStar[1], this.countingCrown[1]);
-                this.OverlayDisplay.Set(this.countingCrown[0], this.countingStar[0], this.countingStar[1], this.countingCrown[1]);
-            }
-            else if (this.Mode == DisplayModes.Game_and_Star)
-            {
-                this.MainDisplay.Set(this.countingCrown[0], this.currentStar[0], this.currentStar[1], this.countingCrown[1]);
-                this.OverlayDisplay.Set(this.countingCrown[0], this.currentStar[0], this.currentStar[1], this.countingCrown[1]);
-            }
-            else if (this.Mode == DisplayModes.Game_only)
-            {
-                this.MainDisplay.Set(this.countingCrown[0], this.countingCrown[1]);
-                this.OverlayDisplay.Set(this.countingCrown[0], this.countingCrown[1]);
-            }
-            else if (this.Mode == DisplayModes.Star_plus_only)
-            {
-                this.MainDisplay.Set(this.countingStar[0], this.countingStar[1]);
-                this.OverlayDisplay.Set(this.countingStar[0], this.countingStar[1]);
-            }
-            else //if (this.Mode == DisplayModes.Star_plus_and_Star)
-            {
-                this.MainDisplay.Set(this.countingStar[0], this.currentStar[0], this.currentStar[1], this.countingStar[1]);
-                this.OverlayDisplay.Set(this.countingStar[0], this.currentStar[0], this.currentStar[1], this.countingStar[1]);
-            }
+            this.MainDisplay.Set(this.currentStar, this.countingStar, this.countingCrown, this.GoalType, this.GoalScore);
+            this.OverlayDisplay.Set(this.currentStar, this.countingStar, this.countingCrown, this.GoalType, this.GoalScore);
         }
 
         private void ToMonitors()
@@ -1355,13 +1507,18 @@ namespace bayoen
             Game_and_Star_plus = 3,
             Star_plus_and_Star = 4,
         }
-
         public enum ChromaKeys : int
         {
             None = 0,
             Green = 1,
             Blue = 2,
             Magenta = 3,
+        }
+        public enum GoalTypes : int
+        {
+            None = 0,
+            Star = 1,
+            Crown = 2,
         }
     }
 

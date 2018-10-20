@@ -57,6 +57,10 @@ namespace bayoen
 
                 this._containerImage = ContainerImages.StarPlus;
                 this.ContainerImage = ContainerImages.StarPlain;
+
+                this._containerState = ContainerStates.Broken;
+                this.ContainerState = ContainerStates.Idle;
+
                 this.IsValid = true;
                 this.Score = 0;
             }
@@ -163,6 +167,34 @@ namespace bayoen
                 }
             }
 
+            private ContainerStates _containerState;
+            public ContainerStates ContainerState
+            {
+                get => this._containerState;
+                set
+                {
+                    //if (value == this._containerState)
+                    //{
+                    //    return;
+                    //}
+
+                    if (value == ContainerStates.Idle)
+                    {
+                        this.ScoreText.Foreground = System.Windows.Media.Brushes.White;
+                    }
+                    else if (value == ContainerStates.Goal)
+                    {
+                        this.ScoreText.Foreground = System.Windows.Media.Brushes.Gold;
+                    }
+                    else // if (value == ContainerStates.Broken)
+                    {
+                        this.ScoreText.Foreground = System.Windows.Media.Brushes.Crimson;
+                    }
+
+                    this._containerState = value;
+                }
+            }
+
             private bool _isValid;
             public bool IsValid
             {
@@ -204,6 +236,13 @@ namespace bayoen
             StarPlain,
             StarPlus,
             CrownLight,
+        }
+
+        public enum ContainerStates : int
+        {
+            Idle = 0,
+            Goal = 1,
+            Broken = 2,
         }
     }
 

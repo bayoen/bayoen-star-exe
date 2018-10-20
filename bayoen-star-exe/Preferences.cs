@@ -17,12 +17,14 @@ namespace bayoen
             public ChromaKeys? ChromaKey;
             public bool? ExportText;
             public bool? IsFitToScore;
-            public List<double> Overlay;
             public bool? IsOverlayFixed;
-
             public DisplayModes? DisplayMode;
 
+            public GoalTypes? GoalType;
+            public int? GoalScore;
+
             // Passive
+            public List<double> Overlay;
             public bool? EverClosed;
 
             // Escape
@@ -41,9 +43,9 @@ namespace bayoen
                 this.ChromaKey = null;
                 this.ExportText = null;
                 this.IsFitToScore = null;
-                this.Overlay = null;
                 this.IsOverlayFixed = null;
 
+                this.Overlay = null;
                 this.DisplayMode = null;
 
                 this.EverClosed = null;

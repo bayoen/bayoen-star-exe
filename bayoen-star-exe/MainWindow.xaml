@@ -1,4 +1,5 @@
-﻿<mtc:MetroWindow x:Class="bayoen.MainWindow"
+﻿<mtc:MetroWindow x:Name="BayoenWindow"
+                 x:Class="bayoen.MainWindow"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mtc="http://metro.mahapps.com/winfx/xaml/controls"
@@ -8,11 +9,38 @@
                  ShowIconOnTitleBar="False"                 
                  BorderThickness="0"                               
                  ResizeMode="NoResize"
-                 Height="120" Width="525"
+                 Height="160" Width="525"
                  MouseLeftButtonDown="MetroWindow_MouseLeftButtonDown"
                  KeyDown="MetroWindow_KeyDown"
                  Closing="MetroWindow_Closing">
 
+    <mtc:MetroWindow.Flyouts>
+        <mtc:FlyoutsControl>
+            <mtc:Flyout x:Name="GoalFlyout" Header="Set Goal..." Position="Right" Width="{Binding Width, ElementName=BayoenWindow}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel.Resources>
+                        <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="Height" Value="15"/>
+                            <Setter Property="Margin" Value="3,6,3,6"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <TextBlock Text="Type"/>
+                    <ComboBox x:Name="GoalTypeComboBox" Height="15" Width="100" Margin="3,6,6,6"/>
+                    <TextBlock Text="Score"/>
+                    <mtc:NumericUpDown x:Name="GoalScoreNumericUpDown" Height="15" Width="100" Margin="3,6,6,6" Value="0" Minimum="0" Maximum="9999"/>
+                    <Button x:Name="SetGoalButton" Content="Set" Height="15" Width="50" Margin="3,6,3,6" Style="{DynamicResource AccentedSquareButtonStyle}" VerticalAlignment="Center"/>
+                    <Button x:Name="ClearGoalButton" Content="Clear" Height="15" Width="50" Margin="3,6,3,6" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </mtc:Flyout>
+        </mtc:FlyoutsControl>
+    </mtc:MetroWindow.Flyouts>
+    
+    
     <!--Titlebar buttons-->
     <mtc:MetroWindow.RightWindowCommands>
         <mtc:WindowCommands>
