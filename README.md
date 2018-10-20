@@ -27,11 +27,7 @@ The Puyo Puyo Tetris Add-On which counting stars and games
 
 <a name="korean-changes"> </a>
 ## 변경점
-몇몇 단축키 추가
-- 크로마 키 추가: 마젠타, 파랑, 초록
-- 메뉴 단축키: 메인창에서 'm'을 눌러서 메뉴를 엽니다
-- 초기화 단축키: 메뉴에서 'r'을 눌러서 대화상자 확인없이 초기화합니다
-- 오버레이 단축키: 메뉴에서 'o'를 눌러 오버레이를 활성화 합니다
+목표 메뉴 추가: '#선승' 기능이 추가됐습니다.
 
 <a name="korean-functions"> </a>
 ## 주요기능
@@ -49,6 +45,11 @@ The Puyo Puyo Tetris Add-On which counting stars and games
 - 가독성을 위해서 메뉴버튼들을 하나로 합쳤습니다.
 - 설정에서 통계점수를 수동조작할 수 있는 **모니터링 패널**을 추가했습니다.
 - 패널 초기화 버그를 수정했습니다.  (뿌테가 켜져있을 동안 bayoen을 실행하면 버그가 발생했었습니다)
+
+- 크로마 키: 마젠타, 파랑, 초록
+- 메뉴 단축키: 메인창에서 'm'을 눌러서 메뉴를 엽니다
+- 초기화 단축키: 메뉴에서 'r'을 눌러서 대화상자 확인없이 초기화합니다
+- 오버레이 단축키: 메뉴에서 'o'를 눌러 오버레이를 활성화 합니다
 
 *빼먹었던 것들..*
 
@@ -82,11 +83,7 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 
 <a name="english-changes"> </a>
 ## Changes 10(:
-Add some hotkeys 
-- Add few chroma keys: Magenta(Best), Blue, Green
-- Menu hotkey: in main window, press 'm' to open menu
-- Reset hotkey: in menu, press 'r' to reset without dialog
-- Overlay hotkey: in menu, press 'o' to active overlay
+Goal Menu: 'First to # Winning' round system is added
 
 <a name="english-functions"> </a>
 ## Functions
@@ -104,6 +101,10 @@ Add some hotkeys
 - Menu buttons are merged into single button for better readability
 - In settings, added **monitor panel** which can change scores arbitrarily
 - Fixed bugs Initializing panel (when turn on bayoen while PPT is running)
+- Chroma keys: Magenta(Best), Blue, Green
+- Menu hotkey: in main window, press 'm' to open menu
+- Reset hotkey: in menu, press 'r' to reset without dialog
+- Overlay hotkey: in menu, press 'o' to active overlay
 
 *including missing functional..*
 
