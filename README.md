@@ -5,7 +5,7 @@ The Puyo Puyo Tetris Add-On which counting stars and games
 </p>
 
 <p align="center">
-   <img src="resources/bayoen-star-example-chroma.png"/>　　　<img src="resources/bayoen-star-example.png"/>
+   <img src="resources/bayoen-star-example.png"/><img src="resources/bayoen-star-example-chroma.png"/>
 </p>
 *Icon images are powered by Get your Gu's (dailycarbuncle.tumblr.com)
 
