@@ -1,7 +1,11 @@
 # bayoen-star
 The Puyo Puyo Tetris Add-On which counting stars and games
 <p align="center">
-   <img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/>　　　<img src="resources/bayoen-star-example.png"/>
+   <img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/>
+</p>
+
+<p align="center">
+   <img src="resources/bayoen-star-example-chroma.png"/>　　　<img src="resources/bayoen-star-example.png"/>
 </p>
 *Icon images are powered by Get your Gu's (dailycarbuncle.tumblr.com)
 
