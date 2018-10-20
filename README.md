@@ -1,3 +1,10 @@
+# bayoen-star
+The Puyo Puyo Tetris Add-On which counting stars and games
+<p align="center">
+   <img src="resources/bayoen-star-example.png"/>
+</p>
+
+
 # Table of Contents
 - [한국어 안내](#korean)
    1. [변경점](#korean-changes)
