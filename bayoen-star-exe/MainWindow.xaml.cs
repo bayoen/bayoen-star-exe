@@ -44,7 +44,7 @@ namespace bayoen
         public Display2Grid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public static Version currentVersion = new Version(0, 0, 12);
+        public static Version currentVersion = new Version(0, 0, 13);
         public Version latestVersion;
 
         public static string versionText = string.Format(" - Beta v{0}", currentVersion);
@@ -58,7 +58,7 @@ namespace bayoen
         public MetroWindow Overlay;
 
         public VAMemory pptMemory;
-        public RECT pptRect, oldRect;
+        public RECT currentRect, oldRect;
         public int scoreAddress;
         public Process[] PPTProcesses;
         public DispatcherTimer timer;
@@ -925,11 +925,11 @@ namespace bayoen
 
                 if (IsPPTOn)
                 {
-                    GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.pptRect);
+                    GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.currentRect);
                 }
                 else
                 {
-                    this.pptRect = new RECT()
+                    this.currentRect = new RECT()
                     {
                         Left = -1,
                         Top = -1,
@@ -938,7 +938,7 @@ namespace bayoen
                     };
                 }
 
-                this.pptRect = new RECT(this.oldRect);
+                this.currentRect = new RECT(this.oldRect);
 
                 this.OverlayDisplay = new Display2Grid();
                 this.Overlay = new MetroWindow()
@@ -980,8 +980,8 @@ namespace bayoen
 
                     if (IsPPTOn)
                     {
-                        this.Overlay.Left = this.pptRect.Left - this.preferences.Overlay[1];
-                        this.Overlay.Top = this.pptRect.Top - this.preferences.Overlay[2];
+                        this.Overlay.Left = this.currentRect.Left - this.preferences.Overlay[1];
+                        this.Overlay.Top = this.currentRect.Top - this.preferences.Overlay[2];
                     }
                     else
                     {
@@ -1027,8 +1027,8 @@ namespace bayoen
                     {
                         return;
                     }
-                    this.preferences.Overlay[1] = this.pptRect.Left - this.Overlay.Left;
-                    this.preferences.Overlay[2] = this.pptRect.Top - this.Overlay.Top;
+                    this.preferences.Overlay[1] = this.currentRect.Left - this.Overlay.Left;
+                    this.preferences.Overlay[2] = this.currentRect.Top - this.Overlay.Top;
                     this.preferences.Overlay[3] = this.Overlay.Left;
                     this.preferences.Overlay[4] = this.Overlay.Top;
                 };
@@ -1057,6 +1057,24 @@ namespace bayoen
                     this.preferences.IsOverlayFixed = false;
                 }
                 OverlayFixMenu.IsChecked = this.preferences.IsOverlayFixed.Value;
+
+                MenuItem OverlayResetMenu = new MenuItem()
+                {
+                    Header = new TextBlock()
+                    {
+                        Text = "Reset",
+                        TextDecorations = TextDecorations.Underline,                        
+                    },
+                    ToolTip = "You must do 'Shift + Click'!; 쉬프트키를 누르고 클릭하셔야 합니다!",
+                };
+                OverlayResetMenu.Click += (sender, e) =>
+                {
+                    if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                    {
+                        this.Reset();
+                    }                    
+                };
+                this.Overlay.ContextMenu.Items.Add(OverlayResetMenu);
 
                 MenuItem OverlayCloseMenu = new MenuItem()
                 {
@@ -1295,16 +1313,16 @@ namespace bayoen
 
         private void CheckOverlay()
         {
-            GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.pptRect);
+            GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.currentRect);
 
             this.FixOverlay();
 
-            this.oldRect = new RECT(this.pptRect);
+            this.oldRect = new RECT(this.currentRect);
         }
 
         private void FixOverlay()
         {
-            if (RECT.Equals(this.pptRect, this.oldRect))
+            if (RECT.Equals(this.currentRect, this.oldRect))
             {
                 return;
             }
@@ -1319,8 +1337,8 @@ namespace bayoen
                 return;
             }
 
-            this.Overlay.Left = this.pptRect.Left - this.preferences.Overlay[1];
-            this.Overlay.Top = this.pptRect.Top - this.preferences.Overlay[2];
+            this.Overlay.Left = this.currentRect.Left - this.preferences.Overlay[1];
+            this.Overlay.Top = this.currentRect.Top - this.preferences.Overlay[2];
         }
 
         private void Reset()
