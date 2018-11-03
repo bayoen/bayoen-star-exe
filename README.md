@@ -3,7 +3,7 @@
 </p>
 
 # bayoen-star
-**Finished!!!! This sub-project will be merged into 'bayoen-exe'**  
+**Finished!!!! This sub-project will be merged into ['bayoen-exe'](https://github.com/bayoen/bayoen-star-exe)**  
 The Puyo Puyo Tetris Add-On which counting stars and games
 <p align="center">
    <img src="resources/bayoen-star-example.png" width="46%" hspace="10"/><img src="resources/bayoen-star-example-chroma.png" width="46%" hspace="10"/>
