@@ -31,7 +31,7 @@ The Puyo Puyo Tetris Add-On which counting stars and games
 
 <a name="korean-changes"> </a>
 ## 변경점
-목표 메뉴 추가: '#선승' 기능이 추가됐습니다.
+목표 메뉴 추가: '#선승' 기능이 추가됐습니다. 이 프로젝트의 단일개발은 종료되었습니다. 앞으로의 기능개선을 이용하고 싶으시면 상위프로젝트인 'bayoen-exe'을 설치해주세요!
 
 <a name="korean-functions"> </a>
 ## 주요기능
@@ -87,7 +87,7 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 
 <a name="english-changes"> </a>
 ## Changes 10(:
-Goal Menu: 'First to # Winning' round system is added
+Goal Menu: 'First to # Winning' round system is added. Single development of this project has been terminated. If you want to take a new version of future enhancements, please install the upper project 'bayoen-exe'.
 
 <a name="english-functions"> </a>
 ## Functions
