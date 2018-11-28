@@ -1,3 +1,6 @@
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](https://github.com/bayoen/bayoen-exe/blob/master/LICENSE)
+[![Github All Releases](https://img.shields.io/github/downloads/bayoen/bayoen-exe/total.svg?style=flat-square)](https://github.com/bayoen/bayoen-star-exe/releases/latest)
+
 <p align="center">
    <img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/>
 </p>
