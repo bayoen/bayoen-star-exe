@@ -1146,7 +1146,7 @@ namespace bayoen
                     System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
                     string rawString = web.DownloadString("https://github.com/bayoen/bayoen-star-exe/releases/latest");
                     string latestVersion = System.Text.RegularExpressions.Regex.Match(rawString, @"<a class=""js-selected-navigation-item selected reponav-item""((.|\n)*?)>", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups[1].Value.Split('/').Last();
-                    this.latestVersion = Version.Parse(latestVersion.Remove(latestVersion.Length - 1));
+                    this.latestVersion = Version.Parse(latestVersion.Remove(latestVersion.Length - 1) + ".0");
                 }
             }
             
