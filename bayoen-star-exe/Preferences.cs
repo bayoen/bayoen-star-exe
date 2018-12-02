@@ -13,6 +13,7 @@ namespace bayoen
         {
             // Active
             public bool? IsTopMost;
+            public bool? IsHideOffline;
             public bool? IsChromaKey;
             public ChromaKeys? ChromaKey;
             public bool? ExportText;

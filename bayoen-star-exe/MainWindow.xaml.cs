@@ -44,7 +44,7 @@ namespace bayoen
         public Display2Grid OverlayDisplay;
         public List<TextBox> Monitors;
 
-        public static Version currentVersion = new Version(0, 0, 13);
+        public static Version currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         public Version latestVersion;
 
         public static string versionText = string.Format(" - Beta v{0}", currentVersion);
@@ -554,6 +554,26 @@ namespace bayoen
                 this.Topmost = this.preferences.IsTopMost.Value;
                 TopMostCheckBox.IsChecked = this.preferences.IsTopMost.Value;
                 MainGroupPanel.Children.Add(TopMostCheckBox);
+
+                CheckBox HideOfflineCheckBox = new CheckBox()
+                {
+                    Content = "Hide panels when PPT is offline",
+                    Margin = new Thickness(5),
+                    ToolTip = "뿌요뿌요 테트리스가 꺼져있을 때 점수판을 숨깁니다",
+                };
+                HideOfflineCheckBox.Click += (sender, e) =>
+                {
+                    this.preferences.IsHideOffline = !this.preferences.IsHideOffline;
+
+                    if (this.MainDisplay.Visibility == Visibility.Collapsed) this.MainDisplay.Visibility = Visibility.Visible;
+                    if (this.OverlayDisplay.Visibility == Visibility.Hidden) this.OverlayDisplay.Visibility = Visibility.Visible;
+                };
+                if (this.preferences.IsHideOffline == null)
+                {
+                    this.preferences.IsHideOffline = false;
+                }                
+                HideOfflineCheckBox.IsChecked = this.preferences.IsHideOffline.Value;
+                MainGroupPanel.Children.Add(HideOfflineCheckBox);
 
                 StackPanel ExportTextPanel = new StackPanel()
                 {
@@ -1174,16 +1194,22 @@ namespace bayoen
         {
             if (IsPPTOn)
             {
-                if (this.MainDisplay.Visibility == Visibility.Collapsed) this.MainDisplay.Visibility = Visibility.Visible;
-                if (this.OverlayDisplay.Visibility == Visibility.Hidden) this.OverlayDisplay.Visibility = Visibility.Visible;
+                if (this.preferences.IsHideOffline.Value)
+                {
+                    if (this.MainDisplay.Visibility == Visibility.Collapsed) this.MainDisplay.Visibility = Visibility.Visible;
+                    if (this.OverlayDisplay.Visibility == Visibility.Hidden) this.OverlayDisplay.Visibility = Visibility.Visible;
+                }                
                 this.scoreAddress = this.pptMemory.ReadInt32(new IntPtr(0x14057F048)) + 0x38;
 
                 this.CheckOverlay();                
             }
             else
             {
-                if (this.MainDisplay.Visibility == Visibility.Visible) this.MainDisplay.Visibility = Visibility.Collapsed;
-                if (this.OverlayDisplay.Visibility == Visibility.Visible) this.OverlayDisplay.Visibility = Visibility.Hidden;
+                if (this.preferences.IsHideOffline.Value)
+                {
+                    if (this.MainDisplay.Visibility == Visibility.Visible) this.MainDisplay.Visibility = Visibility.Collapsed;
+                    if (this.OverlayDisplay.Visibility == Visibility.Visible) this.OverlayDisplay.Visibility = Visibility.Hidden;
+                }                    
                 this.Status("Offline");
                 return;
             }
