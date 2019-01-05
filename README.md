@@ -26,7 +26,7 @@ The Puyo Puyo Tetris Add-On which counting stars and games
 <a name="korean"> </a>
 # 한국어 안내
 ## bayoen-star-exe
-'**bayoen-star**'은 뿌요뿌요 테트리스 bayoen 프로젝트의 보조기능인 별세는 앱입니다. 뿌요뿌요 테트리스 내부의 정보를 조작하지 않고, 전적분석을 위해 읽기만 합니다. 개발 및 테스트 환경은 Windows 10 (.Net Framework 4.5) 입니다.
+'**bayoen-star**'은 뿌요뿌요 테트리스 bayoen 프로젝트의 보조기능인 별세는 앱입니다. 뿌요뿌요 테트리스 내부의 정보를 조작하지 않고, 전적분석을 위해 읽기만 합니다. 개발 및 테스트 환경은 Windows 10 (.Net Framework 4.5) 입니다. 이 프로젝트는 어떠한 행태로든 영리행위를 하지 않습니다. 모든 2차 저작권은 SEGA에 있습니다! SEGA의 요청이 있을 경우 프로젝트를 폐쇄할 수 있습니다.
 
 문의 및 건의: [[디스코드](https://discord.gg/rxW5UKx)] '**SemiR4in#0001**'
 
@@ -82,7 +82,7 @@ The Puyo Puyo Tetris Add-On which counting stars and games
 <a name="english"> </a>
 # English Instruction 
 ## bayoen-star-exe
-'**bayoen-star**' is counting star module of Puyo Puyo Tetris bayeon project. We don't manipulate the information inside the Puyo Puyo Tetris, we read only it for game result analysis. The development and testing environment is Windows 10 (.Net Framework 4.5).
+'**bayoen-star**' is counting star module of Puyo Puyo Tetris bayeon project. We don't manipulate the information inside the Puyo Puyo Tetris, we read only it for game result analysis. The development and testing environment is Windows 10 (.Net Framework 4.5). We are not about to get any commercial profits. All secondary copyrights are belongs to SEGA. If SEGA reports us, we would close this project immediately.
 
 Contect us: [[Discord](https://discord.gg/rxW5UKx)] '**SemiR4in#0001**'
 
