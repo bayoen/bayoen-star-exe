@@ -58,6 +58,7 @@ namespace bayoen
         public MetroWindow Overlay;
 
         public VAMemory pptMemory;
+        public bool isOffline;
         public RECT currentRect, oldRect;
         public int scoreAddress;
         public Process[] PPTProcesses;
@@ -70,29 +71,6 @@ namespace bayoen
         public List<int> countingStar;
         public List<int> countingCrown;
 
-        private int _goalScore;
-        public int GoalScore
-        {
-            get => this._goalScore;
-            set
-            {
-                int refined = Math.Min(Math.Max(0, value), 9999);
-
-                if (this.GoalType == GoalTypes.None)
-                {
-                    this.MainDisplay.HideGoal();
-                    this.OverlayDisplay.HideGoal();
-                }
-                else
-                {
-                    this.MainDisplay.DisplayGoal(refined, this.GoalType);
-                    this.OverlayDisplay.DisplayGoal(refined, this.GoalType);
-                }
-
-                this._goalScore = refined;
-            }
-        }
-
         private GoalTypes _goalType;
         public GoalTypes GoalType
         {
@@ -102,15 +80,48 @@ namespace bayoen
                 if (value == GoalTypes.None)
                 {
                     this.MainDisplay.HideGoal();
-                    this.OverlayDisplay.HideGoal();
-                }   
-                else
+                    this.OverlayDisplay.HideGoal();                    
+                }
+                else if (value == GoalTypes.First)
                 {
-                    this.MainDisplay.DisplayGoal(this.GoalScore, value);
-                    this.OverlayDisplay.DisplayGoal(this.GoalScore, value);
+                    this.MainDisplay.SubDisplayTFTextBlock.Text = "FIRST";
+                    this.OverlayDisplay.SubDisplayTFTextBlock.Text = "FIRST";
+                }
+                else // if (value == GoalTypes.Total)
+                {
+                    this.MainDisplay.SubDisplayTFTextBlock.Text = "TOTAL";
+                    this.OverlayDisplay.SubDisplayTFTextBlock.Text = "TOTAL";
                 }
 
                 this._goalType = value;
+            }
+        }
+
+        private GoalCounters _goalCounter;
+        public GoalCounters GoalCounter
+        {
+            get => this._goalCounter;
+            set
+            {
+                this.MainDisplay.DisplayGoal(this.GoalScore, value);
+                this.OverlayDisplay.DisplayGoal(this.GoalScore, value);
+
+                this._goalCounter = value;
+            }
+        }
+
+        private int _goalScore;
+        public int GoalScore
+        {
+            get => this._goalScore;
+            set
+            {
+                int refined = Math.Min(Math.Max(0, value), 9999);
+
+                this.MainDisplay.DisplayGoal(refined, this.GoalCounter);
+                this.OverlayDisplay.DisplayGoal(refined, this.GoalCounter);
+
+                this._goalScore = refined;
             }
         }
 
@@ -168,13 +179,27 @@ namespace bayoen
                 {
                     return false;
                 }
-                else if (this.GoalType == GoalTypes.Star)
+                else if (this.GoalType == GoalTypes.First)
                 {
-                    return this.countingStar.FindIndex(x => x >= this.GoalScore) > -1;
+                    if (this.GoalCounter == GoalCounters.Star)
+                    {
+                        return this.countingStar.FindIndex(x => x >= this.GoalScore) > -1;
+                    }
+                    else // if (this.GoalType == GoalTypes.Crown)
+                    {
+                        return this.countingCrown.FindIndex(x => x >= this.GoalScore) > -1;
+                    }
                 }
-                else // if (this.GoalType == GoalTypes.Crown)
+                else //if (this.GoalType == GoalTypes.Total)
                 {
-                    return this.countingCrown.FindIndex(x => x >= this.GoalScore) > -1;
+                    if (this.GoalCounter == GoalCounters.Star)
+                    {                      
+                        return this.countingStar.Sum() >= this.GoalScore;
+                    }
+                    else // if (this.GoalType == GoalTypes.Crown)
+                    {
+                        return this.countingCrown.Sum() >= this.GoalScore;
+                    }
                 }
             }
         }
@@ -257,60 +282,65 @@ namespace bayoen
                 this.SetGoalButton.Click += (sender, e) =>
                 {
                     this.preferences.GoalType = (GoalTypes)(this.GoalTypeComboBox.SelectedIndex);
-                    this.preferences.GoalScore = (int)this.GoalScoreNumericUpDown.Value.Value;
+                    this.preferences.GoalCounter = (GoalCounters)(this.GoalCounterComboBox.SelectedIndex);
+                    this.preferences.GoalScore = (int)this.GoalScoreNumericUpDown.Value.Value;                    
 
-                    this.GoalType = this.preferences.GoalType.Value;
                     this.GoalScore = this.preferences.GoalScore.Value;
+                    this.GoalCounter = this.preferences.GoalCounter.Value;
+                    this.GoalType = this.preferences.GoalType.Value;
+                    this.CheckContainers();
                     this.GoalFlyout.IsOpen = false;
                     System.Media.SystemSounds.Hand.Play();
                 };
                 this.ClearGoalButton.Click += (sender, e) =>
                 {
                     this.GoalTypeComboBox.SelectedIndex = 0;
+                    this.GoalCounterComboBox.SelectedIndex = 0;
                     this.GoalScoreNumericUpDown.Value = 0;
                 };
-                List<Tuple<GoalTypes, System.Drawing.Bitmap>> GoalTypeSets = new List<Tuple<GoalTypes, System.Drawing.Bitmap>>()
+                this.GoalTypeComboBox.ItemsSource = new List<string>() { "None", "First", "Total", };
+                List<Tuple<GoalCounters, System.Drawing.Bitmap>> GoalCounterSets = new List<Tuple<GoalCounters, System.Drawing.Bitmap>>()
                 {
-                    new Tuple<GoalTypes, System.Drawing.Bitmap>( GoalTypes.None,  null),
-                    new Tuple<GoalTypes, System.Drawing.Bitmap>( GoalTypes.Star, bayoen.Properties.Resources.StarPlus),
-                    new Tuple<GoalTypes, System.Drawing.Bitmap>( GoalTypes.Crown, bayoen.Properties.Resources.CrownLight),
+                    //new Tuple<GoalCounters, System.Drawing.Bitmap>( GoalCounters.None,  null),
+                    new Tuple<GoalCounters, System.Drawing.Bitmap>( GoalCounters.Star, bayoen.Properties.Resources.StarPlus),
+                    new Tuple<GoalCounters, System.Drawing.Bitmap>( GoalCounters.Crown, bayoen.Properties.Resources.CrownLight),
                 };
-                List<ComboBoxItem> GoalTypeItemList = new List<ComboBoxItem>();
-                foreach (Tuple<GoalTypes, System.Drawing.Bitmap> tokenGoalType in GoalTypeSets)
+                List<ComboBoxItem> GoalCounterItemList = new List<ComboBoxItem>();
+                foreach (Tuple<GoalCounters, System.Drawing.Bitmap> tokenGoalCounter in GoalCounterSets)
                 {
-                    StackPanel TokenGoalTypeStackPanel = new StackPanel()
+                    StackPanel TokenGoalCounterStackPanel = new StackPanel()
                     {
                         Margin = new Thickness(0),
                         Orientation = Orientation.Horizontal,
                     };
 
-                    Image TokenGoalTypeImage = new Image()
+                    Image TokenGoalCounterImage = new Image()
                     {
                         Width = 14,
                         Height = 14,
                         Margin = new Thickness(3, 2, 5, 2),
                         VerticalAlignment = VerticalAlignment.Center,
                     };
-                    if (tokenGoalType.Item2 != null) TokenGoalTypeImage.SetBitmap(tokenGoalType.Item2);
-                    TokenGoalTypeStackPanel.Children.Add(TokenGoalTypeImage);
+                    if (tokenGoalCounter.Item2 != null) TokenGoalCounterImage.SetBitmap(tokenGoalCounter.Item2);
+                    TokenGoalCounterStackPanel.Children.Add(TokenGoalCounterImage);
 
-                    TextBlock TokenGoalTypeTextBlock = new TextBlock()
+                    TextBlock TokenGoalCounterTextBlock = new TextBlock()
                     {
-                        Text = tokenGoalType.Item1.ToString(),
+                        Text = tokenGoalCounter.Item1.ToString(),
                         FontWeight = FontWeights.Normal,
                         Margin = new Thickness(2),
                         VerticalAlignment = VerticalAlignment.Center,
                     };
-                    TokenGoalTypeStackPanel.Children.Add(TokenGoalTypeTextBlock);
+                    TokenGoalCounterStackPanel.Children.Add(TokenGoalCounterTextBlock);
 
-                    ComboBoxItem TokenGoalTypeItem = new ComboBoxItem()
+                    ComboBoxItem TokenGoalCounterItem = new ComboBoxItem()
                     {
                         Background = Brushes.Black,
-                        Content = TokenGoalTypeStackPanel,
+                        Content = TokenGoalCounterStackPanel,
                     };
-                    GoalTypeItemList.Add(TokenGoalTypeItem);
+                    GoalCounterItemList.Add(TokenGoalCounterItem);
                 }
-                this.GoalTypeComboBox.ItemsSource = GoalTypeItemList;
+                this.GoalCounterComboBox.ItemsSource = GoalCounterItemList;
                 MenuItem RemoveGoalItem = new MenuItem()
                 {
                     Header = "Remove",
@@ -319,10 +349,12 @@ namespace bayoen
                 RemoveGoalItem.Click += (sender, e) =>
                 {
                     this.preferences.GoalType = GoalTypes.None;
+                    this.preferences.GoalCounter = GoalCounters.Star;
                     this.preferences.GoalScore = 0;
 
+                    this.GoalScore = this.preferences.GoalScore.Value;                    
+                    this.GoalCounter = this.preferences.GoalCounter.Value;
                     this.GoalType = this.preferences.GoalType.Value;
-                    this.GoalScore = this.preferences.GoalScore.Value;
                 };
                 GoalItems.Add(RemoveGoalItem);
                 GoalMenuItem.ItemsSource = GoalItems;
@@ -331,12 +363,18 @@ namespace bayoen
                 {
                     this.preferences.GoalType = GoalTypes.None;
                 }
+
+                if (this.preferences.GoalCounter == null)
+                {
+                    this.preferences.GoalCounter = GoalCounters.Star;
+                }
                 if (this.preferences.GoalScore == null)
                 {
                     this.preferences.GoalScore = 0;
                 }
 
                 this.GoalTypeComboBox.SelectedIndex = (int)this.preferences.GoalType.Value;
+                this.GoalCounterComboBox.SelectedIndex = (int)this.preferences.GoalCounter.Value;
                 this.GoalScoreNumericUpDown.Value = this.preferences.GoalScore.Value;
 
                 MenuItem OverlayMenuItem = BuildMenu("Overlay", "appbar_app_plus");
@@ -900,16 +938,18 @@ namespace bayoen
                 };
                 AckMenu.Click += (sender, e) =>
                 {
-                    MessageBox.Show("'bayoen~' is powered by:" + Environment.NewLine
-                        + "Idea: Minacle, mat1jaczyyy" + Environment.NewLine
-                        + "Icon: Get your Gu's (dailycarbuncle.tumblr.com)" + Environment.NewLine
-                        + "IU: MahApps.Metro (mahapps.com)" + Environment.NewLine
+                    //MessageBox.Show("'bayoen~' is powered by:" + Environment.NewLine
+                    //    + "Idea: Minacle, mat1jaczyyy" + Environment.NewLine
+                    //    + "Icon: Get your Gu's (dailycarbuncle.tumblr.com)" + Environment.NewLine
+                    //    + "IU: MahApps.Metro (mahapps.com)" + Environment.NewLine
 
-                        + Environment.NewLine + "and made by SemiR4in (twitch.tv/semirain)" + Environment.NewLine
-                        + "[ the.semirain@gmail.com ]" + Environment.NewLine
+                    //    + Environment.NewLine + "and made by SemiR4in (twitch.tv/semirain)" + Environment.NewLine
+                    //    + "[ the.semirain@gmail.com ]" + Environment.NewLine
 
-                        + Environment.NewLine + "and also thank you all PPT communities!" + Environment.NewLine
-                        , "Acknowledgement");
+                    //    + Environment.NewLine + "and also thank you all PPT communities!" + Environment.NewLine
+                    //    , "Acknowledgement");
+
+                    Process.Start("https://github.com/bayoen/bayoen-exe/wiki/Acknowledgements");
                 };
                 this.Notify.ContextMenu.MenuItems.Add(AckMenu);
 
@@ -1151,6 +1191,7 @@ namespace bayoen
             }
             
             this.pptMemory = new VAMemory(pptName);
+            this.isOffline = true;
 
             this.oldStar = new List<int>() { -1, -1 };
             this.currentStar = new List<int>() { -1, -1 };
@@ -1186,25 +1227,36 @@ namespace bayoen
                 this.winMatch = -1;
             }
 
-            this.GoalType = this.preferences.GoalType.Value;
             this.GoalScore = this.preferences.GoalScore.Value;
+            this.GoalCounter = this.preferences.GoalCounter.Value;
+            this.GoalType = this.preferences.GoalType.Value;
         }
 
         private void CountingStars()
         {
-            if (IsPPTOn)
+            if (this.IsPPTOn)
             {
+                if (this.isOffline)
+                {
+                    this.pptMemory.CheckProcess();
+                    this.isOffline = false;
+                }
+
                 if (this.preferences.IsHideOffline.Value)
                 {
                     if (this.MainDisplay.Visibility == Visibility.Collapsed) this.MainDisplay.Visibility = Visibility.Visible;
                     if (this.OverlayDisplay.Visibility == Visibility.Hidden) this.OverlayDisplay.Visibility = Visibility.Visible;
                 }                
                 this.scoreAddress = this.pptMemory.ReadInt32(new IntPtr(0x14057F048)) + 0x38;
-
-                this.CheckOverlay();                
+                this.CheckOverlay();
             }
             else
             {
+                if (!this.isOffline)
+                {
+                    this.isOffline = true;
+                }
+
                 if (this.preferences.IsHideOffline.Value)
                 {
                     if (this.MainDisplay.Visibility == Visibility.Visible) this.MainDisplay.Visibility = Visibility.Collapsed;
@@ -1214,7 +1266,7 @@ namespace bayoen
                 return;
             }
 
-            if (IsInPlay)
+            if (this.IsInPlay)
             {
                 for (int playerIndex = 0; playerIndex < 2; playerIndex++)
                 {
@@ -1309,8 +1361,8 @@ namespace bayoen
 
         private void CheckContainers()
         {
-            this.MainDisplay.Set(this.currentStar, this.countingStar, this.countingCrown, this.GoalType, this.GoalScore);
-            this.OverlayDisplay.Set(this.currentStar, this.countingStar, this.countingCrown, this.GoalType, this.GoalScore);
+            this.MainDisplay.Set(this.currentStar, this.countingStar, this.countingCrown, this.GoalType, this.GoalCounter, this.GoalScore);
+            this.OverlayDisplay.Set(this.currentStar, this.countingStar, this.countingCrown, this.GoalType, this.GoalCounter, this.GoalScore);
         }
 
         private void ToMonitors()
@@ -1563,8 +1615,13 @@ namespace bayoen
         public enum GoalTypes : int
         {
             None = 0,
-            Star = 1,
-            Crown = 2,
+            First = 1,
+            Total = 2,
+        }
+        public enum GoalCounters : int
+        {
+            Star = 0,
+            Crown = 1,
         }
     }
 
@@ -1595,6 +1652,45 @@ namespace bayoen
             }
 
             return true;
+        }
+
+        public static IntPtr ReadOffset(this VAMemory vam, IntPtr pOffset, params Int32[] offsets)
+        {
+            IntPtr candidate = pOffset;
+            foreach (Int32 tokenOffset in offsets)
+            {
+                try
+                {
+                    candidate = new IntPtr(vam.ReadInt32(candidate) + tokenOffset);
+                }
+                catch
+                {
+                    throw new InvalidOperationException(string.Format("ReadOffset for {0} broken, ({1})", pOffset, tokenOffset));
+                }
+            }
+            return candidate;
+        }
+
+        public static bool ReadBinary(this VAMemory vam, int location, IntPtr pOffset)
+        {
+            return vam.ReadBinary(location, pOffset, new int[] { });
+        }
+
+        public static bool ReadBinary(this VAMemory vam, int location, IntPtr pOffset, params Int32[] offsets)
+        {
+            byte tempByte = vam.ReadByte(vam.ReadOffset(pOffset, offsets));
+
+            return (tempByte & (1 << location)) != 0;
+        }
+
+        public static byte ReadByte(this VAMemory vam, IntPtr pOffset, params Int32[] offsets)
+        {
+            return vam.ReadByte(vam.ReadOffset(pOffset, offsets));
+        }
+
+        public static Int32 ReadInt32(this VAMemory vam, IntPtr pOffset, params Int32[] offsets)
+        {
+            return vam.ReadInt32(vam.ReadOffset(pOffset, offsets));
         }
     }
 }

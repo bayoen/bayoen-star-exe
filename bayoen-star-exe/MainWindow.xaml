@@ -24,17 +24,19 @@
                             <Setter Property="FontWeight" Value="Bold"/>
                             <Setter Property="TextAlignment" Value="Center"/>
                             <Setter Property="Height" Value="15"/>
-                            <Setter Property="Margin" Value="3,6,3,6"/>
+                            <Setter Property="Margin" Value="2,6,2,6"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                         </Style>
                     </StackPanel.Resources>
 
                     <TextBlock Text="Type"/>
-                    <ComboBox x:Name="GoalTypeComboBox" Height="15" Width="100" Margin="3,6,6,6"/>
+                    <ComboBox x:Name="GoalTypeComboBox" Height="15" Width="70" Margin="3,6,6,6"/>
+                    <TextBlock Text="Counter"/>
+                    <ComboBox x:Name="GoalCounterComboBox" Height="15" Width="100" Margin="3,6,6,6"/>
                     <TextBlock Text="Score"/>
-                    <mtc:NumericUpDown x:Name="GoalScoreNumericUpDown" Height="15" Width="100" Margin="3,6,6,6" Value="0" Minimum="0" Maximum="9999"/>
-                    <Button x:Name="SetGoalButton" Content="Set" Height="15" Width="50" Margin="3,6,3,6" Style="{DynamicResource AccentedSquareButtonStyle}" VerticalAlignment="Center"/>
-                    <Button x:Name="ClearGoalButton" Content="Clear" Height="15" Width="50" Margin="3,6,3,6" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Center"/>
+                    <mtc:NumericUpDown x:Name="GoalScoreNumericUpDown" Height="15" Width="85" Margin="3,6,3,6" Value="0" Minimum="0" Maximum="9999"/>
+                    <Button x:Name="SetGoalButton" Content="Set" Height="15" Width="50" Margin="2,6,2,6" Style="{DynamicResource AccentedSquareButtonStyle}" VerticalAlignment="Center"/>
+                    <Button x:Name="ClearGoalButton" Content="Clear" Height="15" Width="50" Margin="3,6,2,6" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
             </mtc:Flyout>
         </mtc:FlyoutsControl>

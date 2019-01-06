@@ -22,6 +22,8 @@ namespace bayoen
             public DisplayModes? DisplayMode;
 
             public GoalTypes? GoalType;
+            public GoalCounters? GoalCounter;
+            
             public int? GoalScore;
 
             // Passive
@@ -48,6 +50,9 @@ namespace bayoen
 
                 this.Overlay = null;
                 this.DisplayMode = null;
+
+                this.GoalType = null;
+                this.GoalCounter = null;
 
                 this.EverClosed = null;
                 this.OverlapPass = false;

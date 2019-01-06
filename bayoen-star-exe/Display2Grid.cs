@@ -68,7 +68,7 @@ namespace bayoen
                 };
                 this.SubDisplayGrid.Children.Add(this.SubDisplayContainerPanel);
 
-                TextBlock SubDisplayTFTextBlock = new TextBlock()
+                this.SubDisplayTFTextBlock = new TextBlock()
                 {
                     Text = "GOAL",
                     FontSize = 20,
@@ -120,6 +120,7 @@ namespace bayoen
             public StackPanel ContainerPanel;
 
             public Grid SubDisplayGrid;
+            public TextBlock SubDisplayTFTextBlock;
             public Image SubDisplayPanelImage;
             public StackPanel SubDisplayContainerPanel;
             public Image SubDisplaySymbolImage;
@@ -278,22 +279,20 @@ namespace bayoen
                 }
             }
 
-
-
             public void SetMode(DisplayModes mode, bool fit)
             {
                 this.fitFlag = fit;
                 this.Mode = mode;
             }
 
-            public void DisplayGoal(int goal, GoalTypes type)
+            public void DisplayGoal(int goal, GoalCounters type)
             {
                 if (this.SubDisplayGrid.Visibility == Visibility.Collapsed) this.SubDisplayGrid.Visibility = Visibility.Visible;
-                if (type == GoalTypes.Star)
+                if (type == GoalCounters.Star)
                 {
                     this.SubDisplaySymbolImage.SetBitmap(bayoen.Properties.Resources.StarPlus);
                 }
-                else if (type == GoalTypes.Crown)
+                else if (type == GoalCounters.Crown)
                 {
                     this.SubDisplaySymbolImage.SetBitmap(bayoen.Properties.Resources.CrownLight);
                 }
@@ -308,46 +307,12 @@ namespace bayoen
             public void HideGoal()
             {
                 if (this.SubDisplayGrid.Visibility == Visibility.Visible) this.SubDisplayGrid.Visibility = Visibility.Collapsed;
+                this.SubDisplayGrid.UpdateLayout();
                 this.SubDisplayTextBlock.Text = "-";
             }
 
-            public void Set(int outerScore0, int innerScore0, int innerScore1, int outerScore1, ContainerImages outerImage0, ContainerImages innerImage0, ContainerImages innerImage1, ContainerImages outerImage1)
+            public void Set(List<int> current, List<int> counted, List<int> crowns, GoalTypes goalType, GoalCounters goalCounter, int goalScore)
             {
-                this.Set_Old(outerScore0, innerScore0, innerScore1, outerScore1);
-                this.Set(outerImage0, innerImage0, innerImage1, outerImage1);
-            }
-
-            public void Set_Old(int innerScore0, int innerScore1)
-            {
-                this.Inners[0].Score = innerScore0;
-                this.Inners[1].Score = innerScore1;
-            }
-
-            public void Set_Old(int outerScore0, int innerScore0, int innerScore1, int outerScore1)
-            {
-                this.Outers[0].Score = outerScore0;
-                this.Inners[0].Score = innerScore0;
-                this.Inners[1].Score = innerScore1;
-                this.Outers[1].Score = outerScore1;
-            }
-
-            public void Set(ContainerImages outerImage0, ContainerImages innerImage0, ContainerImages innerImage1, ContainerImages outerImage1)
-            {
-                this.Outers[0].ContainerImage = outerImage0;
-                this.Inners[0].ContainerImage = innerImage0;
-                this.Inners[1].ContainerImage = innerImage1;
-                this.Outers[1].ContainerImage = outerImage1;
-            }
-
-
-            public void Set(List<int> current, List<int> counted, List<int> crowns, GoalTypes goalType, int goalScore)
-            {
-                if (goalType == GoalTypes.None)
-                {
-                    this.Inners.ForEach(x => x.ContainerState = ContainerStates.Idle);
-                    this.Outers.ForEach(x => x.ContainerState = ContainerStates.Idle);
-                }
-
                 if (this.Mode == DisplayModes.Game_and_Star_plus)
                 {
                     this.Outers[0].Score = crowns[0];
@@ -355,25 +320,119 @@ namespace bayoen
                     this.Inners[1].Score = counted[1];
                     this.Outers[1].Score = crowns[1];
 
-                    if (goalType == GoalTypes.Star)
+                    if (goalCounter == GoalCounters.Star)
                     {
-                             if (counted[0]  < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle;     this.Outers[0].ContainerState = ContainerStates.Idle;    }
-                        else if (counted[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal;     this.Outers[0].ContainerState = ContainerStates.Goal;    }
-                        else if (counted[0] >  goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken;   this.Outers[0].ContainerState = ContainerStates.Broken;  }
-                                                                                                                           
-                             if (counted[1]  < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle;     this.Outers[1].ContainerState = ContainerStates.Idle;    }
-                        else if (counted[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal;     this.Outers[1].ContainerState = ContainerStates.Goal;    }
-                        else if (counted[1] >  goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken;   this.Outers[1].ContainerState = ContainerStates.Broken;  }
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (counted[0] < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle; this.Outers[0].ContainerState = ContainerStates.Idle; }
+                            else if (counted[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal; this.Outers[0].ContainerState = ContainerStates.Goal; }
+                            else if (counted[0] > goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken; this.Outers[0].ContainerState = ContainerStates.Broken; }
+
+                            if (counted[1] < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle; this.Outers[1].ContainerState = ContainerStates.Idle; }
+                            else if (counted[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal; this.Outers[1].ContainerState = ContainerStates.Goal; }
+                            else if (counted[1] > goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken; this.Outers[1].ContainerState = ContainerStates.Broken; }
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = counted[0] + counted[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Outers[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                                this.Outers[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Outers[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                                this.Outers[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (counted[0] > counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                    this.Outers[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (counted[0] < counted[1]) 
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Outers[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (counted[0] == counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
-                    else if (goalType == GoalTypes.Crown)
+                    else if (goalCounter == GoalCounters.Crown)
                     {
-                             if (crowns[0]  < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle;     this.Outers[0].ContainerState = ContainerStates.Idle;    }
-                        else if (crowns[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal;     this.Outers[0].ContainerState = ContainerStates.Goal;    }
-                        else if (crowns[0] >  goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken;   this.Outers[0].ContainerState = ContainerStates.Broken;  }
-                                 
-                             if (crowns[1]  < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle;     this.Outers[1].ContainerState = ContainerStates.Idle;    }
-                        else if (crowns[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal;     this.Outers[1].ContainerState = ContainerStates.Goal;    }
-                        else if (crowns[1] >  goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken;   this.Outers[1].ContainerState = ContainerStates.Broken;  }
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (crowns[0] < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle; this.Outers[0].ContainerState = ContainerStates.Idle; }
+                            else if (crowns[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal; this.Outers[0].ContainerState = ContainerStates.Goal; }
+                            else if (crowns[0] > goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken; this.Outers[0].ContainerState = ContainerStates.Broken; }
+
+                            if (crowns[1] < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle; this.Outers[1].ContainerState = ContainerStates.Idle; }
+                            else if (crowns[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal; this.Outers[1].ContainerState = ContainerStates.Goal; }
+                            else if (crowns[1] > goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken; this.Outers[1].ContainerState = ContainerStates.Broken; }
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = crowns[0] + crowns[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Outers[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                                this.Outers[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Outers[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                                this.Outers[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (crowns[0] > crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                    this.Outers[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (crowns[0] < crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Outers[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (crowns[0] == crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
                 }
                 else if (this.Mode == DisplayModes.Game_and_Star)
@@ -383,20 +442,120 @@ namespace bayoen
                     this.Inners[1].Score = current[1];
                     this.Outers[1].Score = crowns[1];
 
-                    if (goalType == GoalTypes.Star)
+                    if (goalCounter == GoalCounters.Star)
                     {
-                        this.Inners.ForEach(x => x.ContainerState = ContainerStates.Idle);
-                        this.Outers.ForEach(x => x.ContainerState = ContainerStates.Idle);
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (counted[0] < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle; this.Outers[0].ContainerState = ContainerStates.Idle; }
+                            else if (counted[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal; this.Outers[0].ContainerState = ContainerStates.Goal; }
+                            else if (counted[0] > goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken; this.Outers[0].ContainerState = ContainerStates.Broken; }
+
+                            if (counted[1] < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle; this.Outers[1].ContainerState = ContainerStates.Idle; }
+                            else if (counted[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal; this.Outers[1].ContainerState = ContainerStates.Goal; }
+                            else if (counted[1] > goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken; this.Outers[1].ContainerState = ContainerStates.Broken; }
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = counted[0] + counted[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Outers[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                                this.Outers[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Outers[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                                this.Outers[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (counted[0] > counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                    this.Outers[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (counted[0] < counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Outers[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (counted[0] == counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
+
                     }
-                    else if (goalType == GoalTypes.Crown)
+                    else if (goalCounter == GoalCounters.Crown)
                     {
-                             if (crowns[0]  < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle;     this.Outers[0].ContainerState = ContainerStates.Idle;    }
-                        else if (crowns[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal;     this.Outers[0].ContainerState = ContainerStates.Goal;    }
-                        else if (crowns[0] >  goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken;   this.Outers[0].ContainerState = ContainerStates.Broken;  }
-                                 
-                             if (crowns[1]  < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle;     this.Outers[1].ContainerState = ContainerStates.Idle;    }
-                        else if (crowns[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal;     this.Outers[1].ContainerState = ContainerStates.Goal;    }
-                        else if (crowns[1] >  goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken;   this.Outers[1].ContainerState = ContainerStates.Broken;  }
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (crowns[0] < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle; this.Outers[0].ContainerState = ContainerStates.Idle; }
+                            else if (crowns[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal; this.Outers[0].ContainerState = ContainerStates.Goal; }
+                            else if (crowns[0] > goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken; this.Outers[0].ContainerState = ContainerStates.Broken; }
+
+                            if (crowns[1] < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle; this.Outers[1].ContainerState = ContainerStates.Idle; }
+                            else if (crowns[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal; this.Outers[1].ContainerState = ContainerStates.Goal; }
+                            else if (crowns[1] > goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken; this.Outers[1].ContainerState = ContainerStates.Broken; }
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = crowns[0] + crowns[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Outers[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                                this.Outers[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Outers[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                                this.Outers[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (crowns[0] > crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                    this.Outers[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (crowns[0] < crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Outers[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (crowns[0] == crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
                 }
                 else if (this.Mode == DisplayModes.Game_only)
@@ -404,20 +563,99 @@ namespace bayoen
                     this.Inners[0].Score = crowns[0];
                     this.Inners[1].Score = crowns[1];
 
-                    if (goalType == GoalTypes.Star)
+                    if (goalCounter == GoalCounters.Star)
                     {
-                        this.Inners.ForEach(x => x.ContainerState = ContainerStates.Idle);
-                        this.Outers.ForEach(x => x.ContainerState = ContainerStates.Idle);
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (counted[0] < goalScore) this.Inners[0].ContainerState = ContainerStates.Idle;
+                            else if (counted[0] == goalScore) this.Inners[0].ContainerState = ContainerStates.Goal;
+                            else if (counted[0] > goalScore) this.Inners[0].ContainerState = ContainerStates.Broken;
+
+                            if (counted[1] < goalScore) this.Inners[1].ContainerState = ContainerStates.Idle;
+                            else if (counted[1] == goalScore) this.Inners[1].ContainerState = ContainerStates.Goal;
+                            else if (counted[1] > goalScore) this.Inners[1].ContainerState = ContainerStates.Broken;
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = counted[0] + counted[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (counted[0] > counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (counted[0] < counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;                                    
+                                }
+                                else // if (counted[0] == counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
-                    else if (goalType == GoalTypes.Crown)
+                    else if (goalCounter == GoalCounters.Crown)
                     {
-                             if (crowns[0]  < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle;     }
-                        else if (crowns[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal;     }
-                        else if (crowns[0] >  goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken;   }
-                                 
-                             if (crowns[1]  < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle;     }
-                        else if (crowns[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal;     }
-                        else if (crowns[1] >  goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken;   }
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (crowns[0] < goalScore) this.Inners[0].ContainerState = ContainerStates.Idle;
+                            else if (crowns[0] == goalScore) this.Inners[0].ContainerState = ContainerStates.Goal;
+                            else if (crowns[0] > goalScore) this.Inners[0].ContainerState = ContainerStates.Broken;
+
+                            if (crowns[1] < goalScore) this.Inners[1].ContainerState = ContainerStates.Idle;
+                            else if (crowns[1] == goalScore) this.Inners[1].ContainerState = ContainerStates.Goal;
+                            else if (crowns[1] > goalScore) this.Inners[1].ContainerState = ContainerStates.Broken;
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = crowns[0] + crowns[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (crowns[0] > crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (crowns[0] < crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (crowns[0] == crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
                 }
                 else if (this.Mode == DisplayModes.Star_plus_only)
@@ -425,20 +663,100 @@ namespace bayoen
                     this.Inners[0].Score = counted[0];
                     this.Inners[1].Score = counted[1];
 
-                    if (goalType == GoalTypes.Star)
+                    if (goalCounter == GoalCounters.Star)
                     {
-                             if (counted[0]  < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle;     }
-                        else if (counted[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal;     }
-                        else if (counted[0] >  goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken;   }
-                                                                                                                      
-                             if (counted[1]  < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle;     }
-                        else if (counted[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal;     }
-                        else if (counted[1] >  goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken;   }
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (counted[0] < goalScore) this.Inners[0].ContainerState = ContainerStates.Idle;
+                            else if (counted[0] == goalScore) this.Inners[0].ContainerState = ContainerStates.Goal;
+                            else if (counted[0] > goalScore) this.Inners[0].ContainerState = ContainerStates.Broken;
+
+                            if (counted[1] < goalScore) this.Inners[1].ContainerState = ContainerStates.Idle;
+                            else if (counted[1] == goalScore) this.Inners[1].ContainerState = ContainerStates.Goal;
+                            else if (counted[1] > goalScore) this.Inners[1].ContainerState = ContainerStates.Broken;
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = counted[0] + counted[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (counted[0] > counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (counted[0] < counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (counted[0] == counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
-                    else if (goalType == GoalTypes.Crown)
+                    else if (goalCounter == GoalCounters.Crown)
                     {
-                        this.Inners.ForEach(x => x.ContainerState = ContainerStates.Idle);
-                        this.Outers.ForEach(x => x.ContainerState = ContainerStates.Idle);
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (crowns[0] < goalScore) this.Inners[0].ContainerState = ContainerStates.Idle;
+                            else if (crowns[0] == goalScore) this.Inners[0].ContainerState = ContainerStates.Goal;
+                            else if (crowns[0] > goalScore) this.Inners[0].ContainerState = ContainerStates.Broken;
+
+                            if (crowns[1] < goalScore) this.Inners[1].ContainerState = ContainerStates.Idle;
+                            else if (crowns[1] == goalScore) this.Inners[1].ContainerState = ContainerStates.Goal;
+                            else if (crowns[1] > goalScore) this.Inners[1].ContainerState = ContainerStates.Broken;
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = crowns[0] + crowns[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (crowns[0] > crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;                                   
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (crowns[0] < crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (crowns[0] == crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
+
                     }
                 }
                 else //if (this.Mode == DisplayModes.Star_plus_and_Star)
@@ -448,21 +766,126 @@ namespace bayoen
                     this.Inners[1].Score = current[1];
                     this.Outers[1].Score = counted[1];
 
-                    if (goalType == GoalTypes.Star)
+                    if (goalCounter == GoalCounters.Star)
                     {
-                             if (counted[0]  < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle;     this.Outers[0].ContainerState = ContainerStates.Idle;    }
-                        else if (counted[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal;     this.Outers[0].ContainerState = ContainerStates.Goal;    }
-                        else if (counted[0] >  goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken;   this.Outers[0].ContainerState = ContainerStates.Broken;  }
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (counted[0] < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle; this.Outers[0].ContainerState = ContainerStates.Idle; }
+                            else if (counted[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal; this.Outers[0].ContainerState = ContainerStates.Goal; }
+                            else if (counted[0] > goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken; this.Outers[0].ContainerState = ContainerStates.Broken; }
 
-                             if (counted[1]  < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle;     this.Outers[1].ContainerState = ContainerStates.Idle;    }
-                        else if (counted[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal;     this.Outers[1].ContainerState = ContainerStates.Goal;    }
-                        else if (counted[1] >  goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken;   this.Outers[1].ContainerState = ContainerStates.Broken;  }
+                            if (counted[1] < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle; this.Outers[1].ContainerState = ContainerStates.Idle; }
+                            else if (counted[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal; this.Outers[1].ContainerState = ContainerStates.Goal; }
+                            else if (counted[1] > goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken; this.Outers[1].ContainerState = ContainerStates.Broken; }
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = counted[0] + counted[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Outers[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                                this.Outers[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Outers[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                                this.Outers[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (counted[0] > counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                    this.Outers[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (counted[0] < counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Outers[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (counted[0] == counted[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
-                    else if (goalType == GoalTypes.Crown)
+                    else if (goalCounter == GoalCounters.Crown)
                     {
-                        this.Inners.ForEach(x => x.ContainerState = ContainerStates.Idle);
-                        this.Outers.ForEach(x => x.ContainerState = ContainerStates.Idle);
+                        if (goalType == GoalTypes.First)
+                        {
+                            if (crowns[0] < goalScore) { this.Inners[0].ContainerState = ContainerStates.Idle; this.Outers[0].ContainerState = ContainerStates.Idle; }
+                            else if (crowns[0] == goalScore) { this.Inners[0].ContainerState = ContainerStates.Goal; this.Outers[0].ContainerState = ContainerStates.Goal; }
+                            else if (crowns[0] > goalScore) { this.Inners[0].ContainerState = ContainerStates.Broken; this.Outers[0].ContainerState = ContainerStates.Broken; }
+
+                            if (crowns[1] < goalScore) { this.Inners[1].ContainerState = ContainerStates.Idle; this.Outers[1].ContainerState = ContainerStates.Idle; }
+                            else if (crowns[1] == goalScore) { this.Inners[1].ContainerState = ContainerStates.Goal; this.Outers[1].ContainerState = ContainerStates.Goal; }
+                            else if (crowns[1] > goalScore) { this.Inners[1].ContainerState = ContainerStates.Broken; this.Outers[1].ContainerState = ContainerStates.Broken; }
+                        }
+                        else if (goalType == GoalTypes.Total)
+                        {
+                            int sum = crowns[0] + crowns[1];
+
+                            if (sum > goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Broken;
+                                this.Outers[0].ContainerState = ContainerStates.Broken;
+                                this.Inners[1].ContainerState = ContainerStates.Broken;
+                                this.Outers[1].ContainerState = ContainerStates.Broken;
+                            }
+                            else if (sum < goalScore)
+                            {
+                                this.Inners[0].ContainerState = ContainerStates.Idle;
+                                this.Outers[0].ContainerState = ContainerStates.Idle;
+                                this.Inners[1].ContainerState = ContainerStates.Idle;
+                                this.Outers[1].ContainerState = ContainerStates.Idle;
+                            }
+                            else // if (sum == goalScore)
+                            {
+                                if (crowns[0] > crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Idle;
+                                    this.Outers[1].ContainerState = ContainerStates.Idle;
+                                }
+                                else if (crowns[0] < crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Idle;
+                                    this.Outers[0].ContainerState = ContainerStates.Idle;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+                                else // if (crowns[0] == crowns[1])
+                                {
+                                    this.Inners[0].ContainerState = ContainerStates.Goal;
+                                    this.Outers[0].ContainerState = ContainerStates.Goal;
+                                    this.Inners[1].ContainerState = ContainerStates.Goal;
+                                    this.Outers[1].ContainerState = ContainerStates.Goal;
+                                }
+
+                            }
+                        }
                     }
+                }
+
+                if (goalType == GoalTypes.None)
+                {
+                    this.Inners.ForEach(x => x.ContainerState = ContainerStates.Idle);
+                    this.Outers.ForEach(x => x.ContainerState = ContainerStates.Idle);
                 }
             }
         }
