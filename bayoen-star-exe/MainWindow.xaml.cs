@@ -932,6 +932,17 @@ namespace bayoen
                 };
                 this.Notify.ContextMenu.MenuItems.Add(OpenMenu);
 
+                wf::MenuItem ResetMenu = new wf::MenuItem()
+                {
+                    Text = "Reset",
+                };
+                ResetMenu.Click += (sender, e) =>
+                {
+                    this.Reset();
+                };
+                this.Notify.ContextMenu.MenuItems.Add(ResetMenu);
+
+
                 wf::MenuItem AckMenu = new wf::MenuItem()
                 {
                     Text = "Ack.",
@@ -1427,6 +1438,12 @@ namespace bayoen
             this.CheckContainers();
             this.ToMonitors();
             this.Save();
+
+            if (this.IsPPTOn)
+            {
+                this.pptMemory.CheckProcess();
+            }
+
             System.Media.SystemSounds.Hand.Play();
         }
 
