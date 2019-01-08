@@ -10,10 +10,11 @@
 # bayoen-star
 The Puyo Puyo Tetris Add-On which counting stars and games
 <p align="center">
-   <img src="resources/bayoen-star-example.png" width="46%" hspace="10"/><img src="resources/bayoen-star-example-chroma.png" width="46%" hspace="10"/>
+   <img src="resources/bayoen-star-example-chroma.png" width="46%" hspace="10"/>
+   <img src="resources/bayoen-star-example-goal.png" width="46%" hspace="10"/>
 </p>
 <p align="center">
-   <img src="resources/bayoen-star-example-goal.png" width="46%" hspace="10"/>
+   
 </p>
 <p align="center">
    <img src="resources/bayoen-star-example-goal-first-blue.png" width="46%" hspace="10"/>
