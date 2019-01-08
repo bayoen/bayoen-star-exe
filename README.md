@@ -1,6 +1,6 @@
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](https://github.com/bayoen/bayoen-exe/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/bayoen/bayoen-star-exe.svg?style=flat-square)](https://github.com/bayoen/bayoen-star-exe/releases/latest)
-[![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/bayoen/bayoen-star-exe/latest/bayoen-star-0.0.12.zip.svg?style=flat-square)](https://github.com/bayoen/bayoen-star-exe/releases/download/0.0.12/bayoen-star-0.0.12.zip)
+[![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/bayoen/bayoen-star-exe/latest/bayoen-star-0.0.13.zip.svg?style=flat-square)](https://github.com/bayoen/bayoen-star-exe/releases/download/0.0.13/bayoen-star-0.0.13.zip)
 
 
 <p align="center">
@@ -36,7 +36,7 @@ The Puyo Puyo Tetris Add-On which counting stars and games
 
 <a name="korean-changes"> </a>
 ## 변경점
-목표 메뉴 추가: '#선승' 기능이 추가됐습니다. 이 프로젝트의 단일개발은 종료되었습니다. 앞으로의 기능개선을 이용하고 싶으시면 상위프로젝트인 'bayoen-exe'을 설치해주세요!
+목표 메뉴 추가: Goal 메뉴에 '#선승(First)' 기능과 함께 '#풀매치(Total)' 기능이 추가됐습니다. 이 프로젝트의 단일개발은 당분간 유지될 예정입니다. 앞으로의 기능개선을 이용하고 싶으시면 상위프로젝트인 'bayoen-exe'을 설치해주세요!
 
 <a name="korean-functions"> </a>
 ## 주요기능
@@ -92,7 +92,10 @@ Download: [ [bayoen-star-xxxx.zip File](https://github.com/bayoen/bayoen-star-ex
 
 <a name="english-changes"> </a>
 ## Changes 10(:
-Goal Menu: 'First to # Winning' round system is added. Single development of this project has been terminated. If you want to take a new version of future enhancements, please install the upper project 'bayoen-exe'.
+- GOAL is changed to FIRST # as "First to # for winning"
+- TOTAL # is full match for # scores
+
+Single development of this project has been continued for while. If you want to take a new version of future enhancements, please install the upper project 'bayoen-exe'.
 
 <a name="english-functions"> </a>
 ## Functions
