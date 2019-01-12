@@ -27,7 +27,7 @@ The Puyo Puyo Tetris Add-On which counting stars and games
    1. [변경점](#korean-changes)
    2. [주요기능](#korean-functions)
 - [English Instruction](#english)  
-   1. [Chnages](#english-changes)
+   1. [Changes](#english-changes)
    2. [Main Function](#english-functions)
 
 * * *
