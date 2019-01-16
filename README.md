@@ -2,9 +2,9 @@
    <img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/>
 </p>
 
-
-
-[Please visit **bayoen.github.io/star**](https://bayoen.github.io/star/)
+<p align="center">
+   <span><a href=https://bayoen.github.io/star>Please visit <strong>bayoen.github.io/star</strong></a></span>
+</p>
 
 <p align="center">
         <span>
