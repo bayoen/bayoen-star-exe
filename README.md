@@ -1,9 +1,9 @@
 <p align="center">
-   <a href=https://bayoen.github.io/star><img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/></a>
+   <a href=https://dailycarbuncle.tumblr.com><img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/></a>
 </p>
 
 <p align="center">
-   <span><a href=https://dailycarbuncle.tumblr.com>Please visit <strong>bayoen.github.io/star</strong></a></span>
+   <span><a href=https://bayoen.github.io/star>Please visit <strong>bayoen.github.io/star</strong></a></span>
 </p>
 
 <p align="center">
