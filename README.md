@@ -1,5 +1,6 @@
 <p align="center">
    <a href=https://dailycarbuncle.tumblr.com><img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/></a>
+   <span>Images and icons are supported by Get your Gu's</span>
 </p>
 
 <p align="center">
