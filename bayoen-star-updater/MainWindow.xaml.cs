@@ -43,7 +43,7 @@ namespace bayoen.star.updater
         }
 
         private const string bayoenStarName = "bayoen-star.exe";
-        private const string dataName = "bayoen-star-version.dat";
+        private const string versionDataName = "bayoen-star-version.dat";
         private const string coreListName = "Resources/bayoen-star-updater-list.dat";
         private const string updatingFolderName = "__update__";
         private static string UpdatarName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name + ".exe";
@@ -148,7 +148,7 @@ namespace bayoen.star.updater
                             if (!updaterFlag) Directory.Delete(updatingFolderPath);
                         }
 
-                        File.WriteAllText(dataName, latestVersion.ToString());
+                        File.WriteAllText(versionDataName, latestVersion.ToString());
                     }
                     else //if (currentVersion > latestVersion)
                     {
@@ -190,11 +190,11 @@ namespace bayoen.star.updater
         private void CheckLocalVersion()
         {
             // Check local version
-            if (File.Exists(dataName))
+            if (File.Exists(versionDataName))
             {
                 try
                 {
-                    this.currentVersion = Version.Parse(File.ReadAllText(dataName, Encoding.ASCII));
+                    this.currentVersion = Version.Parse(File.ReadAllText(versionDataName, Encoding.ASCII));
                 }
                 catch
                 {

@@ -52,6 +52,7 @@ namespace bayoen
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
         public const string dataJSONName = "data.json";
+        public const string versionDataName = "bayoen-star-version.dat";
         public const string updaterName = "bayoen-star-updater.exe";
         public const string updatingFolderName = "__update__";
         public Preferences preferences;
@@ -1582,26 +1583,7 @@ namespace bayoen
             if (currentVersion == latestVersion)
             {
                 // Latest: check updater
-                if (Directory.Exists(updatingFolderName))
-                {
-                    foreach (string tokenPath in Directory.GetFiles(updatingFolderName))
-                    {
-                        if (File.Exists(tokenPath))
-                        {
-                            string fileName = System.IO.Path.GetFileName(tokenPath);
-                            if (File.Exists(fileName)) File.Delete(fileName);
-                            File.Move(tokenPath, fileName);
-                        }
-                        else if (Directory.Exists(tokenPath))
-                        {
-                            string directoryName = System.IO.Path.GetDirectoryName(tokenPath);
-                            if (Directory.Exists(directoryName)) Directory.Delete(directoryName);
-                            Directory.Move(tokenPath, directoryName);
-                        }
-                    }
-                    Directory.Delete(updatingFolderName, true);
-                }
-
+                this.CheckUpdator();
             }
             else if (currentVersion < latestVersion)
             {
@@ -1615,6 +1597,31 @@ namespace bayoen
 
                 //this.DoOldVersion();
             }
+        }
+
+        private void CheckUpdator()
+        {            
+            if (Directory.Exists(updatingFolderName))
+            {
+                foreach (string tokenPath in Directory.GetFiles(updatingFolderName))
+                {
+                    if (File.Exists(tokenPath))
+                    {
+                        string fileName = System.IO.Path.GetFileName(tokenPath);
+                        if (File.Exists(fileName)) File.Delete(fileName);
+                        File.Move(tokenPath, fileName);
+                    }
+                    else if (Directory.Exists(tokenPath))
+                    {
+                        string directoryName = System.IO.Path.GetDirectoryName(tokenPath);
+                        if (Directory.Exists(directoryName)) Directory.Delete(directoryName);
+                        Directory.Move(tokenPath, directoryName);
+                    }
+                }
+                Directory.Delete(updatingFolderName, true);
+            }
+
+            File.WriteAllText(versionDataName, currentVersion.ToString());
         }
 
         private void DoOldVersion()
