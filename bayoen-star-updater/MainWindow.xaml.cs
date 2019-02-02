@@ -44,6 +44,7 @@ namespace bayoen.star.updater
 
         private const string bayoenStarName = "bayoen-star.exe";
         private const string dataName = "bayoen-star-version.dat";
+        private const string coreListName = "Resources/bayoen-star-updater-list.dat";
         private const string updatingFolderName = "__update__";
         private static string UpdatarName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name + ".exe";
         private Version currentVersion = null;
@@ -56,6 +57,12 @@ namespace bayoen.star.updater
             if (IsGoogleOn)
             {
                 this.CheckLocalVersion();
+
+                this.UpdatorTextBlock.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                {
+                    this.UpdatorTextBlock.Text += string.Format(" {0}", this.currentVersion.ToString());
+                }));
+                Thread.Sleep(1);
 
                 #region CheckReleases::
                 ok::GitHubClient client;
@@ -83,7 +90,7 @@ namespace bayoen.star.updater
                     {
                         this.UpdatorTextBlock.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
                         {
-                            this.UpdatorTextBlock.Text += string.Format("to {0}...", latestVersion.ToString());
+                            this.UpdatorTextBlock.Text += string.Format(" to {0}...", latestVersion.ToString());
                         }));
                         Thread.Sleep(1);
 
@@ -99,6 +106,8 @@ namespace bayoen.star.updater
                             }
                         }
 
+                        List<string> UpdaterList = File.ReadAllText(coreListName, Encoding.UTF8).Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
                         string rootPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
                         string updatingFolderPath = System.IO.Path.Combine(rootPath, updatingFolderName);
                         if (Directory.Exists(updatingFolderPath)) Directory.Delete(updatingFolderPath, true);
@@ -106,9 +115,8 @@ namespace bayoen.star.updater
                         {
                             if (fileNameToken.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
                             {
-                                using (ZipArchive readingToken = ZipFile.Open(fileNameToken, ZipArchiveMode.Read))
-                                {
-                                    readingToken.Entries.ToList().FindAll(x => x.Name == UpdatarName).ForEach(x => x.Delete());
+                                using (ZipArchive readingToken = ZipFile.Open(fileNameToken, ZipArchiveMode.Update))
+                                {                                    
                                     readingToken.ExtractToDirectory(updatingFolderPath);
                                 }
                                 if (File.Exists(fileNameToken)) File.Delete(fileNameToken);
@@ -122,10 +130,17 @@ namespace bayoen.star.updater
 
                             foreach (string filePath in fileList)
                             {
+                                string token = filePath.Replace(updatingFolderPath + '\\', "");
+                                if (UpdaterList.IndexOf(token) > -1) continue;
+
                                 if (File.Exists(filePath))
                                 {
                                     string targetPath = System.IO.Path.Combine(rootPath, System.IO.Path.GetFileName(filePath));
-                                    if (File.Exists(targetPath)) File.Delete(targetPath);
+                                    if (File.Exists(targetPath))
+                                    {
+                                        File.SetAttributes(targetPath, FileAttributes.Normal);
+                                        File.Delete(targetPath);
+                                    }
                                     File.Move(filePath, targetPath);
                                 }
                             }

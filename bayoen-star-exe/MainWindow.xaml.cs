@@ -1584,11 +1584,20 @@ namespace bayoen
                 // Latest: check updater
                 if (Directory.Exists(updatingFolderName))
                 {
-                    string newUpdaterPath = System.IO.Path.Combine(updatingFolderName, updaterName);
-                    if (File.Exists(newUpdaterPath))
+                    foreach (string tokenPath in Directory.GetFiles(updatingFolderName))
                     {
-                        if (File.Exists(updaterName)) File.Delete(updaterName);
-                        File.Move(newUpdaterPath, updaterName);
+                        if (File.Exists(tokenPath))
+                        {
+                            string fileName = System.IO.Path.GetFileName(tokenPath);
+                            if (File.Exists(fileName)) File.Delete(fileName);
+                            File.Move(tokenPath, fileName);
+                        }
+                        else if (Directory.Exists(tokenPath))
+                        {
+                            string directoryName = System.IO.Path.GetDirectoryName(tokenPath);
+                            if (Directory.Exists(directoryName)) Directory.Delete(directoryName);
+                            Directory.Move(tokenPath, directoryName);
+                        }
                     }
                     Directory.Delete(updatingFolderName, true);
                 }
