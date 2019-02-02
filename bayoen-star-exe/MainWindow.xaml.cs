@@ -1464,7 +1464,7 @@ namespace bayoen
             else // if (version > LatestVersion)
             {
                 // in Dev.: do nothing
-                this.Notify.ShowBalloonTip(2000, "This is version in development!", "There's no problem, right?", wf::ToolTipIcon.None);
+                this.Notify.ShowBalloonTip(2000, "This is version in development!", "Everything's ok?", wf::ToolTipIcon.None);
             }
         }
 
