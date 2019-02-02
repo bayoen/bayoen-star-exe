@@ -18,6 +18,8 @@
 *.userprefs
 
 # Build results
+bin-x64/
+bin-x86/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
