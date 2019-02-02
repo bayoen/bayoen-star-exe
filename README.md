@@ -1,11 +1,11 @@
+<h2 align="center">
+   <span><a href=https://bayoen.github.io/star>Please visit <strong>bayoen.github.io/star</strong></a></span>
+</h2>
+
 <p align="center">
    <a href=https://dailycarbuncle.tumblr.com><img src="resources/dailycarbuncle_174030608386.ico" height="120" width="120"/></a>
    <br/>
    <span>Images and icons are supported by <a href=https://dailycarbuncle.tumblr.com>Get your Gu's</a></span>
-</p>
-
-<p align="center">
-   <span><a href=https://bayoen.github.io/star>Please visit <strong>bayoen.github.io/star</strong></a></span>
 </p>
 
 <p align="center">
