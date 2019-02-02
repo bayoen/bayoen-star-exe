@@ -1,6 +1,6 @@
-<h2 align="center">
+<h3 align="center">
    <span><a href=https://bayoen.github.io/star>Please visit <strong>bayoen.github.io/star</strong></a></span>
-</h2>
+</h3>
 
 <p align="center">
         <span>
