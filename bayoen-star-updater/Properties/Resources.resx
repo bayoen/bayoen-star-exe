@@ -118,31 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="CrownLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CrownLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BayoenEN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bayoen-en.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dailycarbuncle_174030608386" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dailycarbuncle_174030608386.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PanelScore2LongStrong" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\score2_long_strong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PanelScore2ShortStrong" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\score2_short_strong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="StarPlain" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\StarPlain.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PanelScore2FitStrong" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\score2_fit_strong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SubPanelGoalString" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\goal_strong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="StarPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\StarPlus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="StarPlus_Old" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\starplus_old.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CarbyCircled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\chara_24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

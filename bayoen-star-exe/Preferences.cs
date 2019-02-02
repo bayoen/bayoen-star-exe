@@ -13,12 +13,14 @@ namespace bayoen
         {
             // Active
             public bool? IsTopMost;
+            public ClosingEvents? ClosingEvent;
             public bool? IsHideOffline;
             public bool? IsChromaKey;
             public ChromaKeys? ChromaKey;
             public bool? ExportText;
             public bool? IsFitToScore;
             public bool? IsOverlayFixed;
+            public bool? IsNoAutoUpdate;
             public DisplayModes? DisplayMode;
 
             public GoalTypes? GoalType;
@@ -28,7 +30,7 @@ namespace bayoen
 
             // Passive
             public List<double> Overlay;
-            public bool? EverClosed;
+            public string LanguageCode;
 
             // Escape
             public int? Period;
@@ -42,19 +44,21 @@ namespace bayoen
             public void Clear()
             {
                 this.IsTopMost = null;
+                this.ClosingEvent = null;
                 //this.IsChromaKey = null;
                 this.ChromaKey = null;
                 this.ExportText = null;
                 this.IsFitToScore = null;
                 this.IsOverlayFixed = null;
+                this.IsNoAutoUpdate = null;
 
                 this.Overlay = null;
                 this.DisplayMode = null;
+                this.LanguageCode = null;
 
                 this.GoalType = null;
                 this.GoalCounter = null;
 
-                this.EverClosed = null;
                 this.OverlapPass = false;
                 this.Period = 333;
             }

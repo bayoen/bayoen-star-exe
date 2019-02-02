@@ -10,6 +10,8 @@ namespace bayoen
         {
             public Display2Grid()
             {
+                this.Margin = new Thickness(0, 30, 0, 0);
+
                 this.PanelImage = new Image()
                 {
                     Height = 68,

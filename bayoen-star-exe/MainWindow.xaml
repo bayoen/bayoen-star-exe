@@ -5,6 +5,7 @@
                  xmlns:mtc="http://metro.mahapps.com/winfx/xaml/controls"
                  Title="bayoen-star"
                  TitleCharacterCasing="Normal"
+                 TitlebarHeight="0"
                  WindowTitleBrush="Transparent"
                  ShowIconOnTitleBar="False"                 
                  BorderThickness="0"                               
@@ -12,7 +13,9 @@
                  Height="160" Width="525"
                  MouseLeftButtonDown="MetroWindow_MouseLeftButtonDown"
                  KeyDown="MetroWindow_KeyDown"
-                 Closing="MetroWindow_Closing">
+                 Closing="MetroWindow_Closing"
+                 MouseEnter="MetroWindow_MouseEnter"
+                 MouseLeave="MetroWindow_MouseLeave">
 
     <mtc:MetroWindow.Flyouts>
         <mtc:FlyoutsControl>
@@ -64,7 +67,7 @@
                 </Style>
             </mtc:WindowCommands.Resources>
 
-            <TextBlock x:Name="StatusTextBlock" Margin="8,3,8,3" Foreground="DimGray" IsEnabled="False"/>
+            <TextBlock x:Name="StatusTextBlock" Margin="8,3,8,3" Opacity="0.9" IsEnabled="False"/>
 
             <Button x:Name ="MenuButton" Background="Transparent" ToolTip="Hotkey 'M'" Click="MenuButton_Click">
                 <StackPanel Orientation="Horizontal">

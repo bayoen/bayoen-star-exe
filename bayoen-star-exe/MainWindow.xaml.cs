@@ -47,14 +47,17 @@ namespace bayoen
         public static Version currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         public Version latestVersion;
 
-        public static string versionText = string.Format(" - Beta v{0}", currentVersion);
+        public static string versionText = string.Format(" - v{0}", currentVersion);
         public const string pptName = "puyopuyotetris";
         public const string prefName = "pref.json";
         public const string exportFolderName = "export";
         public const string dataJSONName = "data.json";
+        public const string updaterName = "bayoen-star-updater.exe";
+        public const string updatingFolderName = "__update__";
         public Preferences preferences;
         public wf::NotifyIcon Notify;
         public MetroWindow Setting;
+        public ComboBox ClosingEventComboBox;
         public MetroWindow Overlay;
 
         public VAMemory pptMemory;
@@ -250,6 +253,8 @@ namespace bayoen
             {
                 System.IO.Directory.CreateDirectory(exportFolderName);
             }
+
+            this.CheckLanguage();
         }
 
         private void InitializeLayouts()
@@ -290,7 +295,14 @@ namespace bayoen
                     this.GoalType = this.preferences.GoalType.Value;
                     this.CheckContainers();
                     this.GoalFlyout.IsOpen = false;
+
                     System.Media.SystemSounds.Hand.Play();
+
+                    // later...
+                    //using (System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(bayoen.Properties.Resources.ArleBegin))
+                    //{
+                    //    soundPlayer.Play();
+                    //}
                 };
                 this.ClearGoalButton.Click += (sender, e) =>
                 {
@@ -517,11 +529,11 @@ namespace bayoen
             {
                 this.Setting = new MetroWindow()
                 {
-                    Title = "settings",
+                    Title = "bayoen-star-settings",
                     TitleCharacterCasing = CharacterCasing.Normal,
 
-                    Height = 270,
-                    Width = 520,
+                    Height = 410,
+                    Width = 535,
                     ResizeMode = ResizeMode.NoResize,
 
                     BorderBrush = Brushes.Transparent,
@@ -544,7 +556,7 @@ namespace bayoen
                 {
                     Orientation = Orientation.Vertical,
                     Margin = new Thickness(5),
-                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 this.Setting.Content = SettingPanel;
@@ -563,6 +575,23 @@ namespace bayoen
                     Margin = new Thickness(10),
                 };
                 MainGroupBox.Content = MainGroupPanel;
+
+                CheckBox NoAutoUpdateCheckBox = new CheckBox()
+                {
+                    Content = "Turn off Auto-Update",
+                    Margin = new Thickness(5),
+                    ToolTip = "자동 업데이트 끄기",
+                };
+                NoAutoUpdateCheckBox.Click += (sender, e) =>
+                {
+                    this.preferences.IsNoAutoUpdate = !this.preferences.IsNoAutoUpdate;
+                };
+                if (this.preferences.IsNoAutoUpdate == null)
+                {
+                    this.preferences.IsNoAutoUpdate = false;
+                }
+                NoAutoUpdateCheckBox.IsChecked = this.preferences.IsNoAutoUpdate.Value;
+                MainGroupPanel.Children.Add(NoAutoUpdateCheckBox);
 
                 CheckBox TopMostCheckBox = new CheckBox()
                 {
@@ -593,6 +622,67 @@ namespace bayoen
                 TopMostCheckBox.IsChecked = this.preferences.IsTopMost.Value;
                 MainGroupPanel.Children.Add(TopMostCheckBox);
 
+                StackPanel ClosingEventPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                };
+                TextBlock ClosingEventTextBlock = new TextBlock()
+                {
+                    Text = "- Close window to ",
+                    Margin = new Thickness(5, 5, 0, 5),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    ToolTip = "닫아서 최소화/종료"
+                };
+                ClosingEventPanel.Children.Add(ClosingEventTextBlock);
+                List<string> ClosingEventSet = new List<string>()
+                {
+                    ClosingEvents.Minimize.ToString(),
+                    ClosingEvents.Exit.ToString(),
+                };
+                this.ClosingEventComboBox = new ComboBox()
+                {
+                    Width = 90,
+                    Margin = new Thickness(5),
+                    Background = Brushes.Black,
+                    ItemsSource = ClosingEventSet,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                ClosingEventPanel.Children.Add(ClosingEventComboBox);
+                ClosingEventComboBox.SelectionChanged += (sender, e) =>
+                {
+                    this.preferences.ClosingEvent = (ClosingEvents)ClosingEventComboBox.SelectedIndex;
+                };
+
+                if (this.preferences.ClosingEvent == null)
+                {
+                    ClosingEventComboBox.SelectedIndex = -1;
+                }
+                else
+                {
+                    ClosingEventComboBox.SelectedIndex = (int)this.preferences.ClosingEvent;
+                }
+
+                
+
+                MainGroupPanel.Children.Add(ClosingEventPanel);
+                #endregion
+
+                #region StreamingGroup
+                GroupBox StreamingGroupBox = new GroupBox()
+                {
+                    Header = "Streaming",
+                    Margin = new Thickness(5),
+                };
+                SettingPanel.Children.Add(StreamingGroupBox);
+
+                WrapPanel StreamingGroupPanel = new WrapPanel()
+                {
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(10),
+                };
+                StreamingGroupBox.Content = StreamingGroupPanel;
+
+
                 CheckBox HideOfflineCheckBox = new CheckBox()
                 {
                     Content = "Hide panels when PPT is offline",
@@ -609,9 +699,9 @@ namespace bayoen
                 if (this.preferences.IsHideOffline == null)
                 {
                     this.preferences.IsHideOffline = false;
-                }                
+                }
                 HideOfflineCheckBox.IsChecked = this.preferences.IsHideOffline.Value;
-                MainGroupPanel.Children.Add(HideOfflineCheckBox);
+                StreamingGroupPanel.Children.Add(HideOfflineCheckBox);
 
                 StackPanel ExportTextPanel = new StackPanel()
                 {
@@ -647,7 +737,7 @@ namespace bayoen
                 {
                     Content = "Folder",
                     Height = 10,
-                    Margin = new Thickness(5,0,0,0),
+                    Margin = new Thickness(5, 0, 0, 0),
                     ToolTip = "Open the folder where the file is stored;\n파일이 저장된 폴더를 엽니다",
                 };
                 ExportTextFolderButton.SetResourceReference(Control.StyleProperty, "AccentedSquareButtonStyle");
@@ -661,8 +751,8 @@ namespace bayoen
                     Process.Start(exportFolderName);
                 };
                 ExportTextPanel.Children.Add(ExportTextFolderButton);
-                MainGroupPanel.Children.Add(ExportTextPanel);
-           
+                StreamingGroupPanel.Children.Add(ExportTextPanel);
+
                 CheckBox FitScoreBoardCheckBox = new CheckBox()
                 {
                     Content = "Fit/Cover to score board",
@@ -679,14 +769,14 @@ namespace bayoen
                         this.Mode = DisplayModes.Game_and_Star;
                         this.Mode = tokenMode;
                     }
-                    
+
                 };
                 if (this.preferences.IsFitToScore == null)
                 {
                     this.preferences.IsFitToScore = false;
                 }
                 FitScoreBoardCheckBox.IsChecked = this.preferences.IsFitToScore.Value;
-                MainGroupPanel.Children.Add(FitScoreBoardCheckBox);
+                StreamingGroupPanel.Children.Add(FitScoreBoardCheckBox);
 
                 StackPanel ChromaKeyPanel = new StackPanel()
                 {
@@ -697,6 +787,7 @@ namespace bayoen
                     Text = "- Chroma key",
                     Margin = new Thickness(5, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
+                    ToolTip = "크로마키 색상 선택 (자홍색, 초록색, 파랑색)",
                 };
                 ChromaKeyPanel.Children.Add(ChromaKeyTextBlock);
                 List<Tuple<ChromaKeys, Brush>> ChromaSets = new List<Tuple<ChromaKeys, Brush>>()
@@ -716,7 +807,7 @@ namespace bayoen
                         Content = new StackPanel()
                         {
                             Margin = new Thickness(0),
-                            Orientation = Orientation.Horizontal,                            
+                            Orientation = Orientation.Horizontal,
                         },
                     };
                     (TokenAccentItem.Content as StackPanel).Children.Add(new Rectangle()
@@ -749,7 +840,7 @@ namespace bayoen
                     Width = 110,
                     Margin = new Thickness(5),
                     Background = Brushes.Black,
-                    ItemsSource = AccentItemList,                    
+                    ItemsSource = AccentItemList,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
                 ChromaKeyPanel.Children.Add(ChromaKeyComboBox);
@@ -776,12 +867,12 @@ namespace bayoen
                         }
 
                         this.preferences.IsChromaKey = null;
-                    }                    
+                    }
                 }
                 this.Background = ChromaSets[(int)this.preferences.ChromaKey].Item2;
                 ChromaKeyComboBox.SelectedIndex = (int)this.preferences.ChromaKey;
 
-                MainGroupPanel.Children.Add(ChromaKeyPanel);
+                StreamingGroupPanel.Children.Add(ChromaKeyPanel);
                 #endregion
 
                 #region MonitorGroup
@@ -942,27 +1033,27 @@ namespace bayoen
                 };
                 this.Notify.ContextMenu.MenuItems.Add(ResetMenu);
 
-
-                wf::MenuItem AckMenu = new wf::MenuItem()
+                wf::MenuItem SettingMenu = new wf::MenuItem()
                 {
-                    Text = "Ack.",
+                    Text = "Setting",
                 };
-                AckMenu.Click += (sender, e) =>
+                SettingMenu.Click += (sender, e) =>
                 {
-                    //MessageBox.Show("'bayoen~' is powered by:" + Environment.NewLine
-                    //    + "Idea: Minacle, mat1jaczyyy" + Environment.NewLine
-                    //    + "Icon: Get your Gu's (dailycarbuncle.tumblr.com)" + Environment.NewLine
-                    //    + "IU: MahApps.Metro (mahapps.com)" + Environment.NewLine
-
-                    //    + Environment.NewLine + "and made by SemiR4in (twitch.tv/semirain)" + Environment.NewLine
-                    //    + "[ the.semirain@gmail.com ]" + Environment.NewLine
-
-                    //    + Environment.NewLine + "and also thank you all PPT communities!" + Environment.NewLine
-                    //    , "Acknowledgement");
-
-                    Process.Start("https://github.com/bayoen/bayoen-exe/wiki/Acknowledgements");
+                    this.ShowSettingWindow();
                 };
-                this.Notify.ContextMenu.MenuItems.Add(AckMenu);
+                this.Notify.ContextMenu.MenuItems.Add(SettingMenu);
+
+
+                wf::MenuItem HelpMenu = new wf::MenuItem()
+                {
+                    Text = "Help",
+                };
+                HelpMenu.Click += (sender, e) =>
+                {
+                    string siteURL = string.Format("https://bayoen.github.io/star/{0}", this.preferences.LanguageCode);
+                    Process.Start(siteURL);                    
+                };
+                this.Notify.ContextMenu.MenuItems.Add(HelpMenu);
 
 
                 wf::MenuItem ExitMenu = new wf::MenuItem()
@@ -971,10 +1062,7 @@ namespace bayoen
                 };
                 ExitMenu.Click += (sender, e) =>
                 {
-                    this.preferences.Save(prefName);
-                    this.Save();
-                    this.Notify.Visible = false;
-                    Environment.Exit(0);
+                    this.Exit();
                 };
                 this.Notify.ContextMenu.MenuItems.Add(ExitMenu);
 
@@ -1243,6 +1331,32 @@ namespace bayoen
             this.GoalType = this.preferences.GoalType.Value;
         }
 
+        private void CheckLanguage()
+        {
+            if (this.preferences.LanguageCode == null)
+            {
+                switch (System.Globalization.CultureInfo.InstalledUICulture.ThreeLetterISOLanguageName)
+                {
+                    case "kor":
+                        this.preferences.LanguageCode = LanguageCodes.KO.ToString().ToLower();
+                        break;
+                    case "eng":
+                        this.preferences.LanguageCode = LanguageCodes.EN.ToString().ToLower();
+                        break;
+                    case "jpn":
+                        this.preferences.LanguageCode = LanguageCodes.JA.ToString().ToLower();
+                        break;
+                    default:
+                        this.preferences.LanguageCode = LanguageCodes.EN.ToString().ToLower();
+                        break;
+                }
+            }
+            else
+            {
+                // Do nothing yet
+            }
+        }
+
         private void CountingStars()
         {
             if (this.IsPPTOn)
@@ -1447,30 +1561,94 @@ namespace bayoen
             System.Media.SystemSounds.Hand.Play();
         }
 
+        private void ShowSettingWindow()
+        {
+            //System.Drawing.Point mousePoint = System.Windows.Forms.Control.MousePosition;
+
+            this.Setting.Show();
+            this.Setting.Left = (SystemParameters.PrimaryScreenWidth - this.Setting.Width) / 2;
+            this.Setting.Top = (SystemParameters.PrimaryScreenHeight - this.Setting.Height) / 2;
+            if (this.Setting.WindowState == WindowState.Minimized)
+            {
+                this.Setting.WindowState = WindowState.Normal;
+            }
+            this.Setting.Activate();
+        }
+
         private void CheckUpdate()
         {
             if (!IsGoogleOn) return;
 
             if (currentVersion == latestVersion)
             {
-                // Latest: do nothing
+                // Latest: check updater
+                if (Directory.Exists(updatingFolderName))
+                {
+                    string newUpdaterPath = System.IO.Path.Combine(updatingFolderName, updaterName);
+                    if (File.Exists(newUpdaterPath))
+                    {
+                        if (File.Exists(updaterName)) File.Delete(updaterName);
+                        File.Move(newUpdaterPath, updaterName);
+                    }
+                    Directory.Delete(updatingFolderName, true);
+                }
+
             }
             else if (currentVersion < latestVersion)
             {
                 // Old
-                this.Notify.BalloonTipClicked += Notify_BalloonTipClicked_GoDownloadPage;
-                this.Notify.ShowBalloonTip(2000, "This is old version!", "Click to go download page!\nand please remove this version", wf::ToolTipIcon.None);
+                this.DoOldVersion();
             }
             else // if (version > LatestVersion)
             {
                 // in Dev.: do nothing
-                this.Notify.ShowBalloonTip(2000, "This is version in development!", "Everything's ok?", wf::ToolTipIcon.None);
+                this.Notify.ShowBalloonTip(2000, "This is version in development!", "Is everything okay?", wf::ToolTipIcon.None);
+
+                //this.DoOldVersion();
             }
+        }
+
+        private void DoOldVersion()
+        {
+            if (this.preferences.IsNoAutoUpdate.Value)
+            {
+                this.Notify.BalloonTipClicked += Notify_BalloonTipClicked_GoDownloadPage;
+                this.Notify.ShowBalloonTip(2000, "This is old version!", "Click to go download page!\nand please remove this version", wf::ToolTipIcon.None);
+            }
+            else
+            {
+                this.Notify.ShowBalloonTip(2000, "This is old version!", "Updating now!", wf::ToolTipIcon.None);
+                DoUpdate();
+            }
+        }
+
+        private void DoUpdate()
+        {
+            // Run updatar
+            if (File.Exists(updaterName))
+            {
+                this.Notify.ShowBalloonTip(2000, "New Update", "We're updating now!", wf::ToolTipIcon.None);
+                Thread.Sleep(2000);
+                Process.Start(updaterName);
+                this.Exit();
+            }
+            else
+            {
+                this.Notify.ShowBalloonTip(2000, "There is no updater!", "Something broken, please reinstall 'bayoen-star'", wf::ToolTipIcon.None);
+            }
+        }
+                
+        private void Exit()
+        {
+            this.preferences.Save(prefName);
+            this.Save();
+            this.Notify.Visible = false;
+            Environment.Exit(0);
         }
 
         private void Notify_BalloonTipClicked_GoDownloadPage(object sender, EventArgs e)
         {
-            Process.Start("https://github.com/bayoen/bayoen-star-exe/releases/latest");
+            Process.Start("https://bayoen.github.io/star/");
             this.Notify.BalloonTipClicked -= Notify_BalloonTipClicked_GoDownloadPage;
         }
 
@@ -1505,16 +1683,7 @@ namespace bayoen
 
         private void SettingMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Drawing.Point mousePoint = System.Windows.Forms.Control.MousePosition;
-
-            this.Setting.Show();
-            this.Setting.Left = Math.Max(0, mousePoint.X - 50);
-            this.Setting.Top = Math.Max(0, mousePoint.Y - 50);
-            if (this.Setting.WindowState == WindowState.Minimized)
-            {
-                this.Setting.WindowState = WindowState.Normal;
-            }
-            this.Setting.Activate();
+            this.ShowSettingWindow();
         }
 
         private void TopContextMenu_KeyDown(object sender, KeyEventArgs e)
@@ -1539,30 +1708,49 @@ namespace bayoen
             }
         }
 
-        private void MetroWindow_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
+        private void MetroWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {            
             this.DragMove();
+        }
+
+        private void MetroWindow_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.TitlebarHeight = 30;
+            this.MainDisplay.Margin = new Thickness(0, 0, 0, 0);
+        }
+
+        private void MetroWindow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.TitlebarHeight = 0;
+            this.MainDisplay.Margin = new Thickness(0, 30, 0, 0);
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = true;
-            this.Hide();
+            if (this.preferences.ClosingEvent == null)
+            {
+                e.Cancel = true;
+                this.Hide();
 
-            if (preferences.EverClosed == null)
-            {
-                NotifyMinimizing();
+                NotifyMinimizing();                
             }
-            else if (!preferences.EverClosed.Value)
+            else if (this.preferences.ClosingEvent.Value == ClosingEvents.Minimize)
             {
-                NotifyMinimizing();
+                e.Cancel = true;
+                this.Hide();
+            }
+            else
+            {
+                e.Cancel = false;
+                this.Exit();
             }
 
             void NotifyMinimizing()
             {
                 this.Notify.BalloonTipClicked -= Notify_BalloonTipClicked_GoDownloadPage;
                 this.Notify.ShowBalloonTip(2000, "Closing → Minimizing", "Minimized into system tray\nPlease right-click icon!", wf::ToolTipIcon.None);
-                preferences.EverClosed = true;
+                this.preferences.ClosingEvent = ClosingEvents.Minimize;
+                this.ClosingEventComboBox.SelectedIndex = (int)ClosingEvents.Minimize;
             }
         }
 
@@ -1639,6 +1827,19 @@ namespace bayoen
         {
             Star = 0,
             Crown = 1,
+        }
+
+        public enum LanguageCodes : int
+        {
+            EN = 0,
+            KO = 1,
+            JA = 2,
+        }        
+
+        public enum ClosingEvents : int
+        {
+            Minimize = 0,
+            Exit = 1,
         }
     }
 
