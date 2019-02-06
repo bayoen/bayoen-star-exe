@@ -59,6 +59,7 @@ namespace bayoen
         public wf::NotifyIcon Notify;
         public MetroWindow Setting;
         public ComboBox ClosingEventComboBox;
+        public ComboBox ChromaKeyComboBox;
         public MetroWindow Overlay;
 
         public VAMemory pptMemory;
@@ -67,6 +68,8 @@ namespace bayoen
         public int scoreAddress;
         public Process[] PPTProcesses;
         public DispatcherTimer timer;
+
+        public bool StreamAskFlag;
 
         public int winCount;
         public int winMatch;
@@ -246,6 +249,55 @@ namespace bayoen
             }
         }
 
+        private int _streamingRing;
+        private const int StreamingToc = 30;
+        public int StreamingRing
+        {
+            get => this._streamingRing;
+            set
+            {
+                if (value >= StreamingToc)
+                {
+                    this._streamingRing = 0;
+                }
+                else
+                {
+                    this._streamingRing = value;
+                }                
+            }
+        }
+        public string BroadcasterName;
+        public Broadcasters Broadcaster;
+
+        public bool StreamingTic
+        {
+            get => (this._streamingRing == 0);
+        }
+
+        public bool IsOBSOn
+        {
+            get
+            {
+                return (Process.GetProcessesByName("obs64").Length > 0);
+            }
+        }
+
+        public bool IsStreamlabsOn
+        {
+            get
+            {
+                return (Process.GetProcessesByName("Streamlabs OBS").Length > 0);
+            }
+        }
+
+        public bool IsXSplitOn
+        {
+            get
+            {
+                return (Process.GetProcessesByName("XSplit.Core").Length > 0);
+            }
+        }
+
         private void InitializePreferences()
         {
             this.preferences = Preferences.Load(prefName);
@@ -260,36 +312,43 @@ namespace bayoen
 
         private void InitializeLayouts()
         {
+            InitializeFlyout();
             InitializeTopMenu();
             InitializeSettingWindow();
             InitializeNotifyIcon();
             InitializeDisplay();
 
-            void InitializeTopMenu()
+            void InitializeFlyout()
             {
-                MenuItem ResetMenuItem = BuildMenu("Reset", "appbar_new");
-                ResetMenuItem.Click += ResetMenuItem_ClickAsync;
-                this.TopCompositeCollection.Add(ResetMenuItem);
-
-                MenuItem GoalMenuItem = BuildMenu("Goal", "appbar_controller_xbox");
-                this.TopCompositeCollection.Add(GoalMenuItem);
-
-                List<MenuItem> GoalItems = new List<MenuItem>();
-                MenuItem SetGoalItem = new MenuItem()
+                // for Streaming
+                this.StreamingYesButton.Click += (sender, e) =>
                 {
-                    Header = "Set...",
-                    ToolTip = "Set goal with its score and type; 목표를 입력하고 설정합니다",
+                    if (this.Broadcaster == Broadcasters.OBS || this.Broadcaster == Broadcasters.StreamlabsOBS)
+                    {
+                        this.ChromaKeyComboBox.SelectedIndex = (int)ChromaKeys.Magenta;
+                    }
+                    else if (this.Broadcaster == Broadcasters.XSplit)
+                    {
+                        this.ChromaKeyComboBox.SelectedIndex = (int)ChromaKeys.Green;
+                    }
+
+                    this.StreamingFlyout.IsOpen = false;
                 };
-                SetGoalItem.Click += (sender, e) =>
+
+                this.StreamingNoButton.Click += (sender, e) =>
                 {
-                    this.GoalFlyout.IsOpen = true;
+                    this.StreamingFlyout.IsOpen = false;
                 };
-                GoalItems.Add(SetGoalItem);
+
+                // for Goal
+                this.GoalTypeTextBlock.ToolTip = "Games until TOTAL N-scores for two player; 합계 N점이 될 때까지 게임합니다" +
+                    Environment.NewLine + "Games until FIRST N-score for any player; 누군가 먼저 N점이 될 때까지 게임합니다";
+
                 this.SetGoalButton.Click += (sender, e) =>
                 {
                     this.preferences.GoalType = (GoalTypes)(this.GoalTypeComboBox.SelectedIndex);
                     this.preferences.GoalCounter = (GoalCounters)(this.GoalCounterComboBox.SelectedIndex);
-                    this.preferences.GoalScore = (int)this.GoalScoreNumericUpDown.Value.Value;                    
+                    this.preferences.GoalScore = (int)this.GoalScoreNumericUpDown.Value.Value;
 
                     this.GoalScore = this.preferences.GoalScore.Value;
                     this.GoalCounter = this.preferences.GoalCounter.Value;
@@ -311,6 +370,7 @@ namespace bayoen
                     this.GoalCounterComboBox.SelectedIndex = 0;
                     this.GoalScoreNumericUpDown.Value = 0;
                 };
+
                 this.GoalTypeComboBox.ItemsSource = new List<string>() { "None", "First", "Total", };
                 List<Tuple<GoalCounters, System.Drawing.Bitmap>> GoalCounterSets = new List<Tuple<GoalCounters, System.Drawing.Bitmap>>()
                 {
@@ -354,6 +414,29 @@ namespace bayoen
                     GoalCounterItemList.Add(TokenGoalCounterItem);
                 }
                 this.GoalCounterComboBox.ItemsSource = GoalCounterItemList;
+            }
+
+            void InitializeTopMenu()
+            {
+                MenuItem ResetMenuItem = BuildMenu("Reset", "appbar_new");
+                ResetMenuItem.Click += ResetMenuItem_ClickAsync;
+                this.TopCompositeCollection.Add(ResetMenuItem);
+
+                MenuItem GoalMenuItem = BuildMenu("Goal", "appbar_controller_xbox");
+                this.TopCompositeCollection.Add(GoalMenuItem);
+
+                List<MenuItem> GoalItems = new List<MenuItem>();
+                MenuItem SetGoalItem = new MenuItem()
+                {
+                    Header = "Set...",
+                    ToolTip = "Set goal with its score and type; 목표를 입력하고 설정합니다",
+                };
+                SetGoalItem.Click += (sender, e) =>
+                {
+                    this.GoalFlyout.IsOpen = true;
+                };
+                GoalItems.Add(SetGoalItem);
+                               
                 MenuItem RemoveGoalItem = new MenuItem()
                 {
                     Header = "Remove",
@@ -836,7 +919,7 @@ namespace bayoen
 
                     AccentItemList.Add(TokenAccentItem);
                 }
-                ComboBox ChromaKeyComboBox = new ComboBox()
+                this.ChromaKeyComboBox = new ComboBox()
                 {
                     Width = 110,
                     Margin = new Thickness(5),
@@ -1274,6 +1357,8 @@ namespace bayoen
             this.timer.Tick += (e, sender) =>
             {
                 this.CountingStars();
+
+                this.CheckStreaming();
             };                       
         }
 
@@ -1296,6 +1381,7 @@ namespace bayoen
             this.oldStar = new List<int>() { -1, -1 };
             this.currentStar = new List<int>() { -1, -1 };
 
+            this.StreamingRing = 0;
 
             if (File.Exists(dataJSONName))
             {
@@ -1458,6 +1544,65 @@ namespace bayoen
             }
         }
         
+        private void CheckStreaming()
+        {
+            if (this.StreamAskFlag) return;            
+
+            this.StreamingRing++;
+
+            if (this.StreamingTic)
+            {
+                this.StreamAskFlag = true;
+
+                this.BroadcasterName = "None";
+                this.Broadcaster = Broadcasters.None;
+
+                if (this.IsOBSOn)
+                {
+                    this.BroadcasterName = "OBS";
+                    this.Broadcaster = Broadcasters.OBS;
+
+                    if (this.preferences.ChromaKey == ChromaKeys.Magenta)
+                    {
+                        this.StreamAskFlag = false;
+                    }
+                }
+                else if (this.IsStreamlabsOn)
+                {
+                    this.BroadcasterName = "Streamlabs OBS";
+                    this.Broadcaster = Broadcasters.StreamlabsOBS;
+
+                    if (this.preferences.ChromaKey == ChromaKeys.Magenta)
+                    {
+                        this.StreamAskFlag = false;
+                    }
+                }
+                else if (this.IsXSplitOn)
+                {
+                    this.BroadcasterName = "XSplit";
+                    this.Broadcaster = Broadcasters.XSplit;
+
+                    if ((this.preferences.ChromaKey == ChromaKeys.Green) || (this.preferences.ChromaKey == ChromaKeys.Blue))
+                    {
+                        this.StreamAskFlag = false;
+                    }
+                }
+                else
+                {
+                    this.StreamAskFlag = false;
+                }
+
+
+                if (this.StreamAskFlag)
+                {
+                    this.StreamingFlyout.Header = string.Format("'{0}' broardcaster detected!\nDo you like to set optimal chromakey?", BroadcasterName);
+
+                    this.StreamingFlyout.IsOpen = true;
+                    System.Media.SystemSounds.Hand.Play();
+                }
+            }
+        }
+
         private void Export()
         {
             File.WriteAllText(exportFolderName + '\\' + "Star1.txt", this.currentStar[0].ToString(), Encoding.UTF8);
@@ -1826,12 +1971,19 @@ namespace bayoen
             Game_and_Star_plus = 3,
             Star_plus_and_Star = 4,
         }
+        public enum Broadcasters : int
+        {
+            None = 0,
+            OBS = 1,
+            StreamlabsOBS = 2,
+            XSplit = 3,
+        }
         public enum ChromaKeys : int
         {
             None = 0,
-            Green = 1,
-            Blue = 2,
-            Magenta = 3,
+            Magenta = 1,
+            Green = 2,
+            Blue = 3,
         }
         public enum GoalTypes : int
         {
