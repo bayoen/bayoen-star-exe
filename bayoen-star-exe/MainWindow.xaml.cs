@@ -1149,6 +1149,33 @@ namespace bayoen
                     this.Reset();
                 };
                 this.Notify.ContextMenu.MenuItems.Add(ResetMenu);
+                
+                wf::MenuItem HelpMenu = new wf::MenuItem()
+                {
+                    Text = "Help",
+                };
+                this.Notify.ContextMenu.MenuItems.Add(HelpMenu);
+
+                wf::MenuItem SiteMenu = new wf::MenuItem()
+                {
+                    Text = "'bayoen-star' Site",
+                };
+                SiteMenu.Click += (sender, e) =>
+                {
+                    string siteURL = string.Format("https://bayoen.github.io/star/{0}", this.preferences.LanguageCode);
+                    Process.Start(siteURL);
+                };
+                HelpMenu.MenuItems.Add(SiteMenu);
+
+                wf::MenuItem PatchNoteMenu = new wf::MenuItem()
+                {
+                    Text = "Patch Note",
+                };
+                PatchNoteMenu.Click += (sender, e) =>
+                {
+                    Process.Start("https://github.com/bayoen/bayoen-star-exe/releases/latest");
+                };
+                HelpMenu.MenuItems.Add(PatchNoteMenu);
 
                 wf::MenuItem SettingMenu = new wf::MenuItem()
                 {
@@ -1159,19 +1186,6 @@ namespace bayoen
                     this.ShowSettingWindow();
                 };
                 this.Notify.ContextMenu.MenuItems.Add(SettingMenu);
-
-
-                wf::MenuItem HelpMenu = new wf::MenuItem()
-                {
-                    Text = "Help",
-                };
-                HelpMenu.Click += (sender, e) =>
-                {
-                    string siteURL = string.Format("https://bayoen.github.io/star/{0}", this.preferences.LanguageCode);
-                    Process.Start(siteURL);                    
-                };
-                this.Notify.ContextMenu.MenuItems.Add(HelpMenu);
-
 
                 wf::MenuItem ExitMenu = new wf::MenuItem()
                 {
