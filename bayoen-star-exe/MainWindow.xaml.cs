@@ -59,6 +59,7 @@ namespace bayoen
         public wf::NotifyIcon Notify;
         public MetroWindow Setting;
         public ComboBox ClosingEventComboBox;
+        public CheckBox IgnoreBroadcasterCheckBox;
         public ComboBox ChromaKeyComboBox;
         public MetroWindow Overlay;
 
@@ -340,6 +341,13 @@ namespace bayoen
                     this.StreamingFlyout.IsOpen = false;
                 };
 
+                this.StreamingNeverButton.Click += (sender, e) =>
+                {
+                    this.StreamingFlyout.IsOpen = false;
+                    this.preferences.IsNoAutoDetect = true;
+                    this.IgnoreBroadcasterCheckBox.IsChecked = true;
+                };
+
                 // for Goal
                 this.GoalTypeTextBlock.ToolTip = "Games until TOTAL N-scores for two player; 합계 N점이 될 때까지 게임합니다" +
                     Environment.NewLine + "Games until FIRST N-score for any player; 누군가 먼저 N점이 될 때까지 게임합니다";
@@ -418,69 +426,13 @@ namespace bayoen
 
             void InitializeTopMenu()
             {
+                #region [Reset Menu]
                 MenuItem ResetMenuItem = BuildMenu("Reset", "appbar_new");
                 ResetMenuItem.Click += ResetMenuItem_ClickAsync;
                 this.TopCompositeCollection.Add(ResetMenuItem);
+                #endregion
 
-                MenuItem GoalMenuItem = BuildMenu("Goal", "appbar_controller_xbox");
-                this.TopCompositeCollection.Add(GoalMenuItem);
-
-                List<MenuItem> GoalItems = new List<MenuItem>();
-                MenuItem SetGoalItem = new MenuItem()
-                {
-                    Header = "Set...",
-                    ToolTip = "Set goal with its score and type; 목표를 입력하고 설정합니다",
-                };
-                SetGoalItem.Click += (sender, e) =>
-                {
-                    this.GoalFlyout.IsOpen = true;
-                };
-                GoalItems.Add(SetGoalItem);
-                               
-                MenuItem RemoveGoalItem = new MenuItem()
-                {
-                    Header = "Remove",
-                    ToolTip = "Remove goal; 목표를 취소합니다",
-                };
-                RemoveGoalItem.Click += (sender, e) =>
-                {
-                    this.preferences.GoalType = GoalTypes.None;
-                    this.preferences.GoalCounter = GoalCounters.Star;
-                    this.preferences.GoalScore = 0;
-
-                    this.GoalScore = this.preferences.GoalScore.Value;                    
-                    this.GoalCounter = this.preferences.GoalCounter.Value;
-                    this.GoalType = this.preferences.GoalType.Value;
-                };
-                GoalItems.Add(RemoveGoalItem);
-                GoalMenuItem.ItemsSource = GoalItems;
-
-                if (this.preferences.GoalType == null)
-                {
-                    this.preferences.GoalType = GoalTypes.None;
-                }
-
-                if (this.preferences.GoalCounter == null)
-                {
-                    this.preferences.GoalCounter = GoalCounters.Star;
-                }
-                if (this.preferences.GoalScore == null)
-                {
-                    this.preferences.GoalScore = 0;
-                }
-
-                this.GoalTypeComboBox.SelectedIndex = (int)this.preferences.GoalType.Value;
-                this.GoalCounterComboBox.SelectedIndex = (int)this.preferences.GoalCounter.Value;
-                this.GoalScoreNumericUpDown.Value = this.preferences.GoalScore.Value;
-
-                MenuItem OverlayMenuItem = BuildMenu("Overlay", "appbar_app_plus");
-                OverlayMenuItem.Click += OverlayMenuItem_Click;
-                this.TopCompositeCollection.Add(OverlayMenuItem);
-
-                MenuItem SettingMenuItem = BuildMenu("Settings", "appbar_settings");
-                SettingMenuItem.Click += SettingMenuItem_Click;
-                this.TopCompositeCollection.Add(SettingMenuItem);
-
+                #region [Mode Menu]
                 MenuItem ModeMenuItem = BuildMenu("Mode", "appbar_list");
                 this.TopCompositeCollection.Add(ModeMenuItem);
 
@@ -582,7 +534,72 @@ namespace bayoen
                     int modeIndex = (int)this.preferences.DisplayMode.Value;
                     (ModeItems[modeIndex] as MenuItem).IsChecked = true;
                 }
+                #endregion
 
+                #region [Goal Menu]
+                MenuItem GoalMenuItem = BuildMenu("Goal", "appbar_controller_xbox");
+                this.TopCompositeCollection.Add(GoalMenuItem);
+
+                List<MenuItem> GoalItems = new List<MenuItem>();
+                MenuItem SetGoalItem = new MenuItem()
+                {
+                    Header = "Set...",
+                    ToolTip = "Set goal with its score and type; 목표를 입력하고 설정합니다",
+                };
+                SetGoalItem.Click += (sender, e) =>
+                {
+                    this.GoalFlyout.IsOpen = true;
+                };
+                GoalItems.Add(SetGoalItem);
+
+                MenuItem RemoveGoalItem = new MenuItem()
+                {
+                    Header = "Remove",
+                    ToolTip = "Remove goal; 목표를 취소합니다",
+                };
+                RemoveGoalItem.Click += (sender, e) =>
+                {
+                    this.preferences.GoalType = GoalTypes.None;
+                    this.preferences.GoalCounter = GoalCounters.Star;
+                    this.preferences.GoalScore = 0;
+
+                    this.GoalScore = this.preferences.GoalScore.Value;
+                    this.GoalCounter = this.preferences.GoalCounter.Value;
+                    this.GoalType = this.preferences.GoalType.Value;
+                };
+                GoalItems.Add(RemoveGoalItem);
+                GoalMenuItem.ItemsSource = GoalItems;
+
+                if (this.preferences.GoalType == null)
+                {
+                    this.preferences.GoalType = GoalTypes.None;
+                }
+
+                if (this.preferences.GoalCounter == null)
+                {
+                    this.preferences.GoalCounter = GoalCounters.Star;
+                }
+                if (this.preferences.GoalScore == null)
+                {
+                    this.preferences.GoalScore = 0;
+                }
+
+                this.GoalTypeComboBox.SelectedIndex = (int)this.preferences.GoalType.Value;
+                this.GoalCounterComboBox.SelectedIndex = (int)this.preferences.GoalCounter.Value;
+                this.GoalScoreNumericUpDown.Value = this.preferences.GoalScore.Value;
+                #endregion
+
+                #region [Overlay Menu]
+                MenuItem OverlayMenuItem = BuildMenu("Overlay", "appbar_app_plus");
+                OverlayMenuItem.Click += OverlayMenuItem_Click;
+                this.TopCompositeCollection.Add(OverlayMenuItem);
+                #endregion
+
+                #region [Setting Menu]
+                MenuItem SettingMenuItem = BuildMenu("Settings", "appbar_settings");
+                SettingMenuItem.Click += SettingMenuItem_Click;
+                this.TopCompositeCollection.Add(SettingMenuItem);
+                #endregion
 
                 MenuItem BuildMenu(string header, string appbar)
                 {
@@ -739,7 +756,7 @@ namespace bayoen
 
                 if (this.preferences.ClosingEvent == null)
                 {
-                    ClosingEventComboBox.SelectedIndex = -1;
+                    ClosingEventComboBox.SelectedIndex = 0;
                 }
                 else
                 {
@@ -766,6 +783,22 @@ namespace bayoen
                 };
                 StreamingGroupBox.Content = StreamingGroupPanel;
 
+                this.IgnoreBroadcasterCheckBox = new CheckBox()
+                {
+                    Content = "Disable auto-detcting broadcasters",
+                    Margin = new Thickness(5),
+                    ToolTip = "방송 송출프로그램을 자동감지하지 않습니다",
+                };
+                this.IgnoreBroadcasterCheckBox.Click += (sender, e) =>
+                {
+                    this.preferences.IsNoAutoDetect = !this.preferences.IsNoAutoDetect;
+                };
+                if (this.preferences.IsNoAutoDetect == null)
+                {
+                    this.preferences.IsNoAutoDetect = false;
+                }
+                this.IgnoreBroadcasterCheckBox.IsChecked = this.preferences.IsNoAutoDetect.Value;
+                StreamingGroupPanel.Children.Add(this.IgnoreBroadcasterCheckBox);
 
                 CheckBox HideOfflineCheckBox = new CheckBox()
                 {
@@ -1285,13 +1318,23 @@ namespace bayoen
                 this.Overlay.ContextMenu = new ContextMenu();
                 MenuItem OverlayFixMenu = new MenuItem()
                 {
-                    Header = "Fixed",
+                    Header = "Fix",
                     IsCheckable = true,
                 };
                 OverlayFixMenu.Click += (sender, e) =>
                 {
-                    this.preferences.IsOverlayFixed = !this.preferences.IsOverlayFixed;
-                    OverlayFixMenu.IsChecked = this.preferences.IsOverlayFixed.Value;
+                    int style = GetWindowLong(this.PPTProcesses.Single().MainWindowHandle, (int)GWL.GWL_STYLE);
+                    if ((style & (uint)WS.WS_MINIMIZE) == (uint)WS.WS_MINIMIZE)
+                    {
+                        System.Media.SystemSounds.Hand.Play();
+                        OverlayFixMenu.IsChecked = false;
+                        return;
+                    }
+                    else
+                    {
+                        this.preferences.IsOverlayFixed = !this.preferences.IsOverlayFixed;
+                        OverlayFixMenu.IsChecked = this.preferences.IsOverlayFixed.Value;
+                    }
                 };
                 this.Overlay.ContextMenu.Items.Add(OverlayFixMenu);
 
@@ -1546,7 +1589,9 @@ namespace bayoen
         
         private void CheckStreaming()
         {
-            if (this.StreamAskFlag) return;            
+            if (this.StreamAskFlag) return;
+
+            if (this.preferences.IsNoAutoDetect.Value) return;
 
             this.StreamingRing++;
 
@@ -1654,15 +1699,34 @@ namespace bayoen
 
         private void FromMonitors()
         {
-            this.countingStar[0] = int.Parse(this.Monitors[2].Text);
-            this.countingStar[1] = int.Parse(this.Monitors[3].Text);
-            this.countingCrown[0] = int.Parse(this.Monitors[4].Text);
-            this.countingCrown[1] = int.Parse(this.Monitors[5].Text);
+            int tempStar0 = this.countingStar[0];
+            int tempStar1 = this.countingStar[1];
+            int tempCrown0 = this.countingCrown[0];
+            int tempCrown1 = this.countingCrown[1];
+
+            try
+            {
+                this.countingStar[0] = int.Parse(this.Monitors[2].Text);
+                this.countingStar[1] = int.Parse(this.Monitors[3].Text);
+                this.countingCrown[0] = int.Parse(this.Monitors[4].Text);
+                this.countingCrown[1] = int.Parse(this.Monitors[5].Text);
+            }
+            catch
+            {
+                this.countingStar[0] = tempStar0;
+                this.countingStar[1] = tempStar1;
+                this.countingCrown[0] = tempCrown0;
+                this.countingCrown[1] = tempCrown1;
+                System.Media.SystemSounds.Hand.Play();
+            }
         }
 
         private void CheckOverlay()
         {
-            GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.currentRect);
+            if (this.PPTProcesses.Length == 1)
+            {
+                GetWindowRect(this.PPTProcesses.Single().MainWindowHandle, ref this.currentRect);
+            }
 
             this.FixOverlay();
 
@@ -1957,6 +2021,26 @@ namespace bayoen
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref RECT rectangle);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        public enum GWL : int
+        {
+            GWL_WNDPROC = (-4),
+            GWL_HINSTANCE = (-6),
+            GWL_HWNDPARENT = (-8),
+            GWL_STYLE = (-16),
+            GWL_EXSTYLE = (-20),
+            GWL_USERDATA = (-21),
+            GWL_ID = (-12)
+        }
+
+        public enum WS : uint
+        {
+            WS_MINIMIZE = 0x20000000,
+
+        }
 
         private void Status(string s)
         {

@@ -45,8 +45,22 @@
 
             <mtc:Flyout x:Name="StreamingFlyout" Header="Streaming Now?" Position="Left" Width="{Binding Width, ElementName=BayoenWindow}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Button x:Name="StreamingYesButton" Content="Yes" Height="35" Width="100" Margin="6" Style="{DynamicResource AccentedSquareButtonStyle}" VerticalAlignment="Center"/>
-                    <Button x:Name="StreamingNoButton" Content="No" Height="35" Width="100" Margin="6" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Center"/>
+                    <StackPanel.Resources>
+                        <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="14"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <Button x:Name="StreamingYesButton" Height="35" Width="100" Margin="6" Style="{DynamicResource AccentedSquareButtonStyle}" VerticalAlignment="Center">
+                        <TextBlock Text="Yes"/>
+                    </Button>
+                    <Button x:Name="StreamingNoButton" Height="35" Width="100" Margin="6" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Center">
+                        <TextBlock Text="No"/>
+                    </Button>
+                    <Button x:Name="StreamingNeverButton" Height="35" Width="100" Margin="6" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Center">
+                        <TextBlock Text="Never"/>
+                    </Button>
                 </StackPanel>
             </mtc:Flyout>
         </mtc:FlyoutsControl>

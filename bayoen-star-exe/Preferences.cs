@@ -21,6 +21,7 @@ namespace bayoen
             public bool? IsFitToScore;
             public bool? IsOverlayFixed;
             public bool? IsNoAutoUpdate;
+            public bool? IsNoAutoDetect;
             public DisplayModes? DisplayMode;
 
             public GoalTypes? GoalType;
@@ -51,6 +52,7 @@ namespace bayoen
                 this.IsFitToScore = null;
                 this.IsOverlayFixed = null;
                 this.IsNoAutoUpdate = null;
+                this.IsNoAutoDetect = null;
 
                 this.Overlay = null;
                 this.DisplayMode = null;
