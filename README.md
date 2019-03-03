@@ -1,5 +1,5 @@
 <h3 align="center">
-   <span><a href=https://bayoen.github.io/star>Please visit <strong>bayoen.github.io/star</strong></a></span>
+   <span><a href=https://bayoen.github.io/star>To get 'bayoen-star.exe', please visit <strong>bayoen.github.io/star</strong></a></span>
 </h3>
 
 <p align="center">
