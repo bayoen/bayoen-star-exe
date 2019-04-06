@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -58,6 +59,15 @@ namespace bayoen
         public Preferences preferences;
         public wf::NotifyIcon Notify;
         public MetroWindow Setting;
+        public MetroWindow Clock;
+        public Grid ClockDisplay;
+        public TextBlock ClockMainTextBlock;
+        public TextBlock ClockMilliTextBlock;
+        public DispatcherTimer ClockTimer;
+        public DateTime ClockAnchor;
+        public TimeSpan ClockBuffer;
+        public TimeSpan CountdownSpan;
+
         public ComboBox ClosingEventComboBox;
         public CheckBox IgnoreBroadcasterCheckBox;
         public ComboBox ChromaKeyComboBox;
@@ -315,6 +325,7 @@ namespace bayoen
         {
             InitializeFlyout();
             InitializeTopMenu();
+            InitializeClockWindow();
             InitializeSettingWindow();
             InitializeNotifyIcon();
             InitializeDisplay();
@@ -595,6 +606,12 @@ namespace bayoen
                 this.TopCompositeCollection.Add(OverlayMenuItem);
                 #endregion
 
+                #region [Clock Menu]
+                MenuItem ClockMenuItem = BuildMenu("Clock", "appbar_clock");
+                ClockMenuItem.Click += ClockMenuItem_Click;
+                this.TopCompositeCollection.Add(ClockMenuItem);
+                #endregion
+
                 #region [Setting Menu]
                 MenuItem SettingMenuItem = BuildMenu("Settings", "appbar_settings");
                 SettingMenuItem.Click += SettingMenuItem_Click;
@@ -626,6 +643,91 @@ namespace bayoen
                 }
             }
 
+            void InitializeClockWindow()
+            {
+                this.Clock = new MetroWindow()
+                {
+                    Title = "bayoen-star-clock",
+                    TitleCharacterCasing = CharacterCasing.Normal,
+
+                    Height = 160,
+                    Width = 525,                    
+                    ResizeMode = ResizeMode.NoResize,
+
+                    TitlebarHeight = 0,
+                    WindowTitleBrush = Brushes.Transparent,
+                    BorderBrush = Brushes.Transparent,
+                    BorderThickness = new Thickness(0),
+                    Topmost = true,
+                };
+
+                this.ClockDisplay = new Grid()
+                {
+                    Margin = new Thickness(0, 30, 0, 0),
+                };
+                this.Clock.Content = ClockDisplay;
+
+                Image ClockPanelImage = new Image()
+                {
+                    Height = 68,
+                    Width = 406,
+                    Margin = new Thickness(0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                ClockPanelImage.SetBitmap(bayoen.Properties.Resources.PanelScore2FitStrong);
+                this.ClockDisplay.Children.Add(ClockPanelImage);
+
+                this.ClockMainTextBlock = new TextBlock()
+                {
+                    Foreground = Brushes.White, //new SolidColorBrush(Color.FromRgb(0xFF, 0xEA, 0x00)), // #ffea00
+                    FontFamily = new System.Windows.Media.FontFamily("Arial"),
+                    FontSize = 40,
+                    FontWeight = FontWeights.ExtraBold,
+                    Text = "00 : 00 : 00.0",
+                    Margin = new Thickness(0, 0, 30, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                this.ClockDisplay.Children.Add(this.ClockMainTextBlock);
+
+                this.ClockMilliTextBlock = new TextBlock()
+                {
+                    Foreground = Brushes.White, //new SolidColorBrush(Color.FromRgb(0xFF, 0xEE, 0x00)), // #ffea00
+                    FontFamily = new System.Windows.Media.FontFamily("Arial"),
+                    FontSize = 25,
+                    FontWeight = FontWeights.Bold,
+                    Text = "00",
+                    Margin = new Thickness(285,8,0,0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                this.ClockDisplay.Children.Add(this.ClockMilliTextBlock);
+
+                this.Clock.MouseLeftButtonDown += (sender, e) =>
+                {
+                    this.Clock.DragMove();
+                };
+
+                this.Clock.Closing += (sender, e) =>
+                {
+                    e.Cancel = true;
+                    this.Clock.Hide();
+                };
+
+                this.Clock.MouseEnter += (sender, e) =>
+                {
+                    this.Clock.TitlebarHeight = 30;
+                    this.ClockDisplay.Margin = new Thickness(0, 0, 0, 0);
+                };
+
+                this.Clock.MouseLeave += (sender, e) =>
+                {
+                    this.Clock.TitlebarHeight = 0;
+                    this.ClockDisplay.Margin = new Thickness(0, 30, 0, 0);
+                };
+            }
+
             void InitializeSettingWindow()
             {
                 this.Setting = new MetroWindow()
@@ -633,7 +735,7 @@ namespace bayoen
                     Title = "bayoen-star-settings",
                     TitleCharacterCasing = CharacterCasing.Normal,
 
-                    Height = 410,
+                    Height = 510,
                     Width = 535,
                     ResizeMode = ResizeMode.NoResize,
 
@@ -965,6 +1067,7 @@ namespace bayoen
                 {
                     this.preferences.ChromaKey = (ChromaKeys)ChromaKeyComboBox.SelectedIndex;
                     this.Background = ChromaSets[ChromaKeyComboBox.SelectedIndex].Item2;
+                    this.Clock.Background = ChromaSets[(int)this.preferences.ChromaKey].Item2;
                 };
                 if (this.preferences.ChromaKey == null)
                 {
@@ -987,6 +1090,7 @@ namespace bayoen
                     }
                 }
                 this.Background = ChromaSets[(int)this.preferences.ChromaKey].Item2;
+                this.Clock.Background = ChromaSets[(int)this.preferences.ChromaKey].Item2;
                 ChromaKeyComboBox.SelectedIndex = (int)this.preferences.ChromaKey;
 
                 StreamingGroupPanel.Children.Add(ChromaKeyPanel);
@@ -1078,6 +1182,298 @@ namespace bayoen
 
                 #endregion
 
+                #region ClockGroup
+                if (this.preferences.IsStopWatch == null)
+                {
+                    this.preferences.IsStopWatch = true;
+                }
+
+                GroupBox ClockGroupBox = new GroupBox()
+                {
+                    Header = "Clock",
+                    Margin = new Thickness(5),
+                };
+                SettingPanel.Children.Add(ClockGroupBox);
+
+                WrapPanel ClockGroupPanel = new WrapPanel()
+                {
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(10),
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                };
+                ClockGroupBox.Content = ClockGroupPanel;
+
+                StackPanel RadioPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                ClockGroupPanel.Children.Add(RadioPanel);
+
+                RadioButton StopwatchRadioButton = new RadioButton()
+                {
+                    Content = "Stopwatch",
+                    Margin = new Thickness(5,5,5,5),
+                };
+                RadioPanel.Children.Add(StopwatchRadioButton);
+
+                RadioButton CountdownRadioButton = new RadioButton()
+                {
+                    Content = "Countdown",
+                    Margin = new Thickness(10,5,5,5),
+                };
+                RadioPanel.Children.Add(CountdownRadioButton);
+
+                if (this.preferences.IsStopWatch.Value)
+                {
+                    StopwatchRadioButton.IsChecked = true;
+                }
+                else
+                {
+                    CountdownRadioButton.IsChecked = true;
+                }
+
+                StackPanel ClockSpanPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                };
+                ClockGroupPanel.Children.Add(ClockSpanPanel);
+
+                TextBlock ClockSpanTextBlock = new TextBlock()
+                {
+                    Text = "- Begin/Remain",
+                    Margin = new Thickness(5, 5, 5, 5),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    ToolTip = "Show begin time or set time remained\n시작시각을 표시하거나, 남은시간을 설정합니다.",
+                };
+                ClockSpanPanel.Children.Add(ClockSpanTextBlock);
+
+                TextBox ClockSpanTextBox = new TextBox()
+                {
+                    Width = 95,
+                    Margin = new Thickness(5, 5, 5, 5),
+                    TextAlignment = TextAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };                
+                ClockSpanTextBox.SetValue(TextBoxHelper.WatermarkProperty, "##:##:##:###");
+                ClockSpanTextBox.SetValue(TextBoxHelper.WatermarkAlignmentProperty, TextAlignment.Center);
+                ClockSpanTextBox.PreviewTextInput += (sender, e) => e.Handled = !IsTextAllowed(e.Text);
+                DataObject.AddPastingHandler(ClockSpanTextBox, ClockSpanTextBox_Pasting);
+                void ClockSpanTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
+                {
+                    if (e.DataObject.GetDataPresent(typeof(string)))
+                    {
+                        string text = (string)e.DataObject.GetData(typeof(string));
+                        if (!IsTextAllowed(text))
+                        {
+                            e.CancelCommand();
+                        }
+                    }
+                    else
+                    {
+                        e.CancelCommand();
+                    }
+                }
+                ClockSpanPanel.Children.Add(ClockSpanTextBox);
+
+                StackPanel ClockControlPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(5, 5, 10, 5),
+                };
+                ClockGroupPanel.Children.Add(ClockControlPanel);
+
+                Button ClockStartButton = new Button()
+                {
+                    Content = "Start",
+                    Margin = new Thickness(0, 0, 5, 0),
+                };
+                ClockStartButton.SetResourceReference(Control.StyleProperty, "AccentedSquareButtonStyle");
+                ClockControlPanel.Children.Add(ClockStartButton);
+
+                bool clockControlFlag = true;
+                var pauseContent = "Pause";
+                var resumeContent = "Resume";
+                Button ClockControlButton = new Button()
+                {
+                    Width = 55,
+                    Content = pauseContent,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    IsEnabled = false,
+                };
+                ClockControlButton.SetResourceReference(Control.StyleProperty, "AccentedSquareButtonStyle");
+                ClockControlPanel.Children.Add(ClockControlButton);
+
+                Button ClockResetButton = new Button()
+                {
+                    Content = "Reset",
+                    Margin = new Thickness(0, 0, 5, 0),
+                };
+                ClockResetButton.SetResourceReference(Control.StyleProperty, "AccentedSquareButtonStyle");
+                ClockControlPanel.Children.Add(ClockResetButton);
+
+
+                StopwatchRadioButton.Checked += (sender, e) =>
+                {
+                    this.preferences.IsStopWatch = true;
+                    ClockSpanTextBox.IsEnabled = false;
+                    if (this.ClockAnchor == DateTime.MinValue)
+                    {
+                        ClockSpanTextBox.Text = "?? --:--:--:--";
+                    }
+                    else
+                    {
+                        ClockSpanTextBox.Text = this.ClockAnchor.ToString("tt hh:mm:ss:ff", CultureInfo.CreateSpecificCulture("en-US"));
+                    }
+                    
+                };                
+
+                CountdownRadioButton.Checked += (sender, e) =>
+                {
+                    this.preferences.IsStopWatch = false;
+                    ClockSpanTextBox.IsEnabled = true;
+                    ClockSpanTextBox.Text = CountdownSpanString();
+
+                    if (this.CountdownSpan >= TimeSpan.Zero)
+                    {
+                        TimeSpan span = this.CountdownSpan;
+                        this.ClockMainTextBlock.Text = $"{(span.Days * 24 + span.Hours).ToString("D2")} : {span.Minutes.ToString("D2")} : {span.Seconds.ToString("D2")}.{(int)(span.Milliseconds / 100)}";
+                        this.ClockMilliTextBlock.Text = $"{(span.Milliseconds % 100).ToString("D2")}";
+                    }
+                };
+
+                ClockStartButton.Click += (sender, e) =>
+                {
+                    this.ClockAnchor = DateTime.Now;
+                    this.ClockBuffer = TimeSpan.Zero;
+
+                    if (this.preferences.IsStopWatch.Value)
+                    {
+                        ClockSpanTextBox.Text = this.ClockAnchor.ToString("tt hh:mm:ss:ff", CultureInfo.CreateSpecificCulture("en-US"));
+                    }
+                    else
+                    {
+                        bool brokenFlag = false;
+
+                        int hours = 0;
+                        int minutes = 0;
+                        int seconds = 0;
+                        int milliseconds = 0;
+
+                        try
+                        {
+                            string rawSpan = ClockSpanTextBox.Text;
+
+                            List<string> split = rawSpan.Split(':').ToList();
+
+                            if (split.Count == 4)
+                            {
+                                hours = int.Parse(split[0]);
+                                minutes = int.Parse(split[1]);
+                                seconds = int.Parse(split[2]);
+                                milliseconds = int.Parse(split[3]);
+                            }
+                            else if (split.Count == 3)
+                            {
+                                hours = int.Parse(split[0]);
+                                minutes = int.Parse(split[1]);
+                                seconds = int.Parse(split[2]);
+                            }
+                            else if (split.Count == 2)
+                            {
+                                hours = int.Parse(split[0]);
+                                minutes = int.Parse(split[1]);
+                            }
+                            else if (split.Count == 1)
+                            {
+                                minutes = int.Parse(split[0]);
+                            }
+                            else
+                            {
+                                brokenFlag = true;
+                            }
+
+                        }
+                        catch
+                        {
+                            brokenFlag = true;
+                        }                        
+
+                        if (brokenFlag)
+                        {
+                            System.Media.SystemSounds.Beep.Play();
+                            return;
+                        }
+
+                        this.CountdownSpan = new TimeSpan((int)(hours / 24), (int)(hours % 24), minutes, seconds, milliseconds);
+                        ClockSpanTextBox.Text = CountdownSpanString();
+                    }
+
+                    this.ClockTimer.Start();
+
+                    ClockResetButton.IsEnabled = true;
+                    if (!ClockControlButton.IsEnabled) ClockControlButton.IsEnabled = true;
+
+                    StopwatchRadioButton.IsEnabled = false;
+                    CountdownRadioButton.IsEnabled = false;
+
+                    ClockStartButton.IsEnabled = false;
+                };
+
+                ClockControlButton.Click += (sender, e) =>
+                {
+                    if (clockControlFlag)
+                    {
+                        this.ClockBuffer += DateTime.Now - this.ClockAnchor;
+                        this.ClockTimer.Stop();
+                        ClockControlButton.Content = resumeContent;
+                    }
+                    else
+                    {
+                        this.ClockAnchor = DateTime.Now;
+                        this.ClockTimer.Start();
+                        ClockControlButton.Content = pauseContent;
+                    }
+
+                    clockControlFlag = !clockControlFlag;
+                };
+
+                ClockResetButton.Click += (sender, e) =>
+                {
+                    ResetClockTimer();
+                };
+
+                this.ClockTimer = new DispatcherTimer()
+                {
+                    Interval = new TimeSpan(0, 0, 0, 0, 5),
+                };
+                this.ClockTimer.Tick += (sender, e) =>
+                {
+                    TimeSpan span = DateTime.Now - this.ClockAnchor + this.ClockBuffer;
+
+                    if (!this.preferences.IsStopWatch.Value)                    
+                    {
+                        span = this.CountdownSpan - span;
+
+                        if (span.Ticks <= 0)
+                        {
+                            ResetClockTimer();
+                            System.Media.SystemSounds.Hand.Play();
+                            return;
+                        }
+                    }
+
+                    this.ClockMainTextBlock.Text = $"{(span.Days * 24 + span.Hours).ToString("D2")} : {span.Minutes.ToString("D2")} : {span.Seconds.ToString("D2")}.{(int)(span.Milliseconds / 100)}";
+                    this.ClockMilliTextBlock.Text = $"{(span.Milliseconds % 100).ToString("D2")}";
+                    
+                };
+
+
+                #endregion
+
                 StackPanel SetText(string header, double height, double width1, double width2, bool isEnabled)
                 {
                     TextBlock tokenTextBlock = new TextBlock()
@@ -1111,6 +1507,33 @@ namespace bayoen
                     tokenPanel.Children.Add(tokenTextBox);
 
                     return tokenPanel;
+                }
+
+                bool IsTextAllowed(string s)
+                {
+                    foreach (char c in s.ToCharArray())
+                    {
+                        if (char.IsDigit(c) || char.IsControl(c) || (new char[] { ':' }).Contains(c)) continue;
+                        else return false;
+                    }
+                    return true;
+                }
+
+                void ResetClockTimer()
+                {
+                    this.ClockMainTextBlock.Text = $"00 : 00 : 00.0";
+                    this.ClockMilliTextBlock.Text = $"00";
+                    this.ClockTimer.Stop();
+
+                    ClockStartButton.IsEnabled = true;
+                    ClockControlButton.Content = pauseContent;
+                    ClockControlButton.IsEnabled = false;
+                    clockControlFlag = true;
+
+                    StopwatchRadioButton.IsEnabled = true;
+                    CountdownRadioButton.IsEnabled = true;
+
+                    ClockResetButton.IsEnabled = false;
                 }
             }
 
@@ -1337,8 +1760,8 @@ namespace bayoen
                 };
                 OverlayFixMenu.Click += (sender, e) =>
                 {
-                    int style = GetWindowLong(this.PPTProcesses.Single().MainWindowHandle, (int)GWL.GWL_STYLE);
-                    if ((style & (uint)WS.WS_MINIMIZE) == (uint)WS.WS_MINIMIZE)
+                    int currentWindowStyle = GetWindowLong(this.PPTProcesses.Single().MainWindowHandle, (int)GWL.GWL_STYLE);
+                    if ((currentWindowStyle & (uint)WS.WS_MINIMIZE) == (uint)WS.WS_MINIMIZE)
                     {
                         System.Media.SystemSounds.Hand.Play();
                         OverlayFixMenu.IsChecked = false;
@@ -1393,6 +1816,11 @@ namespace bayoen
 
                 this._mode = (this.preferences.DisplayMode == DisplayModes.Game_and_Star_plus) ? (DisplayModes.Game_and_Star) : (DisplayModes.Game_and_Star_plus);
                 this.Mode = this.preferences.DisplayMode.Value;
+            }
+
+            string CountdownSpanString()
+            {
+                return $"{(this.CountdownSpan.Days * 24 + this.CountdownSpan.Hours).ToString("D2")}:{this.CountdownSpan.Minutes.ToString("D2")}:{this.CountdownSpan.Seconds.ToString("D2")}:{this.CountdownSpan.Milliseconds.ToString("D3")}";
             }
         }
 
@@ -1785,6 +2213,18 @@ namespace bayoen
             System.Media.SystemSounds.Hand.Play();
         }
 
+        private void ShowClockWindow()
+        {
+            this.Clock.Show();
+            this.Clock.Left = (SystemParameters.PrimaryScreenWidth - this.Clock.Width) / 2;
+            this.Clock.Top = (SystemParameters.PrimaryScreenHeight - this.Clock.Height) / 2;
+            if (this.Clock.WindowState == WindowState.Minimized)
+            {
+                this.Clock.WindowState = WindowState.Normal;
+            }
+            this.Clock.Activate();
+        }
+
         private void ShowSettingWindow()
         {
             //System.Drawing.Point mousePoint = System.Windows.Forms.Control.MousePosition;
@@ -1918,6 +2358,11 @@ namespace bayoen
                 this.Overlay.WindowState = WindowState.Normal;
             }
             this.Overlay.Activate();
+        }
+
+        private void ClockMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.ShowClockWindow();
         }
 
         private void SettingMenuItem_Click(object sender, RoutedEventArgs e)

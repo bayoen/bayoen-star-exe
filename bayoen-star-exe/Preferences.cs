@@ -23,6 +23,7 @@ namespace bayoen
             public bool? IsNoAutoUpdate;
             public bool? IsNoAutoDetect;
             public DisplayModes? DisplayMode;
+            public bool? IsStopWatch;
 
             public GoalTypes? GoalType;
             public GoalCounters? GoalCounter;
@@ -53,6 +54,7 @@ namespace bayoen
                 this.IsOverlayFixed = null;
                 this.IsNoAutoUpdate = null;
                 this.IsNoAutoDetect = null;
+                this.IsStopWatch = null;
 
                 this.Overlay = null;
                 this.DisplayMode = null;

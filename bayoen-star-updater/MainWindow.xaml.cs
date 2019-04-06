@@ -67,10 +67,30 @@ namespace bayoen.star.updater
                 #region CheckReleases::
                 ok::GitHubClient client;
                 ok::Release latest;
+                bool nextBigVersionFlag = false;
+
                 try
                 {
                     client = new ok::GitHubClient(new ok::ProductHeaderValue("bayoen"));
-                    latest = client.Repository.Release.GetLatest("bayoen", "bayoen-star-exe").Result;
+                    //latest = client.Repository.Release.GetLatest("bayoen", "bayoen-star-exe").Result;
+
+                    List<ok.Release> releases = client.Repository.Release.GetAll("bayoen", "bayoen-star-exe").Result.ToList();
+
+                    int nextBigVersion = releases.FindIndex(x => Version.Parse(x.TagName.GetVersionNumbers()) >= new Version(0, 2));
+
+                    if (nextBigVersion == 0)
+                    {
+                        latest = null;
+                    }
+                    else if (nextBigVersion > 0)
+                    {
+                        nextBigVersionFlag = true;
+                        latest = releases[nextBigVersion - 1];
+                    }
+                    else
+                    {
+                        latest = releases.Last();
+                    }                    
                 }
                 catch
                 {
@@ -91,6 +111,10 @@ namespace bayoen.star.updater
                         this.UpdatorTextBlock.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
                         {
                             this.UpdatorTextBlock.Text += string.Format(" to {0}...", latestVersion.ToString());
+                            if (nextBigVersionFlag)
+                            {
+                                this.UpdatorTextBlock.Text += $"\nWe can not update modules to upper versions!\nPlease visit 'https://bayoen.github.io/star/'";
+                            }
                         }));
                         Thread.Sleep(1);
 

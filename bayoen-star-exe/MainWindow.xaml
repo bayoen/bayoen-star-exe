@@ -7,7 +7,7 @@
                  TitleCharacterCasing="Normal"
                  TitlebarHeight="0"
                  WindowTitleBrush="Transparent"
-                 ShowIconOnTitleBar="False"                 
+                 ShowIconOnTitleBar="False"
                  BorderThickness="0"                               
                  ResizeMode="NoResize"
                  Height="160" Width="525"
