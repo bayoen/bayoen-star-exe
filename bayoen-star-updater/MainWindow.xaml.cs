@@ -89,7 +89,7 @@ namespace bayoen.star.updater
                     }
                     else
                     {
-                        latest = releases.Last();
+                        latest = releases.First();
                     }                    
                 }
                 catch
