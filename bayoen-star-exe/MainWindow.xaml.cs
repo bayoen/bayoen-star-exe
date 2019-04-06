@@ -1225,15 +1225,6 @@ namespace bayoen
                 };
                 RadioPanel.Children.Add(CountdownRadioButton);
 
-                if (this.preferences.IsStopWatch.Value)
-                {
-                    StopwatchRadioButton.IsChecked = true;
-                }
-                else
-                {
-                    CountdownRadioButton.IsChecked = true;
-                }
-
                 StackPanel ClockSpanPanel = new StackPanel()
                 {
                     Orientation = Orientation.Horizontal,
@@ -1252,6 +1243,7 @@ namespace bayoen
 
                 TextBox ClockSpanTextBox = new TextBox()
                 {
+                    
                     Width = 95,
                     Margin = new Thickness(5, 5, 5, 5),
                     TextAlignment = TextAlignment.Center,
@@ -1277,6 +1269,19 @@ namespace bayoen
                     }
                 }
                 ClockSpanPanel.Children.Add(ClockSpanTextBox);
+
+                if (this.preferences.IsStopWatch.Value)
+                {
+                    StopwatchRadioButton.IsChecked = true;
+                    ClockSpanTextBox.IsEnabled = false;
+                    ClockSpanTextBox.Text = "-";
+                }
+                else
+                {
+                    CountdownRadioButton.IsChecked = true;
+                    ClockSpanTextBox.IsEnabled = true;
+                    ClockSpanTextBox.Text = "00:00:00:000";
+                }
 
                 StackPanel ClockControlPanel = new StackPanel()
                 {
@@ -1467,8 +1472,7 @@ namespace bayoen
                     }
 
                     this.ClockMainTextBlock.Text = $"{(span.Days * 24 + span.Hours).ToString("D2")} : {span.Minutes.ToString("D2")} : {span.Seconds.ToString("D2")}.{(int)(span.Milliseconds / 100)}";
-                    this.ClockMilliTextBlock.Text = $"{(span.Milliseconds % 100).ToString("D2")}";
-                    
+                    this.ClockMilliTextBlock.Text = $"{(span.Milliseconds % 100).ToString("D2")}";                    
                 };
 
 
@@ -1521,6 +1525,16 @@ namespace bayoen
 
                 void ResetClockTimer()
                 {
+                    if (!this.preferences.IsStopWatch.Value)
+                    {
+                        if (this.CountdownSpan >= TimeSpan.Zero)
+                        {
+                            TimeSpan span = this.CountdownSpan;
+                            this.ClockMainTextBlock.Text = $"{(span.Days * 24 + span.Hours).ToString("D2")} : {span.Minutes.ToString("D2")} : {span.Seconds.ToString("D2")}.{(int)(span.Milliseconds / 100)}";
+                            this.ClockMilliTextBlock.Text = $"{(span.Milliseconds % 100).ToString("D2")}";
+                        }
+                    }
+
                     this.ClockMainTextBlock.Text = $"00 : 00 : 00.0";
                     this.ClockMilliTextBlock.Text = $"00";
                     this.ClockTimer.Stop();

@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>dailycarbuncle_174030608386_kirbuncle.ico</ApplicationIcon>
+    <ApplicationIcon>Resources/dailycarbuncle_174030608386.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -176,9 +176,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\goal_strong.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="dailycarbuncle_174030608386_kirbuncle.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\StarPlus.png" />

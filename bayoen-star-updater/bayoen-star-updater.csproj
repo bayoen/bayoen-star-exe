@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>dailycarbuncle_174765162266_gummy-carbuncles.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\dailycarbuncle_174765162266.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Octokit, Version=0.32.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -108,7 +108,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="dailycarbuncle_174765162266_gummy-carbuncles.ico" />
+    <Resource Include="Resources\dailycarbuncle_174765162266.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\bayoen-en.png" />
