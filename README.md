@@ -2,6 +2,10 @@
    <span><a href=https://bayoen.github.io/star>To get 'bayoen-star.exe', please visit <strong>bayoen.github.io/star</strong></a></span>
 </h3>
 
+<h3 align="center">
+   Maybe this is final version
+</h3>
+
 <p align="center">
         <span>
           <a href="https://github.com/bayoen/bayoen-star-exe/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" alt="GitHub: MIT License"></a>
