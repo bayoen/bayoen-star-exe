@@ -37,7 +37,7 @@ namespace bayoen
 
             this.CheckContainers();
             this.ToMonitors();
-            this.CheckUpdate();
+            //this.CheckUpdate();
             this.IsStatOn = true;
         }
 
@@ -1865,13 +1865,14 @@ namespace bayoen
         {
             if (this.IsGoogleOn)
             {
-                using (System.Net.WebClient web = new System.Net.WebClient() { Encoding = Encoding.UTF8 })
-                {
-                    System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
-                    string rawString = web.DownloadString("https://github.com/bayoen/bayoen-star-exe/releases/latest");
-                    string latestVersion = System.Text.RegularExpressions.Regex.Match(rawString, @"<a class=""js-selected-navigation-item selected reponav-item""((.|\n)*?)>", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups[1].Value.Split('/').Last();
-                    this.latestVersion = Version.Parse(latestVersion.Remove(latestVersion.Length - 1));
-                }
+                // Disabled
+                //using (System.Net.WebClient web = new System.Net.WebClient() { Encoding = Encoding.UTF8 })
+                //{
+                //    System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+                //    string rawString = web.DownloadString("https://github.com/bayoen/bayoen-star-exe/releases/latest");
+                //    string latestVersion = System.Text.RegularExpressions.Regex.Match(rawString, @"<a class=""js-selected-navigation-item selected reponav-item""((.|\n)*?)>", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups[1].Value.Split('/').Last();
+                //    this.latestVersion = Version.Parse(latestVersion.Remove(latestVersion.Length - 1));
+                //}
             }
             
             this.pptMemory = new VAMemory(pptName);
@@ -2270,7 +2271,7 @@ namespace bayoen
             else // if (version > LatestVersion)
             {
                 // in Dev.: do nothing
-                this.Notify.ShowBalloonTip(2000, "This is version in development!", "Is everything okay?", wf::ToolTipIcon.None);
+                //this.Notify.ShowBalloonTip(2000, "This is version in development!", "Is everything okay?", wf::ToolTipIcon.None);
 
                 //this.DoOldVersion();
             }
