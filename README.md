@@ -1,3 +1,11 @@
+# bayoen-star-exe
+Score Counter for Puyo Puyo™ Tetris® on Steam for Windows OS
+
+- homepage: [bayoen.github.io](https://bayoen.github.io)
+- source: [bayoen/bayoen-star-exe](https://github.com/bayoen/bayoen-star-exe) (this repository)
+
+---
+
 <h3 align="center">
    <span><a href=https://bayoen.github.io/star>To get 'bayoen-star.exe', please visit <strong>bayoen.github.io/star</strong></a></span>
 </h3>
